@@ -11,6 +11,17 @@ def create_app():
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object("config.Config")
 
+    # Must happen before any blueprint is imported: those blueprints (via
+    # app.library_scan / app.files) do `from config import ECON_LIBRARY_ROOT,
+    # ANALYSES_ROOT` at import time, so config's module attributes have to
+    # already point at the hydrated cache by then.
+    import config
+
+    if config.CONTENT_SOURCE == "cloud":
+        from app.cloud_storage import hydrate_from_cloud
+
+        config.ECON_LIBRARY_ROOT, config.ANALYSES_ROOT = hydrate_from_cloud()
+
     db.init_app(app)
     login_manager.init_app(app)
 

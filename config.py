@@ -55,3 +55,9 @@ class Config:
         "sqlite:///" + os.path.join(BASE_DIR, "instance", "app.db")
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    # Neon suspends its compute (and drops connections) after a few minutes
+    # idle. Without pool_pre_ping, SQLAlchemy hands out a pooled connection
+    # without checking it's still alive, which throws AdminShutdown on the
+    # first request after any idle gap. pre_ping tests it with a cheap query
+    # first and transparently reconnects if it's dead.
+    SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}

@@ -48,4 +48,14 @@ def hydrate_from_cloud():
                 os.makedirs(os.path.dirname(local_path), exist_ok=True)
                 client.download_file(config.R2_BUCKET_NAME, key, local_path)
 
+                # R2's own LastModified is upload time, not the source file's
+                # real mtime -- sync_to_cloud.py stashes the real one as
+                # custom metadata so "Updated" dates stay meaningful here
+                # instead of always showing "today".
+                head = client.head_object(Bucket=config.R2_BUCKET_NAME, Key=key)
+                source_mtime = head.get("Metadata", {}).get("sourcemtime")
+                if source_mtime:
+                    mtime = float(source_mtime)
+                    os.utime(local_path, (mtime, mtime))
+
     return roots["dashboards"], roots["reports"]

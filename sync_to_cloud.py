@@ -25,6 +25,17 @@ def _r2_client():
     )
 
 
+def _upload(client, local_path, key):
+    # R2 sets its own LastModified to upload time -- stash the file's real
+    # mtime as custom metadata so the hosted app can show meaningful
+    # "Updated" dates instead of always "today" (see app/cloud_storage.py).
+    mtime = os.path.getmtime(local_path)
+    client.upload_file(
+        local_path, config.R2_BUCKET_NAME, key,
+        ExtraArgs={"Metadata": {"sourcemtime": str(mtime)}},
+    )
+
+
 def main():
     missing = [
         name
@@ -48,7 +59,7 @@ def main():
             for filename in filenames:
                 local_path = os.path.join(local_folder, filename)
                 key = f"dashboards/{folder}/{filename}"
-                client.upload_file(local_path, config.R2_BUCKET_NAME, key)
+                _upload(client, local_path, key)
                 uploaded += 1
 
     reports, _skipped = scan_reports()
@@ -59,7 +70,7 @@ def main():
             if not os.path.isfile(local_path):
                 continue
             key = f"reports/{r['folder']}/{filename}"
-            client.upload_file(local_path, config.R2_BUCKET_NAME, key)
+            _upload(client, local_path, key)
             uploaded += 1
 
     print(f"Uploaded {uploaded} file(s) to r2://{config.R2_BUCKET_NAME}")

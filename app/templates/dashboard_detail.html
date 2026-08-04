@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}{{ entry.theme }} — Morning Consult Economic Intelligence{% endblock %}
+{% block content %}
+<p class="subtle"><a href="{{ url_for('dashboards.index') }}">&larr; All dashboards</a></p>
+<h1 class="section-title">{{ geography }} &middot; {{ entry.theme }}</h1>
+{% if entry.updated_at %}
+<p class="subtle" style="margin-top:-1rem;">Updated {{ entry.updated_at.strftime('%B %d, %Y') }}</p>
+{% endif %}
+
+{% if entry.dashboards %}
+  {% if entry.dashboards|length > 1 %}
+  <div class="tabs">
+    {% for d in entry.dashboards %}
+    <a href="#{{ loop.index0 }}" class="dash-tab {{ 'active' if loop.first }}" data-index="{{ loop.index0 }}">{{ d.title }}</a>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% for d in entry.dashboards %}
+  <div class="iframe-wrap dash-frame" data-index="{{ loop.index0 }}" {% if not loop.first %}style="display:none;"{% endif %}>
+    <iframe class="dash-iframe" src="{{ url_for('files.dashboard_file', relpath=entry.folder + '/' + d.filename) }}" title="{{ d.title }}"></iframe>
+  </div>
+  {% endfor %}
+{% else %}
+  <p class="subtle">No dashboard published for this theme yet.</p>
+{% endif %}
+
+{% if entry.guide_html %}
+<h2 class="section-title" style="font-size:1.1rem;">Methodology</h2>
+<div class="guide-box">{{ entry.guide_html | safe }}</div>
+{% endif %}
+
+<script>
+(function () {
+  function isDark(doc) {
+    var el = doc.body || doc.documentElement;
+    var bg = getComputedStyle(el).backgroundColor;
+    var m = bg && bg.match(/\d+/g);
+    if (!m || m.length < 3) return false;
+    var r = +m[0], g = +m[1], b = +m[2];
+    return (0.299 * r + 0.587 * g + 0.114 * b) < 128;
+  }
+
+  function resize(iframe) {
+    try {
+      var doc = iframe.contentDocument;
+      var h = Math.max(doc.documentElement.scrollHeight, doc.body.scrollHeight);
+      if (h > 0) iframe.style.height = h + 'px';
+    } catch (e) { /* cross-origin: leave default height */ }
+  }
+
+  document.querySelectorAll('.dash-iframe').forEach(function (iframe) {
+    iframe.addEventListener('load', function () {
+      try {
+        var win = iframe.contentWindow;
+        var doc = iframe.contentDocument;
+        if (isDark(doc) && typeof win.toggleTheme === 'function') {
+          win.toggleTheme();
+        }
+        var ro = new ResizeObserver(function () { resize(iframe); });
+        ro.observe(doc.body);
+      } catch (e) { /* cross-origin: nothing we can do */ }
+      resize(iframe);
+    });
+  });
+
+  document.querySelectorAll('.dash-tab').forEach(function (tab) {
+    tab.addEventListener('click', function (e) {
+      e.preventDefault();
+      var idx = tab.getAttribute('data-index');
+      document.querySelectorAll('.dash-tab').forEach(function (t) { t.classList.toggle('active', t === tab); });
+      document.querySelectorAll('.dash-frame').forEach(function (f) {
+        var show = f.getAttribute('data-index') === idx;
+        f.style.display = show ? '' : 'none';
+        if (show) resize(f.querySelector('.dash-iframe'));
+      });
+    });
+  });
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Dashboards — Morning Consult Economic Intelligence{% endblock %}
+{% block content %}
+<h1 class="section-title">Dashboards</h1>
+{% for geography in ["US", "Global", "Other"] %}
+  {% set themes = library.get(geography, []) %}
+  {% if themes %}
+  <div class="geography-block">
+    <div class="geography-title">{{ geography }}</div>
+    <div class="card-grid">
+      {% for entry in themes %}
+      <div class="card">
+        <a class="card-link" href="{{ url_for('dashboards.detail', geography=geography.lower(), theme_slug=entry.theme_slug) }}">
+          <h3>{{ entry.theme }}</h3>
+          {% if entry.dashboards %}
+            <span class="badge live">{{ entry.dashboards|length }} dashboard{{ 's' if entry.dashboards|length != 1 else '' }}</span>
+          {% elif entry.guide_html %}
+            <span class="badge live">Methodology only</span>
+          {% else %}
+            <span class="badge">Coming soon</span>
+          {% endif %}
+          {% if entry.updated_at %}
+            <div class="updated-at">Updated {{ entry.updated_at.strftime('%b %d, %Y') }}</div>
+          {% endif %}
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+{% endfor %}
+{% endblock %}

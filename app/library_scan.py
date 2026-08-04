@@ -1,0 +1,209 @@
+"""Live filesystem scanners for the Econ Data Library and the Analyses
+folder. Nothing here copies content -- these functions just describe what
+already exists on disk so the app can link to it through the authenticated
+file routes in app/files.py.
+"""
+import json
+import os
+import re
+from datetime import date, datetime
+
+import markdown
+
+from app.office_convert import ensure_pptx_pdf
+from config import ANALYSES_ROOT, ECON_LIBRARY_ROOT, THEME_KEYWORDS
+
+GUIDE_FILENAME = "interpretation_guide.md"
+PUBLISH_FILENAME = "publish.json"
+ANALYSIS_FOLDER_RE = re.compile(r"^(\d{4})-(\d{2})-(\d{2})-(.+)$")
+DELIVERABLE_RE = re.compile(r"(memo|brief)", re.IGNORECASE)
+
+
+def slugify(text):
+    text = text.lower().strip()
+    text = re.sub(r"[^a-z0-9]+", "-", text)
+    return text.strip("-")
+
+
+def humanize(slug_or_filename):
+    name = os.path.splitext(slug_or_filename)[0]
+    name = name.replace("_", " ").replace("-", " ")
+    return " ".join(word.capitalize() for word in name.split())
+
+
+def _guess_theme(text):
+    text_l = text.lower()
+    for theme, keywords in THEME_KEYWORDS.items():
+        for kw in keywords:
+            if kw in text_l:
+                return theme
+    return None
+
+
+def scan_econ_library(root=ECON_LIBRARY_ROOT):
+    """Returns {geography: [theme_entry, ...]}, geography in ("US", "Global", "Other")."""
+    library = {"US": [], "Global": [], "Other": []}
+
+    if not os.path.isdir(root):
+        return library
+
+    for entry in sorted(os.scandir(root), key=lambda e: e.name):
+        if not entry.is_dir():
+            continue
+        folder_name = entry.name
+        if folder_name.startswith("US "):
+            geography, theme = "US", folder_name[3:]
+        elif folder_name.startswith("Global "):
+            geography, theme = "Global", folder_name[7:]
+        else:
+            geography, theme = "Other", folder_name
+
+        dashboards = []
+        guide_html = None
+        updated_at = None
+        try:
+            for f in sorted(os.scandir(entry.path), key=lambda e: e.name):
+                if not f.is_file():
+                    continue
+                if f.name.lower().endswith(".html"):
+                    dashboards.append({"filename": f.name, "title": humanize(f.name)})
+                    mtime = datetime.fromtimestamp(f.stat().st_mtime)
+                    if updated_at is None or mtime > updated_at:
+                        updated_at = mtime
+                elif f.name == GUIDE_FILENAME:
+                    with open(f.path, "r", encoding="utf-8", errors="replace") as fh:
+                        guide_html = markdown.markdown(
+                            fh.read(), extensions=["tables", "fenced_code"]
+                        )
+        except OSError:
+            continue
+
+        library[geography].append(
+            {
+                "theme": theme,
+                "theme_slug": slugify(theme),
+                "folder": folder_name,
+                "dashboards": dashboards,
+                "guide_html": guide_html,
+                "has_content": bool(dashboards) or bool(guide_html),
+                "updated_at": updated_at,
+            }
+        )
+
+    return library
+
+
+def find_theme(geography, theme_slug, root=ECON_LIBRARY_ROOT):
+    library = scan_econ_library(root)
+    for entry in library.get(geography, []):
+        if entry["theme_slug"] == theme_slug:
+            return entry
+    return None
+
+
+def _load_publish_meta(folder_path):
+    """Returns a dict if publish.json is present (possibly empty), else None.
+
+    Presence of this file is what makes an analysis show up in Analysis &
+    Reports at all -- see publish_report.py. This is an explicit opt-in
+    rather than "anything with a memo/brief file" so bespoke client-specific
+    work never appears on the general site just because it matches a
+    filename pattern.
+    """
+    marker = os.path.join(folder_path, PUBLISH_FILENAME)
+    if not os.path.isfile(marker):
+        return None
+    try:
+        with open(marker, "r", encoding="utf-8") as fh:
+            data = json.load(fh)
+            return data if isinstance(data, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
+def scan_reports(root=ANALYSES_ROOT):
+    """Returns (reports, skipped). skipped maps folder name -> reason.
+    Reports sorted most-recent-first.
+    """
+    reports = []
+    skipped = {}
+
+    if not os.path.isdir(root):
+        return reports, skipped
+
+    for entry in sorted(os.scandir(root), key=lambda e: e.name, reverse=True):
+        if not entry.is_dir():
+            continue
+        match = ANALYSIS_FOLDER_RE.match(entry.name)
+        if not match:
+            continue
+        year, month, day, slug = match.groups()
+        try:
+            report_date = date(int(year), int(month), int(day))
+        except ValueError:
+            continue
+
+        publish_meta = _load_publish_meta(entry.path)
+        if publish_meta is None:
+            skipped[entry.name] = "not marked for publishing (no publish.json)"
+            continue
+
+        try:
+            candidates = [
+                f
+                for f in os.scandir(entry.path)
+                if f.is_file()
+                and DELIVERABLE_RE.search(f.name)
+                and f.name.lower().endswith((".pdf", ".docx", ".pptx"))
+            ]
+        except OSError:
+            candidates = []
+
+        # A written memo (.docx) is rendered inline as an article -- that's
+        # the best reading experience, so it wins if one exists. Otherwise
+        # this is a slide deck or a standalone PDF, which we link out to
+        # rather than trying to reflow as prose.
+        docx_files = [f for f in candidates if f.name.lower().endswith(".docx")]
+        other_files = [f for f in candidates if not f.name.lower().endswith(".docx")]
+        other_files.sort(key=lambda f: 0 if f.name.lower().endswith(".pdf") else 1)
+
+        if docx_files:
+            kind, deliverable = "article", docx_files[0].name
+        elif other_files:
+            best = other_files[0]
+            if best.name.lower().endswith(".pptx"):
+                # Decks are converted to PDF (once, cached alongside the
+                # source) so the download is always a PDF, never a .pptx.
+                pdf_path = ensure_pptx_pdf(best.path)
+                deliverable = os.path.basename(pdf_path) if pdf_path else best.name
+            else:
+                deliverable = best.name
+            kind = "download"
+        else:
+            skipped[entry.name] = "no memo/brief deliverable file found"
+            continue
+
+        title = publish_meta.get("title") or humanize(slug)
+        theme = publish_meta.get("theme") or _guess_theme(slug) or "Other"
+        reports.append(
+            {
+                "folder": entry.name,
+                "slug": slug,
+                "title": title,
+                "date": report_date,
+                "filename": deliverable,
+                "kind": kind,
+                "theme": theme,
+            }
+        )
+
+    reports.sort(key=lambda r: r["date"], reverse=True)
+    return reports, skipped
+
+
+def find_report(folder, root=ANALYSES_ROOT):
+    reports, _skipped = scan_reports(root)
+    for r in reports:
+        if r["folder"] == folder:
+            return r
+    return None

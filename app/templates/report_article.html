@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} — Morning Consult Economic Intelligence{% endblock %}
+{% block content %}
+<p class="subtle"><a href="{{ url_for('reports.index') }}">&larr; All analysis &amp; reports</a></p>
+<p class="subtle" style="margin-top:-0.5rem;">{{ report.date.strftime('%B %d, %Y') }} &middot; {{ report.theme }}</p>
+<article class="article-box">
+  {{ body_html | safe }}
+  <p class="article-download">
+    <a href="{{ url_for('files.report_file', relpath=report.folder + '/' + report.filename) }}" target="_blank" rel="noopener">Download original (.docx)</a>
+  </p>
+</article>
+{% endblock %}

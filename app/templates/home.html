@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<p class="subtle" style="margin-top:-0.5rem;">Welcome, {{ current_user.name }}.</p>
+<div class="card-grid" style="margin-top:1.5rem;">
+  <div class="card">
+    <a class="card-link" href="{{ url_for('dashboards.index') }}">
+      <h3>Dashboards</h3>
+      <p class="subtle">Live economic indicator dashboards, grouped by geography and theme.</p>
+    </a>
+  </div>
+  <div class="card">
+    <a class="card-link" href="{{ url_for('reports.index') }}">
+      <h3>Analysis &amp; Reports</h3>
+      <p class="subtle">Ad hoc analysis memos and briefs, most recent first.</p>
+    </a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Morning Consult Economic Intelligence{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <a class="wordmark" href="{{ url_for('main.home') }}">
+      <img src="{{ url_for('static', filename='img/mc_logo.png') }}" alt="Morning Consult" class="logo-mark">
+      <span class="product-name">Economic Intelligence</span>
+    </a>
+    {% if current_user.is_authenticated %}
+    <nav>
+      <a href="{{ url_for('dashboards.index') }}">Dashboards</a>
+      <a href="{{ url_for('reports.index') }}">Analysis &amp; Reports</a>
+      <a href="{{ url_for('auth.logout') }}">Log out</a>
+    </nav>
+    {% endif %}
+  </header>
+  <main>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="flash">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

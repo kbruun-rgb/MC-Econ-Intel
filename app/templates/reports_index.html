@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Analysis & Reports — Morning Consult Economic Intelligence{% endblock %}
+{% block content %}
+<h1 class="section-title">Analysis &amp; Reports</h1>
+
+<div class="reports-toolbar">
+  <input type="search" id="report-search" placeholder="Search by title...">
+  <span class="chip active" data-theme="all">All</span>
+  {% for theme in themes %}
+  <span class="chip" data-theme="{{ theme }}">{{ theme }}</span>
+  {% endfor %}
+</div>
+
+<table class="reports-table">
+  <thead>
+    <tr><th>Date</th><th>Title</th><th>Theme</th><th></th></tr>
+  </thead>
+  <tbody id="reports-body">
+    {% for r in reports %}
+    <tr data-title="{{ r.title|lower }}" data-theme="{{ r.theme }}">
+      <td>{{ r.date.strftime('%b %d, %Y') }}</td>
+      <td>{{ r.title }}</td>
+      <td>{{ r.theme }}</td>
+      <td>
+        {% if r.kind == 'article' %}
+        <a class="btn" href="{{ url_for('reports.article', folder=r.folder) }}">Read</a>
+        {% else %}
+        <a class="btn" href="{{ url_for('files.report_file', relpath=r.folder + '/' + r.filename) }}" target="_blank" rel="noopener">Download</a>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% if not reports %}
+<p class="subtle" style="margin-top:1rem;">No published analyses yet.</p>
+{% endif %}
+
+<script>
+  var searchInput = document.getElementById('report-search');
+  var chips = document.querySelectorAll('.chip');
+  var rows = document.querySelectorAll('#reports-body tr');
+  var activeTheme = 'all';
+
+  function applyFilter() {
+    var q = searchInput.value.trim().toLowerCase();
+    rows.forEach(function (row) {
+      var matchesTheme = (activeTheme === 'all') || (row.getAttribute('data-theme') === activeTheme);
+      var matchesSearch = !q || row.getAttribute('data-title').indexOf(q) !== -1;
+      row.classList.toggle('hidden', !(matchesTheme && matchesSearch));
+    });
+  }
+
+  searchInput.addEventListener('input', applyFilter);
+  chips.forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      chips.forEach(function (c) { c.classList.remove('active'); });
+      chip.classList.add('active');
+      activeTheme = chip.getAttribute('data-theme');
+      applyFilter();
+    });
+  });
+</script>
+{% endblock %}

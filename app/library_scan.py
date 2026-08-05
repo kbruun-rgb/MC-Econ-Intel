@@ -11,7 +11,13 @@ from datetime import date, datetime
 import markdown
 
 from app.office_convert import ensure_pptx_pdf
-from config import ANALYSES_ROOT, ECON_LIBRARY_ROOT, THEME_KEYWORDS
+from config import (
+    ANALYSES_ROOT,
+    DASHBOARD_FILE_TITLES,
+    DASHBOARD_THEME_DISPLAY_NAMES,
+    ECON_LIBRARY_ROOT,
+    THEME_KEYWORDS,
+)
 
 GUIDE_FILENAME = "interpretation_guide.md"
 PUBLISH_FILENAME = "publish.json"
@@ -58,6 +64,12 @@ def scan_econ_library(root=ECON_LIBRARY_ROOT):
         else:
             geography, theme = "Other", folder_name
 
+        # theme_slug is derived from the raw folder-name theme so existing
+        # links/bookmarks keep working even when the display name is
+        # overridden below.
+        theme_slug = slugify(theme)
+        theme = DASHBOARD_THEME_DISPLAY_NAMES.get((geography, theme), theme)
+
         dashboards = []
         guide_html = None
         updated_at = None
@@ -66,7 +78,8 @@ def scan_econ_library(root=ECON_LIBRARY_ROOT):
                 if not f.is_file():
                     continue
                 if f.name.lower().endswith(".html"):
-                    dashboards.append({"filename": f.name, "title": humanize(f.name)})
+                    title = DASHBOARD_FILE_TITLES.get(f.name, humanize(f.name))
+                    dashboards.append({"filename": f.name, "title": title})
                     mtime = datetime.fromtimestamp(f.stat().st_mtime)
                     if updated_at is None or mtime > updated_at:
                         updated_at = mtime
@@ -81,7 +94,7 @@ def scan_econ_library(root=ECON_LIBRARY_ROOT):
         library[geography].append(
             {
                 "theme": theme,
-                "theme_slug": slugify(theme),
+                "theme_slug": theme_slug,
                 "folder": folder_name,
                 "dashboards": dashboards,
                 "guide_html": guide_html,

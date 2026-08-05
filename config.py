@@ -32,8 +32,10 @@ R2_BUCKET_NAME = os.environ.get("R2_BUCKET_NAME")
 
 # Theme vocabulary shared by the dashboards library and the reports theme
 # filter, used to best-guess a theme tag for each analysis from its slug.
+# The dict key is also what's displayed as the theme name, so it's spelled
+# out in full rather than using the "CHI" acronym.
 THEME_KEYWORDS = {
-    "CHI": ["chi"],
+    "Consumer Health Index": ["chi"],
     "Consumer Spending": ["spending", "consumer-spending", "mdw", "memorial-day"],
     "Jobs & Labor": ["jobs", "labor", "unemployment", "nfp", "payroll"],
     "Housing": ["housing", "mortgage"],
@@ -42,6 +44,25 @@ THEME_KEYWORDS = {
     "Household Finances": ["household", "finance", "income"],
     "Weekly Pulse": ["weekly", "pulse"],
     "Geopolitical Risk": ["geopolitical", "gpr", "political"],
+}
+
+# Dashboard theme folder names are derived directly from the Econ Data
+# Library's folder names (e.g. "US CHI" -> theme "CHI"), which sometimes
+# don't match the display name we want. Keyed by (geography, raw theme) so
+# the same raw name can be overridden differently per geography (e.g. "Jobs
+# & Labor" reads as "Global Labor" only under Global, not under US).
+DASHBOARD_THEME_DISPLAY_NAMES = {
+    ("US", "CHI"): "Consumer Health Index",
+    ("Global", "Jobs & Labor"): "Global Labor",
+    ("Global", "Price Response Indicators"): "International Price Response Indicators",
+}
+
+# Individual dashboard file titles default to a humanized filename (e.g.
+# "labor_dashboard_mc.html" -> "Labor Dashboard Mc"), which doesn't always
+# read well or distinguish similarly-named files -- override by filename
+# here when that happens.
+DASHBOARD_FILE_TITLES = {
+    "labor_dashboard_mc.html": "Weekly Labor Dashboard",
 }
 
 

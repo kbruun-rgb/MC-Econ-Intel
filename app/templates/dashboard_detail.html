@@ -48,13 +48,29 @@
     } catch (e) { /* cross-origin: leave default height */ }
   }
 
+  // Fallback for dashboards with no toggleTheme() to call, e.g. Household
+  // Finances: hue-rotating an inverted image lands back on roughly correct
+  // colors while flipping dark backgrounds to light -- not pixel-perfect,
+  // but stays in sync automatically as the source file changes, unlike a
+  // hand-maintained light-mode copy.
+  function forceLightViaInvert(doc) {
+    var style = doc.createElement('style');
+    style.textContent = 'html { filter: invert(1) hue-rotate(180deg); }' +
+      ' html img, html video, html canvas, html svg image { filter: invert(1) hue-rotate(180deg); }';
+    (doc.head || doc.documentElement).appendChild(style);
+  }
+
   document.querySelectorAll('.dash-iframe').forEach(function (iframe) {
     iframe.addEventListener('load', function () {
       try {
         var win = iframe.contentWindow;
         var doc = iframe.contentDocument;
-        if (isDark(doc) && typeof win.toggleTheme === 'function') {
-          win.toggleTheme();
+        if (isDark(doc)) {
+          if (typeof win.toggleTheme === 'function') {
+            win.toggleTheme();
+          } else {
+            forceLightViaInvert(doc);
+          }
         }
         var ro = new ResizeObserver(function () { resize(iframe); });
         ro.observe(doc.body);

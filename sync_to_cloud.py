@@ -36,6 +36,15 @@ def _upload(client, local_path, key):
     )
 
 
+def _existing_keys(client, prefix):
+    keys = set()
+    paginator = client.get_paginator("list_objects_v2")
+    for page in paginator.paginate(Bucket=config.R2_BUCKET_NAME, Prefix=f"{prefix}/"):
+        for obj in page.get("Contents", []):
+            keys.add(obj["Key"])
+    return keys
+
+
 def main():
     missing = [
         name
@@ -47,6 +56,7 @@ def main():
 
     client = _r2_client()
     uploaded = 0
+    expected_keys = set()
 
     library = scan_econ_library()
     for themes in library.values():
@@ -60,6 +70,7 @@ def main():
                 local_path = os.path.join(local_folder, filename)
                 key = f"dashboards/{folder}/{filename}"
                 _upload(client, local_path, key)
+                expected_keys.add(key)
                 uploaded += 1
 
     reports, _skipped = scan_reports()
@@ -71,9 +82,21 @@ def main():
                 continue
             key = f"reports/{r['folder']}/{filename}"
             _upload(client, local_path, key)
+            expected_keys.add(key)
             uploaded += 1
 
-    print(f"Uploaded {uploaded} file(s) to r2://{config.R2_BUCKET_NAME}")
+    # Mirror sync: anything in the bucket that's no longer expected (an
+    # unpublished report, a removed/renamed dashboard file) has to be
+    # actively deleted, or the hosted app -- which only ever reads what's in
+    # the bucket -- keeps serving it forever even after it's gone locally.
+    stale_keys = (_existing_keys(client, "dashboards") | _existing_keys(client, "reports")) - expected_keys
+    if stale_keys:
+        client.delete_objects(
+            Bucket=config.R2_BUCKET_NAME,
+            Delete={"Objects": [{"Key": k} for k in stale_keys]},
+        )
+
+    print(f"Uploaded {uploaded} file(s), removed {len(stale_keys)} stale file(s) from r2://{config.R2_BUCKET_NAME}")
 
 
 if __name__ == "__main__":

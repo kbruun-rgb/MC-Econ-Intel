@@ -88,6 +88,17 @@ main {
 
 .subtle { color: var(--mc-subtle-gray); font-size: 0.9rem; }
 
+.home-intro {
+  max-width: 640px;
+  margin-bottom: 1.75rem;
+}
+.home-intro p {
+  margin: 0 0 0.85rem;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--mc-near-black);
+}
+
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));

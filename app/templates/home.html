@@ -1,10 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
+<p class="home-greeting">Welcome, {{ current_user.name }}.</p>
 <div class="home-intro">
   <p>Morning Consult Economics turns daily consumer survey data into real-time economic indicators. We field roughly 5,000 interviews a day in the U.S., with smaller daily samples internationally, broken out by income, age, region, and other demographics official statistics don't report at that frequency. On top of that base, we run a set of proprietary measures built to track and anticipate movement in spending, labor markets, and inflation.</p>
   <p>Clients &mdash; consumer-facing companies, the Federal Reserve and other central banks, government agencies, hedge funds, and other financial institutions &mdash; use this data to understand and anticipate movement in the broader economy.</p>
+  <p>This site is where that data and the team's related analysis live. Use Dashboards to browse the underlying indicators by geography and theme, and Analysis &amp; Reports for written memos and briefs on specific topics, most recent first.</p>
 </div>
-<p class="subtle" style="margin-top:-0.5rem;">Welcome, {{ current_user.name }}.</p>
 <div class="card-grid" style="margin-top:1.5rem;">
   <div class="card">
     <a class="card-link" href="{{ url_for('dashboards.index') }}">

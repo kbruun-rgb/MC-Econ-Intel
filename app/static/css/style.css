@@ -88,6 +88,13 @@ main {
 
 .subtle { color: var(--mc-subtle-gray); font-size: 0.9rem; }
 
+.home-greeting {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--mc-near-black);
+  margin: 0 0 1rem;
+}
+
 .home-intro {
   max-width: 640px;
   margin-bottom: 1.75rem;

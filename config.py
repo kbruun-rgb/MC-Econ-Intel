@@ -65,6 +65,48 @@ DASHBOARD_FILE_TITLES = {
     "labor_dashboard_mc.html": "Weekly Labor Dashboard",
 }
 
+# Dashboards with no built-in toggleTheme() get a generic CSS invert-filter
+# fallback so they're never stuck dark (see dashboard_detail.html), but that
+# distorts hue on any accent colors and never looks quite right. Where a
+# dashboard's dark colors are known (mostly CSS variables + a handful of
+# hardcoded hex values, not canvas-baked), a real light-theme override here
+# looks correct instead of merely inverted -- keyed by filename, injected
+# in place of the generic fallback. Canvas-drawn chart colors (Chart.js grid/
+# tick/tooltip options, data-series line colors) can't be reached by CSS at
+# all, so those stay as originally authored; they're mostly neutral grays
+# that read fine on a light background regardless.
+DASHBOARD_LIGHT_MODE_OVERRIDES = {
+    "consumer_financial_health_dashboard.html": """
+        :root {
+          --bg: #f8fafc;
+          --surface: #ffffff;
+          --border: rgba(15,23,42,0.08);
+          --text: #0f172a;
+          --text-dim: #64748b;
+          --text-mid: #475569;
+        }
+        .header h1 { color:#0f172a; }
+        .kpi-card { background:#ffffff; border-color:rgba(15,23,42,0.08); box-shadow:0 1px 2px rgba(15,23,42,0.04); }
+        .kpi-value { color:#0f172a; }
+        .tab-btn:hover:not(.active) { color:#334155; }
+        .filters label { color:#475569; }
+        .demo-select { border-color:rgba(15,23,42,0.15); color:#1e293b; }
+        .demo-select:hover { border-color:rgba(15,23,42,0.35); }
+        .demo-select option { color:#1e293b; }
+        .chart-container { background:#ffffff; border-color:rgba(15,23,42,0.06); box-shadow:0 1px 2px rgba(15,23,42,0.04); }
+        .chart-title { color:#0f172a; }
+        .dl-btn { border-color:rgba(15,23,42,0.15); color:#475569; }
+        .dl-btn:hover { border-color:rgba(15,23,42,0.35); color:#1e293b; }
+        .legend-tag { border-color:rgba(15,23,42,0.12); color:#1e293b; }
+        .section-label { color:#475569; }
+        .loading-overlay { background:rgba(248,250,252,0.92); }
+        .spinner { border-color:rgba(15,23,42,0.12); }
+        .legend-tag.agg:hover, .legend-tag.toggleable:hover { border-color:rgba(15,23,42,0.4); }
+        .toggle-track { background:rgba(15,23,42,0.15); }
+        #date-range-label { color:#475569 !important; }
+    """,
+}
+
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-only-change-me-before-any-real-deployment")

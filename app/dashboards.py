@@ -2,6 +2,7 @@ from flask import Blueprint, abort, render_template
 from flask_login import login_required
 
 from app.library_scan import find_theme, scan_econ_library
+from config import DASHBOARD_LIGHT_MODE_OVERRIDES
 
 dashboards_bp = Blueprint("dashboards", __name__, url_prefix="/dashboards")
 
@@ -21,5 +22,8 @@ def detail(geography, theme_slug):
     if entry is None:
         abort(404)
     return render_template(
-        "dashboard_detail.html", geography=geography_key, entry=entry
+        "dashboard_detail.html",
+        geography=geography_key,
+        entry=entry,
+        light_mode_overrides=DASHBOARD_LIGHT_MODE_OVERRIDES,
     )

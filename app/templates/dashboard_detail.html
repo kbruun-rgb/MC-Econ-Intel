@@ -17,7 +17,7 @@
   {% endif %}
   {% for d in entry.dashboards %}
   <div class="iframe-wrap dash-frame" data-index="{{ loop.index0 }}" {% if not loop.first %}style="display:none;"{% endif %}>
-    <iframe class="dash-iframe" src="{{ url_for('files.dashboard_file', relpath=entry.folder + '/' + d.filename) }}" title="{{ d.title }}"></iframe>
+    <iframe class="dash-iframe" data-filename="{{ d.filename }}" src="{{ url_for('files.dashboard_file', relpath=entry.folder + '/' + d.filename) }}" title="{{ d.title }}"></iframe>
   </div>
   {% endfor %}
 {% else %}
@@ -48,16 +48,32 @@
     } catch (e) { /* cross-origin: leave default height */ }
   }
 
-  // Fallback for dashboards with no toggleTheme() to call, e.g. Household
-  // Finances: hue-rotating an inverted image lands back on roughly correct
-  // colors while flipping dark backgrounds to light -- not pixel-perfect,
-  // but stays in sync automatically as the source file changes, unlike a
-  // hand-maintained light-mode copy.
+  // Per-filename real light-theme overrides for dashboards with no
+  // toggleTheme() of their own (see config.py DASHBOARD_LIGHT_MODE_OVERRIDES)
+  // -- targets the dashboard's actual dark colors instead of blindly
+  // inverting the page, so accent colors don't shift hue.
+  var LIGHT_MODE_OVERRIDES = {{ light_mode_overrides | tojson }};
+
+  // Last-resort fallback for a dashboard with no toggleTheme() AND no
+  // entry in LIGHT_MODE_OVERRIDES yet: inverting gets it off pure-dark
+  // immediately, even though hues shift -- good enough until someone maps
+  // its real colors into config.py.
   function forceLightViaInvert(doc) {
     var style = doc.createElement('style');
     style.textContent = 'html { filter: invert(1) hue-rotate(180deg); }' +
       ' html img, html video, html canvas, html svg image { filter: invert(1) hue-rotate(180deg); }';
     (doc.head || doc.documentElement).appendChild(style);
+  }
+
+  function applyLightModeOverride(doc, filename) {
+    var css = LIGHT_MODE_OVERRIDES[filename];
+    if (css) {
+      var style = doc.createElement('style');
+      style.textContent = css;
+      (doc.head || doc.documentElement).appendChild(style);
+    } else {
+      forceLightViaInvert(doc);
+    }
   }
 
   document.querySelectorAll('.dash-iframe').forEach(function (iframe) {
@@ -69,7 +85,7 @@
           if (typeof win.toggleTheme === 'function') {
             win.toggleTheme();
           } else {
-            forceLightViaInvert(doc);
+            applyLightModeOverride(doc, iframe.getAttribute('data-filename'));
           }
         }
         var ro = new ResizeObserver(function () { resize(iframe); });

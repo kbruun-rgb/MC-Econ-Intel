@@ -13,7 +13,13 @@ import os
 import boto3
 
 import config
-from app.library_scan import GUIDE_FILENAME, PUBLISH_FILENAME, scan_econ_library, scan_reports
+from app.library_scan import (
+    GUIDE_FILENAME,
+    PUBLISH_FILENAME,
+    scan_econ_library,
+    scan_industry_reports,
+    scan_reports,
+)
 
 
 def _r2_client():
@@ -100,12 +106,23 @@ def main():
             expected_keys.add(key)
             uploaded += 1
 
+    for r in scan_industry_reports():
+        local_path = os.path.join(config.INDUSTRY_REPORTS_ROOT, r["filename"])
+        key = f"industry_reports/{r['filename']}"
+        _upload(client, local_path, key)
+        expected_keys.add(key)
+        uploaded += 1
+
     # Mirror sync: anything in the bucket that's no longer expected (an
-    # unpublished report, a removed/renamed dashboard file) has to be
-    # actively deleted, or the hosted app -- which only ever reads what's in
-    # the bucket -- keeps serving it forever even after it's gone locally.
+    # unpublished report, a removed/renamed dashboard file, a retired
+    # industry category) has to be actively deleted, or the hosted app --
+    # which only ever reads what's in the bucket -- keeps serving it
+    # forever even after it's gone locally.
     stale_keys = (
-        _existing_keys(client, "dashboards") | _existing_keys(client, "reports") | _existing_keys(client, "bible")
+        _existing_keys(client, "dashboards")
+        | _existing_keys(client, "reports")
+        | _existing_keys(client, "bible")
+        | _existing_keys(client, "industry_reports")
     ) - expected_keys
     if stale_keys:
         client.delete_objects(

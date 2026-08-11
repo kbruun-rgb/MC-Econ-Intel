@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}{{ report.category }} — Industry Report — Morning Consult Economic Intelligence{% endblock %}
+{% block content %}
+<p class="subtle"><a href="{{ url_for('industry_reports.index') }}">&larr; All industry reports</a></p>
+<h1 class="section-title">Industry Report: {{ report.category }}</h1>
+<p class="subtle" style="margin-top:-1rem;">Updated {{ report.updated_at.strftime('%B %d, %Y') }}</p>
+
+<div class="pdf-embed-wrap">
+  <iframe src="{{ url_for('files.industry_report_file', relpath=report.filename) }}" title="Industry Report: {{ report.category }}"></iframe>
+</div>
+{% endblock %}

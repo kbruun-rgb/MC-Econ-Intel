@@ -24,6 +24,8 @@
       <td>
         {% if r.kind == 'article' %}
         <a class="btn" href="{{ url_for('reports.article', folder=r.folder) }}">Read</a>
+        {% elif r.kind == 'industry' %}
+        <a class="btn" href="{{ url_for('industry_reports.detail', slug=r.slug) }}">Read</a>
         {% else %}
         <a class="btn" href="{{ url_for('files.report_file', relpath=r.folder + '/' + r.filename) }}" target="_blank" rel="noopener">Download</a>
         {% endif %}

@@ -4,7 +4,7 @@ from flask import Blueprint, abort, render_template
 from flask_login import login_required
 
 from app.docx_render import render_docx_article
-from app.library_scan import find_report, scan_reports
+from app.library_scan import find_report, scan_industry_reports, scan_reports
 from config import ANALYSES_ROOT
 
 reports_bp = Blueprint("reports", __name__, url_prefix="/reports")
@@ -20,6 +20,13 @@ def index():
         print(f"[reports] {len(skipped)} folder(s) not shown:", flush=True)
         for folder, reason in skipped.items():
             print(f"  - {folder}: {reason}", flush=True)
+
+    # Industry Reports have their own section (see industry_reports.py) but
+    # also show up here so someone searching Analysis & Reports for a
+    # category (e.g. "Groceries") finds them without knowing to look
+    # elsewhere -- same list, same search/filter, tagged by category.
+    reports = reports + scan_industry_reports()
+    reports.sort(key=lambda r: r["date"], reverse=True)
     themes = sorted({r["theme"] for r in reports})
     return render_template("reports_index.html", reports=reports, themes=themes)
 

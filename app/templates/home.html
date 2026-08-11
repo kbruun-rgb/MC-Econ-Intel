@@ -4,7 +4,7 @@
 <div class="home-intro">
   <p>Morning Consult Economics turns daily consumer survey data into real-time economic indicators. We field roughly 5,000 interviews a day in the U.S., with smaller daily samples internationally, broken out by income, age, region, and other demographics official statistics don't report at that frequency. On top of that base, we run a set of proprietary measures built to track and anticipate movement in spending, labor markets, and inflation.</p>
   <p>Clients &mdash; consumer-facing companies, the Federal Reserve and other central banks, government agencies, hedge funds, and other financial institutions &mdash; use this data to understand and anticipate movement in the broader economy.</p>
-  <p>This site is where that data and the team's related analysis live. Use Dashboards to browse the underlying indicators by geography and theme, and Analysis &amp; Reports for written memos and briefs on specific topics, most recent first.</p>
+  <p>This site is where that data and the team's related analysis live. Use Dashboards to browse the underlying indicators by geography and theme, Analysis &amp; Reports for written memos and briefs on specific topics, and Industry Reports for category-level spending and pricing trends, refreshed monthly.</p>
 </div>
 <div class="card-grid" style="margin-top:1.5rem;">
   <div class="card">
@@ -17,6 +17,12 @@
     <a class="card-link" href="{{ url_for('reports.index') }}">
       <h3>Analysis &amp; Reports</h3>
       <p class="subtle">Ad hoc analysis memos and briefs, most recent first.</p>
+    </a>
+  </div>
+  <div class="card">
+    <a class="card-link" href="{{ url_for('industry_reports.index') }}">
+      <h3>Industry Reports</h3>
+      <p class="subtle">Category-level spending and price response, one report per industry.</p>
     </a>
   </div>
   <div class="card">

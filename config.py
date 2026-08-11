@@ -24,6 +24,9 @@ if _database_url:
 ECON_LIBRARY_ROOT = r"G:\Shared drives\mc_econ\Econ Team\Econ Data Library"
 ANALYSES_ROOT = r"C:\Users\kayla\Desktop\Kayla\Claude Helper Tools\Analyses"
 BIBLE_ROOT = r"C:\Users\kayla\Desktop\Kayla\Econ Bible"
+INDUSTRY_REPORTS_ROOT = (
+    r"G:\Shared drives\mc_econ\Econ Team\U.S. Consumer Spending Data\Data Process\industry report\reports"
+)
 
 # Top-level ("## ") sections to strip entirely from a specific Bible file
 # before it goes into /llms.txt or the "Connect with AI" download -- for

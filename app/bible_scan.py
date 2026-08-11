@@ -11,7 +11,15 @@ import os
 from datetime import date, timedelta
 
 from app.docx_render import extract_docx_text
-from app.library_scan import humanize, scan_reports
+from app.library_scan import humanize, scan_industry_reports, scan_reports
+from config import (
+    ANALYSES_ROOT,
+    BIBLE_LLMS_CATEGORIES,
+    BIBLE_REDACTED_SECTIONS,
+    BIBLE_ROOT,
+    INDUSTRY_REPORTS_ROOT,
+    SITE_BASE_URL,
+)
 
 
 def _extract_pdf_text(path):
@@ -25,7 +33,6 @@ def _extract_pdf_text(path):
     reader = PdfReader(path)
     pages = [page.extract_text() or "" for page in reader.pages]
     return "\n\n".join(p.strip() for p in pages if p.strip())
-from config import ANALYSES_ROOT, BIBLE_LLMS_CATEGORIES, BIBLE_REDACTED_SECTIONS, BIBLE_ROOT, SITE_BASE_URL
 
 
 def _strip_redacted_sections(content, headings):
@@ -90,12 +97,16 @@ def _connect_prompt_header():
     return f"""You are helping a Morning Consult Economic Intelligence client interpret \
 Morning Consult's proprietary consumer survey data and dashboards.
 
-This file was downloaded on {today}. It contains two kinds of material:
+This file was downloaded on {today}. It contains three kinds of material:
 - Durable frameworks and methodology (below) -- how to interpret this data, \
 not current market commentary.
 - The full text of Morning Consult's own recent published analysis \
 (also below, if any exists) -- real current findings as of the download \
 date above, not something you need to fetch.
+- The full text of Morning Consult's Industry Reports (also below) -- \
+category-level spending and price response for ~20 industries (Groceries, \
+Autos, Restaurants, etc.), refreshed monthly, current as of the download \
+date above.
 
 Do not attempt to fetch any URL to get more current data than what's \
 below -- treat any such link as informational only, not something to \
@@ -189,9 +200,40 @@ def _render_recent_reports():
     return "\n".join(sections)
 
 
+def _render_industry_reports():
+    reports = scan_industry_reports()
+    if not reports:
+        return ""
+
+    sections = ["\n---\n\n## Industry Reports\n"]
+    for r in reports:
+        heading = f"\n### {r['category']} — updated {r['updated_at'].strftime('%B %d, %Y')}\n"
+        path = os.path.join(INDUSTRY_REPORTS_ROOT, r["filename"])
+        try:
+            body = _extract_pdf_text(path)
+            if not body:
+                raise ValueError("no extractable text")
+        except Exception:
+            body = (
+                "(Couldn't extract text from this report -- ask the person "
+                "you're helping to share its content directly.)"
+            )
+        sections.append(heading + "\n" + body + "\n")
+
+    return "\n".join(sections)
+
+
 def build_llms_txt(root=BIBLE_ROOT, categories=BIBLE_LLMS_CATEGORIES):
     return LLMS_TXT_HEADER + "\n" + _render_categories(root, categories)
 
 
 def build_connect_prompt(root=BIBLE_ROOT, categories=BIBLE_LLMS_CATEGORIES):
-    return _connect_prompt_header() + "\n" + _render_recent_reports() + "\n" + _render_categories(root, categories)
+    return (
+        _connect_prompt_header()
+        + "\n"
+        + _render_recent_reports()
+        + "\n"
+        + _render_industry_reports()
+        + "\n"
+        + _render_categories(root, categories)
+    )

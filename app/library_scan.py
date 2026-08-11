@@ -16,6 +16,7 @@ from config import (
     DASHBOARD_FILE_TITLES,
     DASHBOARD_THEME_DISPLAY_NAMES,
     ECON_LIBRARY_ROOT,
+    INDUSTRY_REPORTS_ROOT,
     THEME_KEYWORDS,
 )
 
@@ -23,6 +24,17 @@ GUIDE_FILENAME = "interpretation_guide.md"
 PUBLISH_FILENAME = "publish.json"
 ANALYSIS_FOLDER_RE = re.compile(r"^(\d{4})-(\d{2})-(\d{2})-(.+)$")
 DELIVERABLE_RE = re.compile(r"(memo|brief)", re.IGNORECASE)
+INDUSTRY_REPORT_RE = re.compile(r"^Industry Report - (.+)\.pdf$", re.IGNORECASE)
+
+# The generator regenerates every category together in one run each month, so
+# a fresh batch's files all land within the same window. A file sitting well
+# outside that window is a leftover from a retired/renamed category (seen in
+# practice -- standalone "Furniture" and "Home Furnishings" files lingering
+# after the category merged into "Furniture & Home Furnishings"), not a
+# current one just skipped this cycle. Filtering on that instead of a
+# hardcoded category list means a genuine taxonomy change upstream doesn't
+# need a matching code change here.
+INDUSTRY_REPORT_STALE_TOLERANCE_DAYS = 5
 
 
 def slugify(text):
@@ -223,5 +235,56 @@ def find_report(folder, root=ANALYSES_ROOT):
     reports, _skipped = scan_reports(root)
     for r in reports:
         if r["folder"] == folder:
+            return r
+    return None
+
+
+def scan_industry_reports(root=INDUSTRY_REPORTS_ROOT):
+    """One entry per category (e.g. "Groceries", "Autos"), overwritten in
+    place monthly at the source -- there's no dated folder per edition, just
+    the current one. Sorted alphabetically by category.
+    """
+    if not os.path.isdir(root):
+        return []
+
+    candidates = []
+    try:
+        for f in os.scandir(root):
+            if not f.is_file():
+                continue
+            match = INDUSTRY_REPORT_RE.match(f.name)
+            if not match:
+                continue
+            candidates.append((match.group(1).strip(), f.name, f.stat().st_mtime))
+    except OSError:
+        return []
+
+    if not candidates:
+        return []
+
+    latest_mtime = max(c[2] for c in candidates)
+    cutoff = latest_mtime - INDUSTRY_REPORT_STALE_TOLERANCE_DAYS * 86400
+
+    reports = [
+        {
+            "slug": slugify(category),
+            "category": category,
+            "title": f"Industry Report: {category}",
+            "filename": filename,
+            "kind": "industry",
+            "theme": category,
+            "updated_at": datetime.fromtimestamp(mtime),
+            "date": datetime.fromtimestamp(mtime).date(),
+        }
+        for category, filename, mtime in candidates
+        if mtime >= cutoff
+    ]
+    reports.sort(key=lambda r: r["category"])
+    return reports
+
+
+def find_industry_report(slug, root=INDUSTRY_REPORTS_ROOT):
+    for r in scan_industry_reports(root):
+        if r["slug"] == slug:
             return r
     return None

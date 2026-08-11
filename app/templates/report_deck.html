@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}{{ report.title }} — Morning Consult Economic Intelligence{% endblock %}
+{% block content %}
+<p class="subtle"><a href="{{ url_for('reports.index') }}">&larr; All analysis &amp; reports</a></p>
+<div style="display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:0.75rem;">
+  <div>
+    <h1 class="section-title" style="margin-bottom:0.25rem;">{{ report.title }}</h1>
+    <p class="subtle">{{ report.date.strftime('%B %d, %Y') }} &middot; {{ report.theme }}</p>
+  </div>
+  <a class="btn btn-secondary" href="{{ url_for('files.report_file', relpath=report.folder + '/' + report.filename) }}" download>Download PDF</a>
+</div>
+
+<div class="pdf-page-stack">
+  {% for i in range(1, page_count + 1) %}
+  <img src="{{ url_for('reports.deck_page_image', folder=report.folder, page_num=i) }}" alt="{{ report.title }} — page {{ i }}" loading="{{ 'eager' if i == 1 else 'lazy' }}">
+  {% endfor %}
+</div>
+{% if page_count == 0 %}
+<p class="subtle" style="margin-top:1rem;">Couldn't render this report. Try the download link above.</p>
+{% endif %}
+{% endblock %}

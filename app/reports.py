@@ -1,10 +1,11 @@
 import os
 
-from flask import Blueprint, abort, render_template
+from flask import Blueprint, abort, render_template, send_file
 from flask_login import login_required
 
 from app.docx_render import render_docx_article
 from app.library_scan import find_report, scan_industry_reports, scan_reports
+from app.pdf_render import pdf_page_count, render_pdf_page
 from config import ANALYSES_ROOT
 
 reports_bp = Blueprint("reports", __name__, url_prefix="/reports")
@@ -42,3 +43,33 @@ def article(folder):
     return render_template(
         "report_article.html", report=report, title=title, body_html=body_html
     )
+
+
+@reports_bp.route("/<folder>/read")
+@login_required
+def deck_read(folder):
+    # Slide decks (kind == "download") embedded as a page-image stack --
+    # same approach as Industry Reports -- instead of only being a download.
+    report = find_report(folder)
+    if report is None or report["kind"] != "download":
+        abort(404)
+    path = os.path.join(ANALYSES_ROOT, report["folder"], report["filename"])
+    try:
+        page_count = pdf_page_count(path)
+    except Exception:
+        page_count = 0
+    return render_template("report_deck.html", report=report, page_count=page_count)
+
+
+@reports_bp.route("/<folder>/page/<int:page_num>.jpg")
+@login_required
+def deck_page_image(folder, page_num):
+    report = find_report(folder)
+    if report is None or report["kind"] != "download":
+        abort(404)
+    path = os.path.join(ANALYSES_ROOT, report["folder"], report["filename"])
+    try:
+        image_path = render_pdf_page(path, page_num)
+    except Exception:
+        abort(404)
+    return send_file(image_path, mimetype="image/jpeg")

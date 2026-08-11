@@ -6,7 +6,7 @@
 <article class="article-box">
   {{ body_html | safe }}
   <p class="article-download">
-    <a href="{{ url_for('files.report_file', relpath=report.folder + '/' + report.filename) }}" target="_blank" rel="noopener">Download original (.docx)</a>
+    <a href="{{ url_for('files.report_file', relpath=report.folder + '/' + report.filename) }}" download>Download original (.docx)</a>
   </p>
 </article>
 {% endblock %}

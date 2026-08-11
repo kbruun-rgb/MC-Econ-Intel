@@ -2,10 +2,20 @@
 {% block title %}{{ report.category }} — Industry Report — Morning Consult Economic Intelligence{% endblock %}
 {% block content %}
 <p class="subtle"><a href="{{ url_for('industry_reports.index') }}">&larr; All industry reports</a></p>
-<h1 class="section-title">Industry Report: {{ report.category }}</h1>
-<p class="subtle" style="margin-top:-1rem;">Updated {{ report.updated_at.strftime('%B %d, %Y') }}</p>
-
-<div class="pdf-embed-wrap">
-  <iframe src="{{ url_for('files.industry_report_file', relpath=report.filename) }}" title="Industry Report: {{ report.category }}"></iframe>
+<div style="display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:0.75rem;">
+  <div>
+    <h1 class="section-title" style="margin-bottom:0.25rem;">Industry Report: {{ report.category }}</h1>
+    <p class="subtle">Updated {{ report.updated_at.strftime('%B %d, %Y') }}</p>
+  </div>
+  <a class="btn btn-secondary" href="{{ url_for('files.industry_report_file', relpath=report.filename) }}" download>Download PDF</a>
 </div>
+
+<div class="pdf-page-stack">
+  {% for i in range(1, page_count + 1) %}
+  <img src="{{ url_for('industry_reports.page_image', slug=report.slug, page_num=i) }}" alt="{{ report.category }} — page {{ i }}" loading="{{ 'eager' if i == 1 else 'lazy' }}">
+  {% endfor %}
+</div>
+{% if page_count == 0 %}
+<p class="subtle" style="margin-top:1rem;">Couldn't render this report. Try the download link above.</p>
+{% endif %}
 {% endblock %}

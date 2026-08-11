@@ -21,13 +21,16 @@
       <td>{{ r.date.strftime('%b %d, %Y') }}</td>
       <td>{{ r.title }}</td>
       <td>{{ r.theme }}</td>
-      <td>
+      <td class="actions-cell">
         {% if r.kind == 'article' %}
         <a class="btn" href="{{ url_for('reports.article', folder=r.folder) }}">Read</a>
+        <a class="btn btn-secondary" href="{{ url_for('files.report_file', relpath=r.folder + '/' + r.filename) }}" download>Download</a>
         {% elif r.kind == 'industry' %}
         <a class="btn" href="{{ url_for('industry_reports.detail', slug=r.slug) }}">Read</a>
+        <a class="btn btn-secondary" href="{{ url_for('files.industry_report_file', relpath=r.filename) }}" download>Download</a>
         {% else %}
-        <a class="btn" href="{{ url_for('files.report_file', relpath=r.folder + '/' + r.filename) }}" target="_blank" rel="noopener">Download</a>
+        <a class="btn" href="{{ url_for('reports.deck_read', folder=r.folder) }}">Read</a>
+        <a class="btn btn-secondary" href="{{ url_for('files.report_file', relpath=r.folder + '/' + r.filename) }}" download>Download</a>
         {% endif %}
       </td>
     </tr>

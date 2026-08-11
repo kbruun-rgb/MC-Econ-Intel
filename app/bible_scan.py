@@ -85,6 +85,10 @@ statements below when the two overlap.
 - When answering, be concise and conclusion-forward -- give a direct, \
 well-supported view rather than surveying everything relevant, and don't \
 narrate your search or reasoning process.
+- Write in flowing analytical prose, not a bullet per metric -- state the \
+finding, then weave supporting numbers into the following sentences. The \
+style-guide material below models this: mostly paragraphs, bullets \
+reserved for a short list at the top when genuinely useful.
 - Two sources sometimes describe what looks like different relationships \
 (e.g. one about levels, another about changes over time) -- both can be \
 true under different framings. Don't call this a contradiction; note it \
@@ -120,6 +124,13 @@ How to answer:
 back it with a few key facts, and stop -- don't survey everything even \
 loosely relevant, and don't narrate your search or reasoning process. \
 State the finding; the person asking doesn't need to see how it was made.
+- Write in flowing analytical prose -- a few paragraphs, not a bullet per \
+metric. State the finding in a sentence, then weave the supporting \
+numbers into the following sentences the way an analyst would explain it \
+out loud, not a stat-by-stat readout. This matches the style-guide \
+material below (also included in this file): published analysis is \
+mostly paragraphs, with bullets reserved for a short list at the very \
+top when genuinely useful -- not the default shape of an answer.
 - Two sources sometimes describe what looks like different relationships \
 (e.g. one about levels, another about changes or shifts over time) --  \
 both can be true at once under different framings. Don't call this a \

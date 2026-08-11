@@ -85,11 +85,28 @@ def main():
             expected_keys.add(key)
             uploaded += 1
 
+    # Only the allow-listed, vetted Bible categories (see
+    # config.BIBLE_LLMS_CATEGORIES) -- feeds /llms.txt. journal/ and
+    # current-state/ are deliberately never synced here.
+    for category in config.BIBLE_LLMS_CATEGORIES:
+        cat_path = os.path.join(config.BIBLE_ROOT, category)
+        if not os.path.isdir(cat_path):
+            continue
+        for f in os.scandir(cat_path):
+            if not f.is_file() or not f.name.lower().endswith(".md"):
+                continue
+            key = f"bible/{category}/{f.name}"
+            _upload(client, f.path, key)
+            expected_keys.add(key)
+            uploaded += 1
+
     # Mirror sync: anything in the bucket that's no longer expected (an
     # unpublished report, a removed/renamed dashboard file) has to be
     # actively deleted, or the hosted app -- which only ever reads what's in
     # the bucket -- keeps serving it forever even after it's gone locally.
-    stale_keys = (_existing_keys(client, "dashboards") | _existing_keys(client, "reports")) - expected_keys
+    stale_keys = (
+        _existing_keys(client, "dashboards") | _existing_keys(client, "reports") | _existing_keys(client, "bible")
+    ) - expected_keys
     if stale_keys:
         client.delete_objects(
             Bucket=config.R2_BUCKET_NAME,

@@ -23,8 +23,9 @@ def _r2_client():
 
 
 def hydrate_from_cloud():
-    """Downloads the bucket's dashboards/ and reports/ prefixes into a local
-    cache directory. Returns (dashboards_root, reports_root).
+    """Downloads the bucket's dashboards/, reports/, and bible/ prefixes into
+    a local cache directory. Returns (dashboards_root, reports_root,
+    bible_root).
     """
     import config
 
@@ -32,7 +33,7 @@ def hydrate_from_cloud():
     cache_root = os.path.abspath(CACHE_ROOT)
     roots = {}
 
-    for prefix in ("dashboards", "reports"):
+    for prefix in ("dashboards", "reports", "bible"):
         local_root = os.path.join(cache_root, prefix)
         os.makedirs(local_root, exist_ok=True)
         roots[prefix] = local_root
@@ -58,4 +59,4 @@ def hydrate_from_cloud():
                     mtime = float(source_mtime)
                     os.utime(local_path, (mtime, mtime))
 
-    return roots["dashboards"], roots["reports"]
+    return roots["dashboards"], roots["reports"], roots["bible"]

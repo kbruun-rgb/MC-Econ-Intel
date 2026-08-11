@@ -167,6 +167,25 @@ main {
 }
 .btn:hover { background: #016b6b; text-decoration: none; }
 
+.btn-secondary {
+  background: white;
+  color: var(--mc-near-black);
+  border: 1px solid var(--mc-light-gray);
+}
+.btn-secondary:hover { background: var(--mc-light-gray); }
+
+.token-status {
+  max-width: 480px;
+  margin-top: 2rem;
+  padding: 1.1rem 1.2rem;
+  background: white;
+  border: 1px solid var(--mc-light-gray);
+  border-radius: 10px;
+}
+.token-table { width: 100%; border-collapse: collapse; margin-top: 0.75rem; font-size: 0.9rem; }
+.token-table td { padding: 0.3rem 0; border-bottom: 1px solid var(--mc-light-gray); }
+.token-table td:first-child { color: var(--mc-grid-gray); width: 40%; }
+
 .login-wrap {
   max-width: 380px;
   margin: 4rem auto;

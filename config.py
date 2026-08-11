@@ -23,8 +23,31 @@ if _database_url:
 # downstream (library_scan.py, files.py) just reads a local folder either way.
 ECON_LIBRARY_ROOT = r"G:\Shared drives\mc_econ\Econ Team\Econ Data Library"
 ANALYSES_ROOT = r"C:\Users\kayla\Desktop\Kayla\Claude Helper Tools\Analyses"
+BIBLE_ROOT = r"C:\Users\kayla\Desktop\Kayla\Econ Bible"
+
+# Top-level ("## ") sections to strip entirely from a specific Bible file
+# before it goes into /llms.txt or the "Connect with AI" download -- for
+# content that's legitimately useful to keep in the Bible for internal
+# Claude sessions (e.g. how to pull live data from MC's internal API) but
+# has no business going into anything public or handed to a client. Found
+# by manual review, not auto-detection -- deliberately a human judgment
+# call per file, not a pattern-matching filter that could miss variants or
+# over-redact something harmless.
+BIBLE_REDACTED_SECTIONS = {
+    ("data-series", "consumer-health-index-chi.md"): ["Data Access"],
+}
+
+# Only these Econ Bible categories feed the public /llms.txt guidance file
+# (see app/bible_scan.py) -- durable, vetted methodology and interpretive
+# knowledge. Deliberately excludes journal/ and current-state/, which are
+# Kayla's raw, unvetted, dated working theories -- not something a client's
+# AI agent should repeat back as settled Morning Consult analysis. For
+# current-state inferences, the guidance file points agents at the site's
+# own dated Analysis & Reports section instead.
+BIBLE_LLMS_CATEGORIES = ["frameworks", "patterns", "playbooks", "data-series", "style-guide"]
 
 CONTENT_SOURCE = os.environ.get("CONTENT_SOURCE", "local")
+SITE_BASE_URL = os.environ.get("SITE_BASE_URL", "https://mc-econ-intel.onrender.com")
 R2_ENDPOINT_URL = os.environ.get("R2_ENDPOINT_URL")
 R2_ACCESS_KEY_ID = os.environ.get("R2_ACCESS_KEY_ID")
 R2_SECRET_ACCESS_KEY = os.environ.get("R2_SECRET_ACCESS_KEY")

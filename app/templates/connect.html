@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Connect with AI — Morning Consult Economic Intelligence{% endblock %}
+{% block content %}
+<p class="subtle"><a href="{{ url_for('main.home') }}">&larr; Home</a></p>
+<h1 class="section-title">Connect with AI</h1>
+
+<div class="home-intro">
+  <p>If you use Claude, ChatGPT, or a similar AI assistant to help interpret Morning Consult economic data, you can give it our team's own analytical frameworks and methodology as background context &mdash; so it answers grounded in how we actually think about this data, instead of generic economic knowledge.</p>
+  <p>Download the prompt below and paste it into your AI session (or attach it as a file, in tools that support that), then ask your question. It includes our durable frameworks plus the full text of recent Analysis &amp; Reports memos, current as of the day you download it &mdash; download again later for anything more recent.</p>
+</div>
+
+<p><a class="btn" href="{{ url_for('main.connect_download') }}">Download AI prompt (.txt)</a></p>
+{% endblock %}

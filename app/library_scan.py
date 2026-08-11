@@ -198,6 +198,11 @@ def scan_reports(root=ANALYSES_ROOT):
 
         title = publish_meta.get("title") or humanize(slug)
         theme = publish_meta.get("theme") or _guess_theme(slug) or "Other"
+        if publish_meta.get("date"):
+            try:
+                report_date = date.fromisoformat(publish_meta["date"])
+            except ValueError:
+                pass
         reports.append(
             {
                 "folder": entry.name,

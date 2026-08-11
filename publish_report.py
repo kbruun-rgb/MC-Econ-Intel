@@ -9,16 +9,32 @@ a memo/brief file, the way filename-based auto-detection would.
 Usage:
     python publish_report.py 2026-06-10-memorial-day-spending
     python publish_report.py 2026-06-03-staples-drs-leading-indicator --title "Office Supply Store Sales Leading Indicator" --theme "Consumer Spending"
+    python publish_report.py 2026-08-05-us-economic-update-june-2026 --date 2026-06-01
     python publish_report.py 2026-06-30-tapestry-genz --remove
 
-Re-running on an already-published folder updates its title/theme override.
+Re-running on an already-published folder updates its title/theme/date override.
+
+By default the displayed date is parsed from the folder's YYYY-MM-DD prefix,
+which is normally when the analysis was first written. When a folder is
+processed well after the fact (e.g. backlog cleanup) and that prefix reflects
+the processing date rather than the period the analysis is actually about,
+use --date to override what's shown on the site.
 """
 import argparse
 import json
 import os
+from datetime import date
 
 from app.library_scan import PUBLISH_FILENAME
 from config import ANALYSES_ROOT
+
+
+def _parse_date(value):
+    try:
+        year, month, day = (int(part) for part in value.split("-"))
+        return date(year, month, day).isoformat()
+    except (ValueError, TypeError):
+        raise argparse.ArgumentTypeError(f"--date must be YYYY-MM-DD, got {value!r}")
 
 
 def main():
@@ -26,6 +42,7 @@ def main():
     parser.add_argument("folder", help="Analysis folder name, e.g. 2026-06-10-memorial-day-spending")
     parser.add_argument("--title", help="Override the auto-generated title (default: humanized from the folder slug)")
     parser.add_argument("--theme", help="Override the auto-guessed theme (default: keyword-matched, else \"Other\")")
+    parser.add_argument("--date", type=_parse_date, help="Override the displayed date, YYYY-MM-DD (default: parsed from the folder's date prefix)")
     parser.add_argument("--remove", action="store_true", help="Un-publish this folder")
     args = parser.parse_args()
 
@@ -48,6 +65,8 @@ def main():
         meta["title"] = args.title
     if args.theme:
         meta["theme"] = args.theme
+    if args.date:
+        meta["date"] = args.date
     with open(marker_path, "w", encoding="utf-8") as fh:
         json.dump(meta, fh, indent=2)
 

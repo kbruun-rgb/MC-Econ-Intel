@@ -184,7 +184,7 @@ TOPIC_HUBS = [
         "label": "Macro Outlook",
         "icon": "compass",
         "dashboard_themes": ["Weekly Pulse", "Jobs & Labor", "Geopolitical Risk"],
-        "report_themes": ["Macro Outlook"],
+        "report_themes": ["Macro Outlook", "Jobs & Labor", "Geopolitical Risk"],
     },
     {
         "slug": "global",

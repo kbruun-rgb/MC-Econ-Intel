@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% import "_icons.html" as icons %}
+{% block title %}{{ topic.label }} — Morning Consult Economic Intelligence{% endblock %}
+{% block content %}
+<p class="subtle"><a href="{{ url_for('main.home') }}">&larr; Home</a></p>
+<div class="topic-header">
+  {{ icons.topic_icon(topic.icon, 44) }}
+  <h1 class="section-title" style="margin:0;">{{ topic.label }}</h1>
+</div>
+
+<div class="topic-columns">
+  <div class="topic-dashboards">
+    <h2 class="section-title" style="font-size:1.05rem;">Dashboards</h2>
+    {% if dashboards %}
+    <div class="card-grid">
+      {% for d in dashboards %}
+      <div class="card">
+        <a class="card-link" href="{{ url_for('dashboards.detail', geography=d.geography.lower(), theme_slug=d.theme_slug) }}">
+          <h3>{{ d.theme }}</h3>
+          <span class="badge">{{ d.geography }}</span>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="subtle">No dashboards tagged for this topic yet.</p>
+    {% endif %}
+  </div>
+
+  <div class="topic-reports">
+    <h2 class="section-title" style="font-size:1.05rem;">Related Analysis &amp; Reports</h2>
+    {% if reports %}
+    <ul class="topic-report-list">
+      {% for r in reports %}
+      <li>
+        <div class="topic-report-title">{{ r.title }}</div>
+        <div class="subtle">{{ r.date.strftime('%b %d, %Y') }} &middot; {{ r.type }}</div>
+        <div class="topic-report-actions">
+          {% if r.kind == 'article' %}
+          <a class="btn" href="{{ url_for('reports.article', folder=r.folder) }}">Read</a>
+          {% elif r.kind == 'industry' %}
+          <a class="btn" href="{{ url_for('industry_reports.detail', slug=r.slug) }}">Read</a>
+          {% else %}
+          <a class="btn" href="{{ url_for('reports.deck_read', folder=r.folder) }}">Read</a>
+          {% endif %}
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="subtle">No reports tagged for this topic yet.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

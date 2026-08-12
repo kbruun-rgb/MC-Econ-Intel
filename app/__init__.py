@@ -41,6 +41,7 @@ def create_app():
     from app.dashboards import dashboards_bp
     from app.reports import reports_bp
     from app.industry_reports import industry_reports_bp
+    from app.topics_routes import topics_bp
     from app.files import files_bp
 
     app.register_blueprint(auth_bp)
@@ -48,6 +49,7 @@ def create_app():
     app.register_blueprint(dashboards_bp)
     app.register_blueprint(reports_bp)
     app.register_blueprint(industry_reports_bp)
+    app.register_blueprint(topics_bp)
     app.register_blueprint(files_bp)
 
     # Route-level @login_required decorators guard every page and file
@@ -61,7 +63,7 @@ def create_app():
     # User.api_token in app/models.py. Deliberately excludes main.* (the
     # /connect pages and any future account-management routes), so a leaked
     # token can only ever read content, never view or regenerate itself.
-    TOKEN_ELIGIBLE_BLUEPRINTS = {"dashboards", "reports", "industry_reports", "files"}
+    TOKEN_ELIGIBLE_BLUEPRINTS = {"dashboards", "reports", "industry_reports", "topics", "files"}
 
     @app.before_request
     def enforce_login():

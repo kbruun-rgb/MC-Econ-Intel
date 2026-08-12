@@ -28,7 +28,7 @@ def index():
     # elsewhere -- same list, same search/filter, tagged by category.
     reports = reports + scan_industry_reports()
     reports.sort(key=lambda r: r["date"], reverse=True)
-    themes = sorted({r["theme"] for r in reports})
+    themes = sorted({t for r in reports for t in r["themes"]})
     return render_template("reports_index.html", reports=reports, themes=themes)
 
 

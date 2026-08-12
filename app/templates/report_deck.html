@@ -5,7 +5,7 @@
 <div style="display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:0.75rem;">
   <div>
     <h1 class="section-title" style="margin-bottom:0.25rem;">{{ report.title }}</h1>
-    <p class="subtle">{{ report.date.strftime('%B %d, %Y') }} &middot; {{ report.theme }}</p>
+    <p class="subtle">{{ report.date.strftime('%B %d, %Y') }} &middot; {{ report.themes|join(', ') }}</p>
   </div>
   <a class="btn btn-secondary" href="{{ url_for('files.report_file', relpath=report.folder + '/' + report.filename) }}" download>Download PDF</a>
 </div>

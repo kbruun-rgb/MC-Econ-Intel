@@ -183,7 +183,7 @@ def _render_recent_reports():
 
     sections = [f"\n---\n\n## Recent Analysis & Reports (last {RECENT_REPORTS_WINDOW_DAYS} days)\n"]
     for r in recent:
-        heading = f"\n### {r['title']} — {r['date'].strftime('%B %d, %Y')} ({r['theme']})\n"
+        heading = f"\n### {r['title']} — {r['date'].strftime('%B %d, %Y')} ({', '.join(r['themes'])})\n"
         path = os.path.join(ANALYSES_ROOT, r["folder"], r["filename"])
         if r["kind"] == "article":
             try:

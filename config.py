@@ -134,6 +134,76 @@ DASHBOARD_LIGHT_MODE_OVERRIDES = {
 }
 
 
+# Curated cross-content "topic hubs" for the home page's "Explore by Topic"
+# shortcuts -- each pulls together dashboards (matched by dashboard theme
+# display name) and reports/industry reports (matched by report theme tag)
+# under one umbrella. Deliberately overlapping, not a partition: a dashboard
+# or report can and should show up under more than one hub when it's
+# genuinely relevant to both (e.g. the PRI dashboard belongs under both
+# Housing and Category-Level Spending). Curated by hand, not derived, since
+# the groupings here are broader than the literal theme tags (e.g. "Macro
+# Outlook" pulls in Weekly Pulse + Jobs & Labor + Geopolitical Risk
+# dashboards, none of which are individually tagged "Macro Outlook").
+#
+# "report_themes" matches against the theme tags already used on
+# Analysis & Reports / Industry Reports (see scan_reports/
+# scan_industry_reports); "include_all_industry_reports" additionally pulls
+# in every Industry Report regardless of its specific category, since those
+# collectively *are* the category-level-spending content.
+TOPIC_HUBS = [
+    {
+        "slug": "consumer-financial-health",
+        "label": "Consumer Financial Health",
+        "icon": "wallet",
+        "dashboard_themes": ["Consumer Health Index", "Household Finances"],
+        "report_themes": ["Consumer Health Index", "Household Finances"],
+    },
+    {
+        "slug": "consumer-spending",
+        "label": "Consumer Spending",
+        "icon": "cart",
+        "dashboard_themes": ["Consumer Spending", "Consumer Health Index"],
+        "report_themes": ["Consumer Spending"],
+    },
+    {
+        "slug": "housing",
+        "label": "Housing",
+        "icon": "house",
+        "dashboard_themes": ["Housing", "Consumer Spending", "Price Response Indicators"],
+        "report_themes": ["Housing"],
+    },
+    {
+        "slug": "labor-market",
+        "label": "Labor Market",
+        "icon": "briefcase",
+        "dashboard_themes": ["Jobs & Labor", "Global Labor"],
+        "report_themes": ["Jobs & Labor"],
+    },
+    {
+        "slug": "macro-outlook",
+        "label": "Macro Outlook",
+        "icon": "compass",
+        "dashboard_themes": ["Weekly Pulse", "Jobs & Labor", "Geopolitical Risk"],
+        "report_themes": ["Macro Outlook"],
+    },
+    {
+        "slug": "global",
+        "label": "Global",
+        "icon": "globe",
+        "dashboard_themes": ["Geopolitical Risk", "International Price Response Indicators", "Global Labor"],
+        "report_themes": [],
+    },
+    {
+        "slug": "category-level-spending",
+        "label": "Category-Level Spending",
+        "icon": "grid",
+        "dashboard_themes": ["Consumer Spending", "Price Response Indicators"],
+        "report_themes": ["Consumer Spending", "Housing"],
+        "include_all_industry_reports": True,
+    },
+]
+
+
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-only-change-me-before-any-real-deployment")
     # Falls back to a local SQLite file when DATABASE_URL isn't set, so the

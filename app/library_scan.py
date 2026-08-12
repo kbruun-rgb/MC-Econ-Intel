@@ -209,7 +209,15 @@ def scan_reports(root=ANALYSES_ROOT):
             continue
 
         title = publish_meta.get("title") or humanize(slug)
-        theme = publish_meta.get("theme") or _guess_theme(slug) or "Other"
+        # "themes" (list) is current; "theme" (string) is the legacy key
+        # from before multi-theme tagging -- still honored so existing
+        # publish.json files don't need to be re-run.
+        themes = publish_meta.get("themes")
+        if not themes and publish_meta.get("theme"):
+            themes = [publish_meta["theme"]]
+        if not themes:
+            guessed = _guess_theme(slug)
+            themes = [guessed] if guessed else ["Other"]
         if publish_meta.get("date"):
             try:
                 report_date = date.fromisoformat(publish_meta["date"])
@@ -223,7 +231,8 @@ def scan_reports(root=ANALYSES_ROOT):
                 "date": report_date,
                 "filename": deliverable,
                 "kind": kind,
-                "theme": theme,
+                "type": "Analysis" if kind == "article" else "Report",
+                "themes": themes,
             }
         )
 
@@ -272,7 +281,8 @@ def scan_industry_reports(root=INDUSTRY_REPORTS_ROOT):
             "title": f"Industry Report: {category}",
             "filename": filename,
             "kind": "industry",
-            "theme": category,
+            "type": "Report",
+            "themes": [category],
             "updated_at": datetime.fromtimestamp(mtime),
             "date": datetime.fromtimestamp(mtime).date(),
         }

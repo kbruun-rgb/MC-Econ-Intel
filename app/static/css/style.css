@@ -137,6 +137,27 @@ main {
   gap: 0.85rem;
   margin-top: 1rem;
 }
+
+.guide-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  max-width: 480px;
+  margin-top: 1rem;
+}
+.guide-option {
+  text-align: left;
+  background: white;
+  border: 1px solid var(--mc-light-gray);
+  border-radius: 8px;
+  padding: 0.85rem 1.1rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--mc-near-black);
+  cursor: pointer;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.guide-option:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.06); border-color: var(--mc-teal-light); }
 .topic-tile {
   display: flex;
   flex-direction: column;

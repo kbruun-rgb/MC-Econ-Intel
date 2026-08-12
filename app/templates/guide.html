@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% import "_icons.html" as icons %}
+{% block title %}Guide me — Morning Consult Economic Intelligence{% endblock %}
+{% block content %}
+<p class="subtle"><a href="{{ url_for('main.home') }}">&larr; Home</a></p>
+<h1 class="section-title">What are you trying to understand?</h1>
+
+<div id="guide-question" class="guide-options">
+  {% for opt in options %}
+  <button type="button" class="guide-option" data-hubs="{{ opt.hubs|join(',') }}">{{ opt.label }}</button>
+  {% endfor %}
+</div>
+
+<div id="guide-result" class="topic-tile-grid" style="display:none;"></div>
+<p id="guide-restart" class="subtle" style="display:none;"><a href="#" id="guide-restart-link">&larr; Ask again</a></p>
+
+<script>
+  var HUB_LOOKUP = {{ hub_lookup | tojson }};
+
+  // Icon markup for each hub is pre-rendered server-side (Jinja can't run
+  // client-side), keyed by icon name, so the JS below can drop the right
+  // one into a result card without duplicating the SVG paths in JS.
+  var ICON_MARKUP = {};
+  {% for t in topic_hubs %}
+  ICON_MARKUP[{{ t.icon | tojson }}] = {{ icons.topic_icon(t.icon) | tojson }};
+  {% endfor %}
+
+  var questionEl = document.getElementById('guide-question');
+  var resultEl = document.getElementById('guide-result');
+  var restartEl = document.getElementById('guide-restart');
+
+  document.querySelectorAll('.guide-option').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var slugs = btn.getAttribute('data-hubs').split(',');
+      resultEl.innerHTML = slugs.map(function (slug) {
+        var hub = HUB_LOOKUP[slug];
+        if (!hub) return '';
+        return '<a class="topic-tile" href="' + hub.url + '">' + (ICON_MARKUP[hub.icon] || '') + '<span>' + hub.label + '</span></a>';
+      }).join('');
+      questionEl.style.display = 'none';
+      resultEl.style.display = 'grid';
+      restartEl.style.display = 'block';
+    });
+  });
+
+  document.getElementById('guide-restart-link').addEventListener('click', function (e) {
+    e.preventDefault();
+    resultEl.style.display = 'none';
+    restartEl.style.display = 'none';
+    questionEl.style.display = 'flex';
+  });
+</script>
+{% endblock %}

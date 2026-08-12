@@ -113,6 +113,13 @@ main {
   margin-bottom: 2rem;
 }
 
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+.team-card h3 { margin: 0 0 0.2rem; font-size: 1rem; }
+
 .path-section { margin-bottom: 2.25rem; }
 .path-heading {
   font-size: 1.05rem;

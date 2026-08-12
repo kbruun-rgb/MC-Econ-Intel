@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}About — Morning Consult Economic Intelligence{% endblock %}
+{% block content %}
+<p class="subtle"><a href="{{ url_for('main.home') }}">&larr; Home</a></p>
+<h1 class="section-title">About Morning Consult Economics</h1>
+
+<div class="home-intro">
+  <p>Morning Consult Economics turns daily consumer survey data into real-time economic indicators. We field roughly 5,000 interviews a day in the U.S., with smaller daily samples internationally, broken out by income, age, region, and other demographics official statistics don't report at that frequency. On top of that base, we run a set of proprietary measures built to track and anticipate movement in spending, labor markets, and inflation.</p>
+  <p>Clients &mdash; consumer-facing companies, the Federal Reserve and other central banks, government agencies, hedge funds, and other financial institutions &mdash; use this data to understand and anticipate movement in the broader economy.</p>
+</div>
+
+<h2 class="section-title" style="font-size:1.1rem; margin-top:2rem;">Team</h2>
+<div class="team-grid">
+  {% for person in team %}
+  <div class="card team-card">
+    <h3>{{ person.name }}</h3>
+    <p class="subtle" style="margin:0 0 0.4rem;">{{ person.title }}</p>
+    <a href="mailto:{{ person.email }}">{{ person.email }}</a>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

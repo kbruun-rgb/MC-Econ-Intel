@@ -3,7 +3,7 @@ from flask_login import current_user, login_required
 
 from app import db
 from app.bible_scan import build_connect_prompt, build_llms_txt
-from config import TOPIC_HUBS
+from config import TEAM, TOPIC_HUBS
 
 main_bp = Blueprint("main", __name__)
 
@@ -12,6 +12,12 @@ main_bp = Blueprint("main", __name__)
 @login_required
 def home():
     return render_template("home.html", topic_hubs=TOPIC_HUBS)
+
+
+@main_bp.route("/about")
+@login_required
+def about():
+    return render_template("about.html", team=TEAM)
 
 
 @main_bp.route("/llms.txt")

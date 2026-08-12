@@ -204,6 +204,15 @@ TOPIC_HUBS = [
 ]
 
 
+# Team roster for the About page. Deliberately just name/title/email for
+# now -- no bios yet.
+TEAM = [
+    {"name": "John Leer", "title": "Chief Economist", "email": "jleer@morningconsult.com"},
+    {"name": "Kayla Bruun", "title": "Head of Economic Analysis", "email": "kbruun@morningconsult.com"},
+    {"name": "Sofia Baig", "title": "Senior Economist", "email": "sbaig@morningconsult.com"},
+]
+
+
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-only-change-me-before-any-real-deployment")
     # Falls back to a local SQLite file when DATABASE_URL isn't set, so the

@@ -56,6 +56,11 @@ def main():
         "Repeat to tag with more than one theme; passing it at all replaces the full list.",
     )
     parser.add_argument("--date", type=_parse_date, help="Override the displayed date, YYYY-MM-DD (default: parsed from the folder's date prefix)")
+    parser.add_argument(
+        "--geography",
+        choices=["US", "Global"],
+        help="Override the auto-guessed geography (default: \"Global\" if the slug says so, else \"US\")",
+    )
     parser.add_argument("--remove", action="store_true", help="Un-publish this folder")
     args = parser.parse_args()
 
@@ -93,6 +98,8 @@ def main():
         meta["themes"] = args.theme
     if args.date:
         meta["date"] = args.date
+    if args.geography:
+        meta["geography"] = args.geography
     with open(marker_path, "w", encoding="utf-8") as fh:
         json.dump(meta, fh, indent=2)
 

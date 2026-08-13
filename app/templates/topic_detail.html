@@ -37,7 +37,7 @@
       {% for r in reports %}
       <li>
         <div class="topic-report-title">{{ r.title }}</div>
-        <div class="subtle">{{ r.date.strftime('%b %d, %Y') }} &middot; {{ r.type }}</div>
+        <div class="subtle">{{ r.date.strftime('%b %d, %Y') }} &middot; {{ r.type }} &middot; <span class="badge {{ 'badge-global' if r.geography == 'Global' }}">{{ r.geography }}</span></div>
         <div class="topic-report-actions">
           {% if r.kind == 'article' %}
           <a class="btn" href="{{ url_for('reports.article', folder=r.folder) }}">Read</a>

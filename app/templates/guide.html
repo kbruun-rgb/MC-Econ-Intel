@@ -94,7 +94,7 @@
     state.topics = [...document.querySelectorAll('.topic-checkbox:checked')].map(function (c) { return c.value; });
     union = computeUnion(state.topics);
 
-    var geographies = [...new Set(union.dashboards.map(function (d) { return d.geography; }))];
+    var geographies = [...new Set(union.dashboards.map(function (d) { return d.geography; }).concat(union.reports.map(function (r) { return r.geography; })))];
     if (geographies.length > 1) {
       var container = document.getElementById('geography-options');
       container.innerHTML = geographies.map(function (g) {
@@ -138,7 +138,8 @@
       return state.geographies.length === 0 || state.geographies.indexOf(d.geography) !== -1;
     });
     var reports = union.reports.filter(function (r) {
-      return state.includeIndustry || !r.is_industry;
+      var matchesGeography = state.geographies.length === 0 || state.geographies.indexOf(r.geography) !== -1;
+      return matchesGeography && (state.includeIndustry || !r.is_industry);
     });
     reports.sort(function (a, b) { return a.sort_date < b.sort_date ? 1 : -1; });
 
@@ -159,7 +160,8 @@
     if (showReports && reports.length) {
       reportHtml = '<h2 class="section-title" style="font-size:1.05rem;">Analysis &amp; Reports</h2><ul class="topic-report-list">' +
         reports.map(function (r) {
-          return '<li><div class="topic-report-title">' + r.label + '</div><div class="subtle">' + r.date + ' &middot; ' + r.type + '</div>' +
+          var badgeClass = 'badge' + (r.geography === 'Global' ? ' badge-global' : '');
+          return '<li><div class="topic-report-title">' + r.label + '</div><div class="subtle">' + r.date + ' &middot; ' + r.type + ' &middot; <span class="' + badgeClass + '">' + r.geography + '</span></div>' +
             '<div class="topic-report-actions"><a class="btn" href="' + r.url + '">Read</a></div></li>';
         }).join('') + '</ul>';
     }

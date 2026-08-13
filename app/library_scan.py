@@ -17,6 +17,7 @@ from config import (
     DASHBOARD_THEME_DESCRIPTIONS,
     DASHBOARD_THEME_DISPLAY_NAMES,
     ECON_LIBRARY_ROOT,
+    GEOGRAPHY_KEYWORDS,
     INDUSTRY_REPORTS_ROOT,
     THEME_KEYWORDS,
 )
@@ -57,6 +58,15 @@ def _guess_theme(text):
             if kw in text_l:
                 return theme
     return None
+
+
+def _guess_geography(text):
+    text_l = text.lower()
+    for geography, keywords in GEOGRAPHY_KEYWORDS.items():
+        for kw in keywords:
+            if kw in text_l:
+                return geography
+    return "US"
 
 
 def scan_econ_library(root=ECON_LIBRARY_ROOT):
@@ -220,6 +230,7 @@ def scan_reports(root=ANALYSES_ROOT):
         if not themes:
             guessed = _guess_theme(slug)
             themes = [guessed] if guessed else ["Other"]
+        geography = publish_meta.get("geography") or _guess_geography(slug)
         if publish_meta.get("date"):
             try:
                 report_date = date.fromisoformat(publish_meta["date"])
@@ -235,6 +246,7 @@ def scan_reports(root=ANALYSES_ROOT):
                 "kind": kind,
                 "type": "Analysis" if kind == "article" else "Report",
                 "themes": themes,
+                "geography": geography,
             }
         )
 
@@ -285,6 +297,7 @@ def scan_industry_reports(root=INDUSTRY_REPORTS_ROOT):
             "kind": "industry",
             "type": "Report",
             "themes": [category],
+            "geography": "US",
             "updated_at": datetime.fromtimestamp(mtime),
             "date": datetime.fromtimestamp(mtime).date(),
         }

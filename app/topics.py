@@ -45,9 +45,9 @@ def build_wizard_data():
     """One entry per topic hub, each holding the dashboards/reports matched
     to it in a shape the "Guide me" wizard's client-side JS can filter
     directly -- ids for de-duplicating an item that matches more than one
-    selected topic, geography for the dashboard-only geography step (reports
-    don't carry geography today, so that step only ever filters dashboards),
-    and an is_industry flag for the industry-coverage step.
+    selected topic, geography for the geography step (now on both
+    dashboards and reports), and an is_industry flag for the
+    industry-coverage step.
     """
     data = {}
     for topic in TOPIC_HUBS:
@@ -70,6 +70,7 @@ def build_wizard_data():
                     "date": r["date"].strftime("%b %d, %Y"),
                     "sort_date": r["date"].isoformat(),
                     "type": r["type"],
+                    "geography": r["geography"],
                     "is_industry": r["kind"] == "industry",
                     "url": _report_url(r),
                 }

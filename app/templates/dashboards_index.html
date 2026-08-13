@@ -6,7 +6,7 @@
   {% set themes = library.get(geography, []) %}
   {% if themes %}
   <div class="geography-block">
-    <div class="geography-title">{{ geography }}</div>
+    <div class="geography-title {{ 'geography-title-global' if geography == 'Global' }}">{{ geography }}</div>
     <div class="card-grid">
       {% for entry in themes %}
       <div class="card">

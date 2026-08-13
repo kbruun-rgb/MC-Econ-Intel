@@ -72,6 +72,14 @@ THEME_KEYWORDS = {
     "Geopolitical Risk": ["geopolitical", "gpr", "political"],
 }
 
+# Keyword-guessed geography for an analysis, same best-effort approach as
+# THEME_KEYWORDS above -- defaults to "US" (the vast majority of the team's
+# output) unless the slug flags itself as Global. Overridable per-report via
+# publish_report.py --geography, same pattern as --theme.
+GEOGRAPHY_KEYWORDS = {
+    "Global": ["global", "international", "worldwide", "cross-country"],
+}
+
 # Dashboard theme folder names are derived directly from the Econ Data
 # Library's folder names (e.g. "US CHI" -> theme "CHI"), which sometimes
 # don't match the display name we want. Keyed by (geography, raw theme) so

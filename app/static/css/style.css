@@ -329,6 +329,7 @@ main {
   margin-bottom: 0.75rem;
   font-weight: 700;
 }
+.geography-title.geography-title-global { color: var(--mc-purple); }
 
 .btn {
   display: inline-block;

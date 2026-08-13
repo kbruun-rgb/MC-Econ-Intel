@@ -5,6 +5,10 @@
   --mc-grid-gray: #757575;
   --mc-subtle-gray: #949494;
   --mc-light-gray: #E5E5E5;
+  /* MC's brand secondary color (2nd in the official chart-series palette) --
+     used sparingly, only where it encodes a real distinction, not as a
+     second "default" color competing with teal. */
+  --mc-purple: #4F18F9;
   --font-stack: 'Proxima Nova', 'Avenir Next', 'Gill Sans', 'Trebuchet MS', sans-serif;
 }
 
@@ -308,6 +312,7 @@ main {
   margin-top: 0.4rem;
 }
 .badge.live { background: rgba(1,131,131,0.12); color: var(--mc-teal); }
+.badge.badge-global { background: rgba(79,24,249,0.1); color: var(--mc-purple); }
 
 .updated-at {
   font-size: 0.75rem;

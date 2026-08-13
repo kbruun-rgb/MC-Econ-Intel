@@ -20,7 +20,7 @@
           {% if d.description %}
           <p class="subtle" style="margin:0 0 0.5rem;">{{ d.description }}</p>
           {% endif %}
-          <span class="badge">{{ d.geography }}</span>
+          <span class="badge {{ 'badge-global' if d.geography == 'Global' }}">{{ d.geography }}</span>
         </a>
       </div>
       {% endfor %}

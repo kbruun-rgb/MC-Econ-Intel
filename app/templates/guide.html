@@ -150,7 +150,8 @@
       dashHtml = '<h2 class="section-title" style="font-size:1.05rem;">Dashboards</h2><div class="card-grid">' +
         dashboards.map(function (d) {
           var desc = d.description ? '<p class="subtle" style="margin:0 0 0.5rem;">' + d.description + '</p>' : '';
-          return '<div class="card"><a class="card-link" href="' + d.url + '"><h3>' + d.label + '</h3>' + desc + '<span class="badge">' + d.geography + '</span></a></div>';
+          var badgeClass = 'badge' + (d.geography === 'Global' ? ' badge-global' : '');
+          return '<div class="card"><a class="card-link" href="' + d.url + '"><h3>' + d.label + '</h3>' + desc + '<span class="' + badgeClass + '">' + d.geography + '</span></a></div>';
         }).join('') + '</div>';
     }
 

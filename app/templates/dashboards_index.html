@@ -12,6 +12,9 @@
       <div class="card">
         <a class="card-link" href="{{ url_for('dashboards.detail', geography=geography.lower(), theme_slug=entry.theme_slug) }}">
           <h3>{{ entry.theme }}</h3>
+          {% if entry.description %}
+            <p class="subtle" style="margin:0 0 0.5rem;">{{ entry.description }}</p>
+          {% endif %}
           {% if entry.dashboards %}
             <span class="badge live">{{ entry.dashboards|length }} dashboard{{ 's' if entry.dashboards|length != 1 else '' }}</span>
           {% elif entry.guide_html %}

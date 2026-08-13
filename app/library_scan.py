@@ -14,6 +14,7 @@ from app.office_convert import ensure_pptx_pdf
 from config import (
     ANALYSES_ROOT,
     DASHBOARD_FILE_TITLES,
+    DASHBOARD_THEME_DESCRIPTIONS,
     DASHBOARD_THEME_DISPLAY_NAMES,
     ECON_LIBRARY_ROOT,
     INDUSTRY_REPORTS_ROOT,
@@ -107,6 +108,7 @@ def scan_econ_library(root=ECON_LIBRARY_ROOT):
             {
                 "theme": theme,
                 "theme_slug": theme_slug,
+                "description": DASHBOARD_THEME_DESCRIPTIONS.get(theme, ""),
                 "folder": folder_name,
                 "dashboards": dashboards,
                 "guide_html": guide_html,

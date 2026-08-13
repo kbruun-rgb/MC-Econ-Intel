@@ -83,6 +83,26 @@ DASHBOARD_THEME_DISPLAY_NAMES = {
     ("Global", "Price Response Indicators"): "International Price Response Indicators",
 }
 
+# One-line descriptions shown alongside a dashboard's name wherever it's
+# listed as a card (Dashboards index, Topic Hub pages, the Guide me wizard
+# results). Keyed by the display name (post-override, above) since those
+# are unique across geographies -- hand-written rather than pulled from
+# each interpretation_guide.md, which is long-form methodology, not
+# card-blurb length.
+DASHBOARD_THEME_DESCRIPTIONS = {
+    "Consumer Health Index": "Real-time consumer demand, combining sentiment and labor market conditions.",
+    "Consumer Spending": "Real, seasonally-adjusted spending levels and category share of wallet.",
+    "Household Finances": "Savings, debt, and financial cushion across income groups.",
+    "Housing": "Home-buying sentiment, affordability, and housing-related spending.",
+    "Inflation & Supply Chains": "Price pressure and supply chain disruption signals.",
+    "Jobs & Labor": "Weekly unemployment, pay loss, and job search activity, plus a quarterly deep-dive survey.",
+    "Price Response Indicators": "How consumers react to price changes -- absorption, trading down, and price sensitivity by category.",
+    "Weekly Pulse": "A fast-moving snapshot of consumer sentiment and spending intent, updated weekly.",
+    "Geopolitical Risk": "Consumer-perceived geopolitical risk across tracked countries.",
+    "Global Labor": "Labor market conditions across international markets.",
+    "International Price Response Indicators": "Price response and sensitivity trends outside the U.S.",
+}
+
 # Individual dashboard file titles default to a humanized filename (e.g.
 # "labor_dashboard_mc.html" -> "Labor Dashboard Mc"), which doesn't always
 # read well or distinguish similarly-named files -- override by filename

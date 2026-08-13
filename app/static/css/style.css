@@ -120,18 +120,27 @@ main {
 }
 .team-card h3 { margin: 0 0 0.2rem; font-size: 1rem; }
 
+.paths-headline {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--mc-near-black);
+  margin: 0.25rem 0 1rem;
+}
+
 .path-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.25rem;
-  align-items: start;
   margin-bottom: 2.25rem;
+  /* stretch (the default) makes every card match the tallest one */
 }
 @media (max-width: 860px) {
   .path-grid { grid-template-columns: 1fr; }
 }
 
 .path-card {
+  display: flex;
+  flex-direction: column;
   background: white;
   border: 1px solid var(--mc-light-gray);
   border-radius: 12px;
@@ -148,6 +157,30 @@ main {
   gap: 0.6rem;
 }
 .path-heading .topic-icon { color: var(--mc-teal); flex-shrink: 0; }
+
+.guide-card {
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  background: linear-gradient(180deg, rgba(1,131,131,0.06), white 65%);
+  border-color: var(--mc-teal-light);
+}
+.guide-card .path-heading { justify-content: center; }
+.guide-card p.subtle { max-width: 260px; }
+
+.path-icon-badge {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(1,131,131,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  color: var(--mc-teal);
+}
+
+.btn-large { padding: 0.75rem 1.75rem; font-size: 1rem; margin-top: 0.75rem; }
 
 .topic-tile-grid {
   display: grid;

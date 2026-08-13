@@ -57,6 +57,7 @@ def build_wizard_data():
                 {
                     "id": f"dash:{d['geography']}:{d['theme_slug']}",
                     "label": d["theme"],
+                    "description": d.get("description", ""),
                     "geography": d["geography"],
                     "url": url_for("dashboards.detail", geography=d["geography"].lower(), theme_slug=d["theme_slug"]),
                 }

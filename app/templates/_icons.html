@@ -27,6 +27,20 @@
   <rect x="28" y="8" width="12" height="12" rx="2"/>
   <rect x="8" y="28" width="12" height="12" rx="2"/>
   <rect x="28" y="28" width="12" height="12" rx="2"/>
+  {% elif name == 'help' %}
+  <circle cx="24" cy="24" r="16"/>
+  <path d="M19 19a5 5 0 0 1 9.5 2.2c0 3.3-4.5 3.8-4.5 7.3"/>
+  <circle cx="24" cy="34" r="0.6" fill="currentColor"/>
+  {% elif name == 'pin' %}
+  <path d="M24 6c-6.6 0-12 5.4-12 12 0 9 12 24 12 24s12-15 12-24c0-6.6-5.4-12-12-12z"/>
+  <circle cx="24" cy="18" r="4.5"/>
+  {% elif name == 'list' %}
+  <path d="M18 12h22"/>
+  <path d="M18 24h22"/>
+  <path d="M18 36h22"/>
+  <circle cx="9" cy="12" r="1.6" fill="currentColor"/>
+  <circle cx="9" cy="24" r="1.6" fill="currentColor"/>
+  <circle cx="9" cy="36" r="1.6" fill="currentColor"/>
   {% endif %}
 </svg>
 {% endmacro %}

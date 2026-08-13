@@ -6,53 +6,47 @@
   <p>Morning Consult Economics turns daily consumer survey data into real-time economic indicators &mdash; dashboards, category reports, and written analysis, all in one place. <a href="{{ url_for('main.about') }}">Learn more about Morning Consult Economics &rarr;</a></p>
 </div>
 
-<div class="path-section">
-  <h2 class="path-heading">Guide me</h2>
-  <p class="subtle">A short question to point you at the most relevant content, instead of browsing everything yourself.</p>
-  <p><a class="btn" href="{{ url_for('main.guide') }}">Get started</a></p>
-</div>
-
-<div class="path-section">
-  <h2 class="path-heading">Explore by topic</h2>
-  <p class="subtle">Jump straight to a topic and see the dashboards and analysis relevant to it, gathered in one place.</p>
-  <div class="topic-tile-grid">
-    {% for t in topic_hubs %}
-    <a class="topic-tile" href="{{ url_for('topics.detail', slug=t.slug) }}">
-      {{ icons.topic_icon(t.icon) }}
-      <span>{{ t.label }}</span>
-    </a>
-    {% endfor %}
+<div class="path-grid">
+  <div class="path-card">
+    <h2 class="path-heading">{{ icons.topic_icon('help', 26) }} Guide me</h2>
+    <p class="subtle">A short question to point you at the most relevant content, instead of browsing everything yourself.</p>
+    <p><a class="btn" href="{{ url_for('main.guide') }}">Get started</a></p>
   </div>
-</div>
 
-<div class="path-section">
-  <h2 class="path-heading">Browse all</h2>
-  <p class="subtle">The full site, section by section.</p>
-  <div class="card-grid">
-    <div class="card">
-      <a class="card-link" href="{{ url_for('dashboards.index') }}">
-        <h3>Dashboards</h3>
-        <p class="subtle">Live economic indicator dashboards, grouped by geography and theme.</p>
+  <div class="path-card">
+    <h2 class="path-heading">{{ icons.topic_icon('pin', 26) }} Explore by topic</h2>
+    <p class="subtle">Jump straight to a topic and see the dashboards and analysis relevant to it, gathered in one place.</p>
+    <div class="topic-tile-grid topic-tile-grid-compact">
+      {% for t in topic_hubs %}
+      <a class="topic-tile" href="{{ url_for('topics.detail', slug=t.slug) }}">
+        {{ icons.topic_icon(t.icon, 28) }}
+        <span>{{ t.label }}</span>
       </a>
+      {% endfor %}
     </div>
-    <div class="card">
-      <a class="card-link" href="{{ url_for('reports.index') }}">
-        <h3>Analysis &amp; Reports</h3>
-        <p class="subtle">Ad hoc analysis memos and briefs, most recent first.</p>
-      </a>
-    </div>
-    <div class="card">
-      <a class="card-link" href="{{ url_for('industry_reports.index') }}">
-        <h3>Industry Reports</h3>
-        <p class="subtle">Category-level spending and price response, one report per industry.</p>
-      </a>
-    </div>
-    <div class="card">
-      <a class="card-link" href="{{ url_for('main.connect') }}">
-        <h3>Connect with AI</h3>
-        <p class="subtle">Give your own Claude or ChatGPT session Morning Consult's analytical context.</p>
-      </a>
-    </div>
+  </div>
+
+  <div class="path-card">
+    <h2 class="path-heading">{{ icons.topic_icon('list', 26) }} Browse all</h2>
+    <p class="subtle">The full site, section by section.</p>
+    <ul class="browse-all-list">
+      <li>
+        <a href="{{ url_for('dashboards.index') }}">Dashboards</a>
+        <span class="subtle">Live economic indicator dashboards, grouped by geography and theme.</span>
+      </li>
+      <li>
+        <a href="{{ url_for('reports.index') }}">Analysis &amp; Reports</a>
+        <span class="subtle">Ad hoc analysis memos and briefs, most recent first.</span>
+      </li>
+      <li>
+        <a href="{{ url_for('industry_reports.index') }}">Industry Reports</a>
+        <span class="subtle">Category-level spending and price response, one report per industry.</span>
+      </li>
+      <li>
+        <a href="{{ url_for('main.connect') }}">Connect with AI</a>
+        <span class="subtle">Give your own Claude or ChatGPT session Morning Consult's analytical context.</span>
+      </li>
+    </ul>
   </div>
 </div>
 {% endblock %}

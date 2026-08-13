@@ -3,7 +3,8 @@ from flask_login import current_user, login_required
 
 from app import db
 from app.bible_scan import build_connect_prompt, build_llms_txt
-from config import GUIDE_OPTIONS, TEAM, TOPIC_HUBS
+from app.topics import build_wizard_data
+from config import TEAM, TOPIC_HUBS
 
 main_bp = Blueprint("main", __name__)
 
@@ -23,13 +24,11 @@ def about():
 @main_bp.route("/guide")
 @login_required
 def guide():
-    # Client-side reveal (see guide.html's script) needs each hub's
-    # label/icon/URL to render a result card without a server round trip.
-    hub_lookup = {
-        t["slug"]: {"label": t["label"], "icon": t["icon"], "url": url_for("topics.detail", slug=t["slug"])}
-        for t in TOPIC_HUBS
-    }
-    return render_template("guide.html", options=GUIDE_OPTIONS, hub_lookup=hub_lookup, topic_hubs=TOPIC_HUBS)
+    # Everything after topic selection happens client-side (see guide.html)
+    # -- this assembles the full per-topic dataset once, up front, so later
+    # steps (geography, industry coverage, data type) can filter it with no
+    # server round trip.
+    return render_template("guide.html", topic_hubs=TOPIC_HUBS, wizard_data=build_wizard_data())
 
 
 @main_bp.route("/llms.txt")

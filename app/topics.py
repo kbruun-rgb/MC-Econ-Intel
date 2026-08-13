@@ -3,6 +3,8 @@ hubs" defined in config.TOPIC_HUBS. Nothing here decides *what* belongs in
 a hub -- that's the hand-curated mapping in config.py -- this just applies
 it against the live content on each request.
 """
+from flask import url_for
+
 from app.library_scan import scan_econ_library, scan_industry_reports, scan_reports
 from config import TOPIC_HUBS
 
@@ -29,3 +31,48 @@ def topic_content(topic):
 
     matched.sort(key=lambda r: r["date"], reverse=True)
     return dashboards, matched
+
+
+def _report_url(report):
+    if report["kind"] == "article":
+        return url_for("reports.article", folder=report["folder"])
+    if report["kind"] == "industry":
+        return url_for("industry_reports.detail", slug=report["slug"])
+    return url_for("reports.deck_read", folder=report["folder"])
+
+
+def build_wizard_data():
+    """One entry per topic hub, each holding the dashboards/reports matched
+    to it in a shape the "Guide me" wizard's client-side JS can filter
+    directly -- ids for de-duplicating an item that matches more than one
+    selected topic, geography for the dashboard-only geography step (reports
+    don't carry geography today, so that step only ever filters dashboards),
+    and an is_industry flag for the industry-coverage step.
+    """
+    data = {}
+    for topic in TOPIC_HUBS:
+        dashboards, reports = topic_content(topic)
+        data[topic["slug"]] = {
+            "dashboards": [
+                {
+                    "id": f"dash:{d['geography']}:{d['theme_slug']}",
+                    "label": d["theme"],
+                    "geography": d["geography"],
+                    "url": url_for("dashboards.detail", geography=d["geography"].lower(), theme_slug=d["theme_slug"]),
+                }
+                for d in dashboards
+            ],
+            "reports": [
+                {
+                    "id": f"report:{r.get('folder', r.get('slug'))}",
+                    "label": r["title"],
+                    "date": r["date"].strftime("%b %d, %Y"),
+                    "sort_date": r["date"].isoformat(),
+                    "type": r["type"],
+                    "is_industry": r["kind"] == "industry",
+                    "url": _report_url(r),
+                }
+                for r in reports
+            ],
+        }
+    return data

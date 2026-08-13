@@ -153,7 +153,7 @@ DASHBOARD_LIGHT_MODE_OVERRIDES = {
 TOPIC_HUBS = [
     {
         "slug": "consumer-financial-health",
-        "label": "Consumer Financial Health",
+        "label": "Financial Health",
         "icon": "wallet",
         "dashboard_themes": ["Consumer Health Index", "Household Finances"],
         "report_themes": ["Consumer Health Index", "Household Finances"],
@@ -195,27 +195,12 @@ TOPIC_HUBS = [
     },
     {
         "slug": "category-level-spending",
-        "label": "Category-Level Spending",
+        "label": "Spending by Category",
         "icon": "grid",
         "dashboard_themes": ["Consumer Spending", "Price Response Indicators"],
         "report_themes": ["Consumer Spending", "Housing"],
         "include_all_industry_reports": True,
     },
-]
-
-# "Guide me" wizard options -- plain-language phrasings of the same 7 topic
-# hubs above, for someone who doesn't already know the site's category
-# names. Each option can point at more than one hub (e.g. a broad question
-# about consumer mood/spending reasonably lands in both Macro Outlook and
-# Consumer Spending) -- the wizard shows all matching hubs as the result
-# rather than guessing a single one.
-GUIDE_OPTIONS = [
-    {"label": "How consumers are feeling and spending, overall", "hubs": ["macro-outlook", "consumer-spending"]},
-    {"label": "A specific spending category (groceries, autos, restaurants, etc.)", "hubs": ["category-level-spending"]},
-    {"label": "The housing market", "hubs": ["housing"]},
-    {"label": "Jobs and the labor market", "hubs": ["labor-market"]},
-    {"label": "Household financial health and confidence", "hubs": ["consumer-financial-health"]},
-    {"label": "International or geopolitical conditions", "hubs": ["global"]},
 ]
 
 

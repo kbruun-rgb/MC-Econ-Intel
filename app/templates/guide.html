@@ -3,51 +3,179 @@
 {% block title %}Guide me — Morning Consult Economic Intelligence{% endblock %}
 {% block content %}
 <p class="subtle"><a href="{{ url_for('main.home') }}">&larr; Home</a></p>
-<h1 class="section-title">What are you trying to understand?</h1>
 
-<div id="guide-question" class="guide-options">
-  {% for opt in options %}
-  <button type="button" class="guide-option" data-hubs="{{ opt.hubs|join(',') }}">{{ opt.label }}</button>
-  {% endfor %}
+<div id="step-topics" class="guide-step">
+  <h1 class="section-title">What are you interested in?</h1>
+  <p class="subtle">Pick as many as apply.</p>
+  <div class="guide-checkbox-grid">
+    {% for t in topic_hubs %}
+    <label class="guide-checkbox-tile">
+      <input type="checkbox" class="topic-checkbox" value="{{ t.slug }}">
+      {{ icons.topic_icon(t.icon, 28) }}
+      <span>{{ t.label }}</span>
+    </label>
+    {% endfor %}
+  </div>
+  <p><button type="button" id="topics-continue" class="btn" disabled>Continue</button></p>
 </div>
 
-<div id="guide-result" class="topic-tile-grid" style="display:none;"></div>
-<p id="guide-restart" class="subtle" style="display:none;"><a href="#" id="guide-restart-link">&larr; Ask again</a></p>
+<div id="step-geography" class="guide-step" style="display:none;">
+  <h1 class="section-title">Which geography?</h1>
+  <div class="guide-checkbox-list" id="geography-options"></div>
+  <p><button type="button" class="btn guide-continue" data-next="industry">Continue</button></p>
+</div>
+
+<div id="step-industry" class="guide-step" style="display:none;">
+  <h1 class="section-title">Include industry-specific reports?</h1>
+  <p class="subtle">Category breakdowns like Groceries, Autos, Restaurants, etc.</p>
+  <div class="guide-checkbox-list">
+    <label class="guide-checkbox-row"><input type="radio" name="industry" value="yes" checked> Yes, include them</label>
+    <label class="guide-checkbox-row"><input type="radio" name="industry" value="no"> No, just the broader topics</label>
+  </div>
+  <p><button type="button" class="btn guide-continue" data-next="datatype">Continue</button></p>
+</div>
+
+<div id="step-datatype" class="guide-step" style="display:none;">
+  <h1 class="section-title">What kind of content?</h1>
+  <div class="guide-checkbox-list">
+    <label class="guide-checkbox-row"><input type="checkbox" class="datatype-checkbox" value="dashboard" checked> Dashboards</label>
+    <label class="guide-checkbox-row"><input type="checkbox" class="datatype-checkbox" value="report" checked> Analysis &amp; Reports</label>
+  </div>
+  <p><button type="button" id="datatype-continue" class="btn">See results</button></p>
+</div>
+
+<div id="step-results" class="guide-step" style="display:none;">
+  <h1 class="section-title">Here's what matches</h1>
+  <div id="results-dashboards"></div>
+  <div id="results-reports"></div>
+  <p id="results-empty" class="subtle" style="display:none;">Nothing matches that combination -- try including more content types or industry reports.</p>
+  <p class="subtle"><a href="#" id="guide-restart-link">&larr; Start over</a></p>
+</div>
 
 <script>
-  var HUB_LOOKUP = {{ hub_lookup | tojson }};
-
-  // Icon markup for each hub is pre-rendered server-side (Jinja can't run
-  // client-side), keyed by icon name, so the JS below can drop the right
-  // one into a result card without duplicating the SVG paths in JS.
+  var WIZARD_DATA = {{ wizard_data | tojson }};
   var ICON_MARKUP = {};
   {% for t in topic_hubs %}
   ICON_MARKUP[{{ t.icon | tojson }}] = {{ icons.topic_icon(t.icon) | tojson }};
   {% endfor %}
 
-  var questionEl = document.getElementById('guide-question');
-  var resultEl = document.getElementById('guide-result');
-  var restartEl = document.getElementById('guide-restart');
+  var state = { topics: [], geographies: [], includeIndustry: true, dataTypes: ['dashboard', 'report'] };
+  var union = { dashboards: [], reports: [] };
 
-  document.querySelectorAll('.guide-option').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var slugs = btn.getAttribute('data-hubs').split(',');
-      resultEl.innerHTML = slugs.map(function (slug) {
-        var hub = HUB_LOOKUP[slug];
-        if (!hub) return '';
-        return '<a class="topic-tile" href="' + hub.url + '">' + (ICON_MARKUP[hub.icon] || '') + '<span>' + hub.label + '</span></a>';
-      }).join('');
-      questionEl.style.display = 'none';
-      resultEl.style.display = 'grid';
-      restartEl.style.display = 'block';
+  function showStep(id) {
+    document.querySelectorAll('.guide-step').forEach(function (el) { el.style.display = 'none'; });
+    document.getElementById(id).style.display = 'block';
+  }
+
+  function computeUnion(topicSlugs) {
+    var dashMap = {}, reportMap = {};
+    topicSlugs.forEach(function (slug) {
+      var t = WIZARD_DATA[slug];
+      if (!t) return;
+      t.dashboards.forEach(function (d) { dashMap[d.id] = d; });
+      t.reports.forEach(function (r) { reportMap[r.id] = r; });
+    });
+    return {
+      dashboards: Object.keys(dashMap).map(function (k) { return dashMap[k]; }),
+      reports: Object.keys(reportMap).map(function (k) { return reportMap[k]; }),
+    };
+  }
+
+  // Step 1 -> topics
+  document.querySelectorAll('.topic-checkbox').forEach(function (cb) {
+    cb.addEventListener('change', function () {
+      cb.closest('.guide-checkbox-tile').classList.toggle('selected', cb.checked);
+      var anyChecked = [...document.querySelectorAll('.topic-checkbox')].some(function (c) { return c.checked; });
+      document.getElementById('topics-continue').disabled = !anyChecked;
     });
   });
 
+  document.getElementById('topics-continue').addEventListener('click', function () {
+    state.topics = [...document.querySelectorAll('.topic-checkbox:checked')].map(function (c) { return c.value; });
+    union = computeUnion(state.topics);
+
+    var geographies = [...new Set(union.dashboards.map(function (d) { return d.geography; }))];
+    if (geographies.length > 1) {
+      var container = document.getElementById('geography-options');
+      container.innerHTML = geographies.map(function (g) {
+        return '<label class="guide-checkbox-row"><input type="checkbox" class="geography-checkbox" value="' + g + '" checked> ' + g + '</label>';
+      }).join('');
+      showStep('step-geography');
+    } else {
+      state.geographies = geographies;
+      goToIndustryOrSkip();
+    }
+  });
+
+  document.querySelector('[data-next="industry"]').addEventListener('click', function () {
+    state.geographies = [...document.querySelectorAll('.geography-checkbox:checked')].map(function (c) { return c.value; });
+    goToIndustryOrSkip();
+  });
+
+  function goToIndustryOrSkip() {
+    var industryAvailable = union.reports.some(function (r) { return r.is_industry; });
+    if (industryAvailable) {
+      showStep('step-industry');
+    } else {
+      state.includeIndustry = true; // nothing to exclude either way
+      showStep('step-datatype');
+    }
+  }
+
+  document.querySelector('[data-next="datatype"]').addEventListener('click', function () {
+    state.includeIndustry = document.querySelector('input[name="industry"]:checked').value === 'yes';
+    showStep('step-datatype');
+  });
+
+  document.getElementById('datatype-continue').addEventListener('click', function () {
+    state.dataTypes = [...document.querySelectorAll('.datatype-checkbox:checked')].map(function (c) { return c.value; });
+    renderResults();
+    showStep('step-results');
+  });
+
+  function renderResults() {
+    var dashboards = union.dashboards.filter(function (d) {
+      return state.geographies.length === 0 || state.geographies.indexOf(d.geography) !== -1;
+    });
+    var reports = union.reports.filter(function (r) {
+      return state.includeIndustry || !r.is_industry;
+    });
+    reports.sort(function (a, b) { return a.sort_date < b.sort_date ? 1 : -1; });
+
+    var showDashboards = state.dataTypes.indexOf('dashboard') !== -1;
+    var showReports = state.dataTypes.indexOf('report') !== -1;
+
+    var dashHtml = '';
+    if (showDashboards && dashboards.length) {
+      dashHtml = '<h2 class="section-title" style="font-size:1.05rem;">Dashboards</h2><div class="card-grid">' +
+        dashboards.map(function (d) {
+          return '<div class="card"><a class="card-link" href="' + d.url + '"><h3>' + d.label + '</h3><span class="badge">' + d.geography + '</span></a></div>';
+        }).join('') + '</div>';
+    }
+
+    var reportHtml = '';
+    if (showReports && reports.length) {
+      reportHtml = '<h2 class="section-title" style="font-size:1.05rem;">Analysis &amp; Reports</h2><ul class="topic-report-list">' +
+        reports.map(function (r) {
+          return '<li><div class="topic-report-title">' + r.label + '</div><div class="subtle">' + r.date + ' &middot; ' + r.type + '</div>' +
+            '<div class="topic-report-actions"><a class="btn" href="' + r.url + '">Read</a></div></li>';
+        }).join('') + '</ul>';
+    }
+
+    document.getElementById('results-dashboards').innerHTML = dashHtml;
+    document.getElementById('results-reports').innerHTML = reportHtml;
+    document.getElementById('results-empty').style.display = (!dashHtml && !reportHtml) ? 'block' : 'none';
+  }
+
   document.getElementById('guide-restart-link').addEventListener('click', function (e) {
     e.preventDefault();
-    resultEl.style.display = 'none';
-    restartEl.style.display = 'none';
-    questionEl.style.display = 'flex';
+    document.querySelectorAll('.topic-checkbox').forEach(function (c) {
+      c.checked = false;
+      c.closest('.guide-checkbox-tile').classList.remove('selected');
+    });
+    document.getElementById('topics-continue').disabled = true;
+    state = { topics: [], geographies: [], includeIndustry: true, dataTypes: ['dashboard', 'report'] };
+    showStep('step-topics');
   });
 </script>
 {% endblock %}

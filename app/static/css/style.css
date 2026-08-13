@@ -142,7 +142,7 @@ main {
   display: flex;
   flex-direction: column;
   background: white;
-  border: 1px solid var(--mc-light-gray);
+  border: 1px solid var(--mc-teal-light);
   border-radius: 12px;
   padding: 1.5rem;
 }
@@ -163,7 +163,6 @@ main {
   text-align: center;
   justify-content: center;
   background: linear-gradient(180deg, rgba(1,131,131,0.06), white 65%);
-  border-color: var(--mc-teal-light);
 }
 .guide-card .path-heading { justify-content: center; }
 .guide-card p.subtle { max-width: 260px; }

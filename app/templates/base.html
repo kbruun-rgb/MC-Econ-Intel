@@ -19,6 +19,7 @@
       <a href="{{ url_for('industry_reports.index') }}">Industry Reports</a>
       {% if is_admin %}
       <a href="{{ url_for('main.health') }}">Content health</a>
+      <a href="{{ url_for('main.activity') }}">Activity</a>
       {% endif %}
       <a href="{{ url_for('auth.logout') }}">Log out</a>
     </nav>

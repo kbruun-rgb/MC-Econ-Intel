@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Activity — Morning Consult Economic Intelligence{% endblock %}
+{% block content %}
+<h1 class="section-title">Activity</h1>
+<p class="subtle">Logins and page views by account, tracked since this page shipped -- there's no history from before then.</p>
+
+<h2 class="section-title" style="font-size:1.05rem;">By account</h2>
+<table class="reports-table">
+  <thead>
+    <tr><th>Name</th><th>Email</th><th>Logins</th><th>Last login</th><th>Page views</th><th>Last active</th></tr>
+  </thead>
+  <tbody>
+    {% for u in users %}
+    <tr>
+      <td>{{ u.name }}</td>
+      <td>{{ u.email }}</td>
+      <td>{{ u.login_count }}</td>
+      <td>{{ u.last_login.strftime('%b %d, %Y %H:%M') if u.last_login else '—' }}</td>
+      <td>{{ u.view_count }}</td>
+      <td>{{ u.last_active.strftime('%b %d, %Y %H:%M') if u.last_active else '—' }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2 class="section-title" style="font-size:1.05rem; margin-top:2rem;">Most-viewed pages</h2>
+<table class="reports-table">
+  <thead>
+    <tr><th>Page</th><th>Views</th></tr>
+  </thead>
+  <tbody>
+    {% for c in top_content %}
+    <tr>
+      <td>{{ c.path }}</td>
+      <td>{{ c.views }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% if not top_content %}
+<p class="subtle" style="margin-top:1rem;">No page views logged yet.</p>
+{% endif %}
+{% endblock %}

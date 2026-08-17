@@ -2,6 +2,7 @@ from flask import Blueprint, Response, abort, flash, redirect, render_template, 
 from flask_login import current_user, login_required
 
 from app import db
+from app.activity import build_top_content, build_user_summary
 from app.bible_scan import build_connect_prompt, build_llms_txt
 from app.content_health import build_health_rows
 from app.topics import build_wizard_data
@@ -40,6 +41,14 @@ def health():
         # is real. This should look identical to a route that never existed.
         abort(404)
     return render_template("health.html", rows=build_health_rows())
+
+
+@main_bp.route("/activity")
+@login_required
+def activity():
+    if current_user.email not in ADMIN_EMAILS:
+        abort(404)
+    return render_template("activity.html", users=build_user_summary(), top_content=build_top_content())
 
 
 @main_bp.route("/llms.txt")

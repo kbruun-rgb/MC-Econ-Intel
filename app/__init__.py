@@ -30,7 +30,7 @@ def create_app():
     db.init_app(app)
     login_manager.init_app(app)
 
-    from app.models import User
+    from app.models import ActivityEvent, User
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -84,6 +84,31 @@ def create_app():
                     return None
             return redirect(url_for("auth.login", next=request.path))
         return None
+
+    # Which blueprints represent an actual "page" a user looked at, for the
+    # /activity engagement log -- excludes files (raw dashboard/report bytes,
+    # far too high-volume and not itself a page) and auth (the login event is
+    # logged explicitly in auth.py instead, since a GET on /login happens
+    # before anyone's authenticated).
+    TRACKED_BLUEPRINTS = {"main", "dashboards", "reports", "industry_reports", "topics"}
+    # The admin pages' own view counts would just be Kayla checking them,
+    # not client engagement -- excluded so they don't pollute the log.
+    UNTRACKED_ENDPOINTS = {"main.health", "main.activity"}
+
+    @app.after_request
+    def record_page_view(response):
+        if (
+            request.method == "GET"
+            and response.status_code == 200
+            and current_user.is_authenticated
+            and request.blueprint in TRACKED_BLUEPRINTS
+            and request.endpoint not in UNTRACKED_ENDPOINTS
+        ):
+            db.session.add(
+                ActivityEvent(user_id=current_user.id, event_type="view", endpoint=request.endpoint, path=request.path)
+            )
+            db.session.commit()
+        return response
 
     @app.after_request
     def set_referrer_policy(response):

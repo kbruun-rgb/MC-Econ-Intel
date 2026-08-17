@@ -57,3 +57,21 @@ class User(UserMixin, db.Model):
         self.api_token_last_used_at = datetime.now(timezone.utc)
         self.api_token_use_count = (self.api_token_use_count or 0) + 1
         self.api_token_last_ip = ip_address
+
+
+class ActivityEvent(db.Model):
+    """One row per login or page view -- the raw log behind the /activity
+    admin page. A brand-new table rather than columns added to User, so
+    shipping this needs no migration: db.create_all() creates missing
+    tables on every startup but never alters existing ones (see
+    create_app()), and a new table is exactly the case it does handle.
+    """
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    event_type = db.Column(db.String(20), nullable=False)  # "login" or "view"
+    endpoint = db.Column(db.String(120))
+    path = db.Column(db.String(255))
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+
+    user = db.relationship("User")

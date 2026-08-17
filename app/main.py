@@ -1,10 +1,11 @@
-from flask import Blueprint, Response, flash, redirect, render_template, url_for
+from flask import Blueprint, Response, abort, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
 
 from app import db
 from app.bible_scan import build_connect_prompt, build_llms_txt
+from app.content_health import build_health_rows
 from app.topics import build_wizard_data
-from config import TEAM, TOPIC_HUBS
+from config import ADMIN_EMAILS, TEAM, TOPIC_HUBS
 
 main_bp = Blueprint("main", __name__)
 
@@ -29,6 +30,16 @@ def guide():
     # steps (geography, industry coverage, data type) can filter it with no
     # server round trip.
     return render_template("guide.html", topic_hubs=TOPIC_HUBS, wizard_data=build_wizard_data())
+
+
+@main_bp.route("/health")
+@login_required
+def health():
+    if current_user.email not in ADMIN_EMAILS:
+        # 404, not 403 -- a 403 would confirm to a non-admin that this URL
+        # is real. This should look identical to a route that never existed.
+        abort(404)
+    return render_template("health.html", rows=build_health_rows())
 
 
 @main_bp.route("/llms.txt")

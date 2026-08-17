@@ -232,6 +232,13 @@ TOPIC_HUBS = [
 ]
 
 
+# Gates the /health content-freshness page (see app/content_health.py) --
+# internal maintenance info (script names, staleness flags), not something
+# every logged-in account should see. A plain email allowlist rather than a
+# User model column since there's no admin/role concept anywhere else yet,
+# and this avoids a schema migration for local SQLite + prod Postgres alike.
+ADMIN_EMAILS = ["kbruun@morningconsult.com"]
+
 # Team roster for the About page. Deliberately just name/title/email for
 # now -- no bios yet.
 TEAM = [

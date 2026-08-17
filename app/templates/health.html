@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Content Health — Morning Consult Economic Intelligence{% endblock %}
+{% block content %}
+<h1 class="section-title">Content Health</h1>
+<p class="subtle">Every dashboard and industry report with an ongoing update cadence, oldest first. Anything flagged has gone more than 45 days without a refresh -- worth checking whether it's still wired into the update pipeline.</p>
+
+<table class="reports-table">
+  <thead>
+    <tr><th>Content</th><th>Geography</th><th>Type</th><th>Last updated</th><th>Days ago</th></tr>
+  </thead>
+  <tbody>
+    {% for r in rows %}
+    <tr>
+      <td>{{ r.label }}</td>
+      <td><span class="badge {{ 'badge-global' if r.geography == 'Global' }}">{{ r.geography }}</span></td>
+      <td>{{ r.kind }}</td>
+      <td>{{ r.updated_at.strftime('%b %d, %Y') }}</td>
+      <td>{% if r.is_stale %}<span class="stale-flag">{{ r.days_ago }} days</span>{% else %}{{ r.days_ago }} days{% endif %}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% if not rows %}
+<p class="subtle" style="margin-top:1rem;">Nothing to show yet.</p>
+{% endif %}
+{% endblock %}

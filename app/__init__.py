@@ -44,6 +44,10 @@ def create_app():
     from app.topics_routes import topics_bp
     from app.files import files_bp
 
+    @app.context_processor
+    def inject_is_admin():
+        return {"is_admin": current_user.is_authenticated and current_user.email in config.ADMIN_EMAILS}
+
     app.register_blueprint(auth_bp)
     app.register_blueprint(main_bp)
     app.register_blueprint(dashboards_bp)

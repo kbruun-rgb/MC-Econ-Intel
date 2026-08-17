@@ -9,6 +9,8 @@
      used sparingly, only where it encodes a real distinction, not as a
      second "default" color competing with teal. */
   --mc-purple: #4F18F9;
+  /* MC brand chart-series red -- used only for the content-health staleness flag. */
+  --mc-red: #D73034;
   --font-stack: 'Proxima Nova', 'Avenir Next', 'Gill Sans', 'Trebuchet MS', sans-serif;
 }
 
@@ -312,6 +314,8 @@ main {
 }
 .badge.live { background: rgba(1,131,131,0.12); color: var(--mc-teal); }
 .badge.badge-global { background: rgba(79,24,249,0.1); color: var(--mc-purple); }
+
+.stale-flag { color: var(--mc-red); font-weight: 600; }
 
 .updated-at {
   font-size: 0.75rem;

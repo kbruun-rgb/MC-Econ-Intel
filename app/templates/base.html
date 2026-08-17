@@ -17,6 +17,9 @@
       <a href="{{ url_for('dashboards.index') }}">Dashboards</a>
       <a href="{{ url_for('reports.index') }}">Analysis &amp; Reports</a>
       <a href="{{ url_for('industry_reports.index') }}">Industry Reports</a>
+      {% if is_admin %}
+      <a href="{{ url_for('main.health') }}">Content health</a>
+      {% endif %}
       <a href="{{ url_for('auth.logout') }}">Log out</a>
     </nav>
     {% endif %}

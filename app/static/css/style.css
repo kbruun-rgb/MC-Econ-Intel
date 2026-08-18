@@ -515,6 +515,17 @@ main {
 .chip.active { background: var(--mc-teal); border-color: var(--mc-teal); color: white; }
 .chip[data-geography="Global"].active { background: var(--mc-purple); border-color: var(--mc-purple); }
 
+.theme-select {
+  margin-left: auto;
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--mc-light-gray);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  color: var(--mc-near-black);
+  background: white;
+}
+
 table.reports-table { width: 100%; border-collapse: collapse; background: white; border: 1px solid var(--mc-light-gray); border-radius: 10px; overflow: hidden; }
 table.reports-table th, table.reports-table td { text-align: left; padding: 0.7rem 1rem; border-bottom: 1px solid var(--mc-light-gray); font-size: 0.92rem; }
 table.reports-table td.actions-cell { display: flex; gap: 0.5rem; white-space: nowrap; }

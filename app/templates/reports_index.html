@@ -10,17 +10,15 @@
   <span class="chip active" data-type="all">All types</span>
   <span class="chip" data-type="Analysis">Analysis</span>
   <span class="chip" data-type="Report">Report</span>
-</div>
-<div class="reports-toolbar">
   <span class="chip active" data-geography="all">All geographies</span>
   <span class="chip" data-geography="US">US</span>
   <span class="chip" data-geography="Global">Global</span>
-</div>
-<div class="reports-toolbar">
-  <span class="chip active" data-theme="all">All themes</span>
-  {% for theme in themes %}
-  <span class="chip" data-theme="{{ theme }}">{{ theme }}</span>
-  {% endfor %}
+  <select id="theme-select" class="theme-select">
+    <option value="all">All themes</option>
+    {% for theme in themes %}
+    <option value="{{ theme }}">{{ theme }}</option>
+    {% endfor %}
+  </select>
 </div>
 
 <table class="reports-table">
@@ -57,7 +55,7 @@
 
 <script>
   var searchInput = document.getElementById('report-search');
-  var themeChips = document.querySelectorAll('.chip[data-theme]');
+  var themeSelect = document.getElementById('theme-select');
   var typeChips = document.querySelectorAll('.chip[data-type]');
   var geographyChips = document.querySelectorAll('.chip[data-geography]');
   var rows = document.querySelectorAll('#reports-body tr');
@@ -78,13 +76,9 @@
   }
 
   searchInput.addEventListener('input', applyFilter);
-  themeChips.forEach(function (chip) {
-    chip.addEventListener('click', function () {
-      themeChips.forEach(function (c) { c.classList.remove('active'); });
-      chip.classList.add('active');
-      activeTheme = chip.getAttribute('data-theme');
-      applyFilter();
-    });
+  themeSelect.addEventListener('change', function () {
+    activeTheme = themeSelect.value;
+    applyFilter();
   });
   typeChips.forEach(function (chip) {
     chip.addEventListener('click', function () {

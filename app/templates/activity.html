@@ -23,6 +23,26 @@
   </tbody>
 </table>
 
+<h2 class="section-title" style="font-size:1.05rem; margin-top:2rem;">Who viewed what</h2>
+<p class="subtle">Most recent {{ recent_activity|length }} page views, newest first.</p>
+<table class="reports-table">
+  <thead>
+    <tr><th>Name</th><th>Page</th><th>When</th></tr>
+  </thead>
+  <tbody>
+    {% for e in recent_activity %}
+    <tr>
+      <td>{{ e.name }}</td>
+      <td>{{ e.path }}</td>
+      <td>{{ e.created_at.strftime('%b %d, %Y %H:%M') }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% if not recent_activity %}
+<p class="subtle" style="margin-top:1rem;">No page views logged yet.</p>
+{% endif %}
+
 <h2 class="section-title" style="font-size:1.05rem; margin-top:2rem;">Most-viewed pages</h2>
 <table class="reports-table">
   <thead>

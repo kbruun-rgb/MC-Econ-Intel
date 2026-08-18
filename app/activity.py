@@ -41,6 +41,23 @@ def build_user_summary():
     return rows
 
 
+def build_recent_activity(limit=200):
+    """Raw who-viewed-what feed, most recent first -- the per-user counts
+    in build_user_summary answer "how much"; this answers "which pages,
+    by whom".
+    """
+    events = (
+        ActivityEvent.query.filter_by(event_type="view")
+        .order_by(ActivityEvent.created_at.desc())
+        .limit(limit)
+        .all()
+    )
+    return [
+        {"name": e.user.name, "email": e.user.email, "path": e.path, "created_at": e.created_at}
+        for e in events
+    ]
+
+
 def build_top_content(limit=20):
     """Most-viewed pages across all accounts, by exact path (not just
     endpoint) so e.g. two different dashboards under the same route

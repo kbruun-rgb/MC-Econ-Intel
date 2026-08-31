@@ -113,8 +113,10 @@ GEOGRAPHY_KEYWORDS = {
 # & Labor" reads as "Global Labor" only under Global, not under US).
 DASHBOARD_THEME_DISPLAY_NAMES = {
     ("US", "CHI"): "Consumer Health Index",
+    ("US", "ICS"): "Index of Consumer Sentiment",
     ("Global", "Jobs & Labor"): "Global Labor",
     ("Global", "Price Response Indicators"): "International Price Response Indicators",
+    ("Global", "ICS"): "Global Consumer Sentiment",
 }
 
 # One-line descriptions shown alongside a dashboard's name wherever it's
@@ -125,6 +127,8 @@ DASHBOARD_THEME_DISPLAY_NAMES = {
 # card-blurb length.
 DASHBOARD_THEME_DESCRIPTIONS = {
     "Consumer Health Index": "Real-time consumer demand, combining sentiment and labor market conditions.",
+    "Index of Consumer Sentiment": "Consumer confidence in personal finances and business conditions, current and expected.",
+    "Global Consumer Sentiment": "Consumer confidence trends across 43 international markets.",
     "Consumer Spending": "Real, seasonally-adjusted spending levels and category share of wallet.",
     "Household Finances": "Savings, debt, and financial cushion across income groups.",
     "Housing": "Home-buying sentiment, affordability, and housing-related spending.",

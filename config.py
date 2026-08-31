@@ -22,6 +22,32 @@ if _database_url:
 # *before* any blueprint imports them -- see app/cloud_storage.py. Everything
 # downstream (library_scan.py, files.py) just reads a local folder either way.
 ECON_LIBRARY_ROOT = r"G:\Shared drives\mc_econ\Econ Team\Econ Data Library"
+
+# Library folders that exist on the shared drive but aren't ready for client
+# eyes yet. Fully invisible to the site (not even "coming soon"), both
+# locally and in what sync_to_cloud.py uploads.
+LIBRARY_FOLDERS_NOT_READY = set()
+
+# Some library folders' dashboard content should be shown on the site under
+# a DIFFERENT folder's public identity (theme name, description, URL slug) --
+# e.g. a rebuilt dashboard that lives in its own separate, deliberately-kept-
+# apart pipeline folder on the shared drive, but should still appear to
+# clients as the same theme they already know. Key = the public-facing
+# folder name (drives geography/theme/theme_slug/URL, unchanged); value =
+# the folder whose actual dashboard .html files + interpretation_guide.md
+# get served instead of the key folder's own.
+#
+# "Global Jobs & Labor" (the key, 15-country placeholder methodology) is
+# kept as a frozen historical record on the shared drive and is intentionally
+# never touched or shown on the site -- "Global Jobs & Labor (Sonnet 3)" (the
+# value, 43-country corrected methodology) is the live pipeline, maintained
+# by a separate weekly-scheduled process. Do not consolidate these two
+# folders on disk; this override achieves the "one unified section on the
+# site" outcome without touching either folder's actual files.
+LIBRARY_SOURCE_OVERRIDES = {
+    "Global Jobs & Labor": "Global Jobs & Labor (Sonnet 3)",
+}
+
 ANALYSES_ROOT = r"C:\Users\kayla\Desktop\Kayla\Claude Helper Tools\Analyses"
 BIBLE_ROOT = r"C:\Users\kayla\Desktop\Kayla\Econ Bible"
 INDUSTRY_REPORTS_ROOT = (

@@ -19,6 +19,8 @@ from config import (
     ECON_LIBRARY_ROOT,
     GEOGRAPHY_KEYWORDS,
     INDUSTRY_REPORTS_ROOT,
+    LIBRARY_FOLDERS_NOT_READY,
+    LIBRARY_SOURCE_OVERRIDES,
     THEME_KEYWORDS,
 )
 
@@ -80,6 +82,13 @@ def scan_econ_library(root=ECON_LIBRARY_ROOT):
         if not entry.is_dir():
             continue
         folder_name = entry.name
+        if folder_name in LIBRARY_FOLDERS_NOT_READY:
+            continue
+        if folder_name in LIBRARY_SOURCE_OVERRIDES.values():
+            # This folder's content is surfaced under its paired public
+            # folder's identity instead (see LIBRARY_SOURCE_OVERRIDES) --
+            # skip it here so it doesn't also show up as its own theme.
+            continue
         if folder_name.startswith("US "):
             geography, theme = "US", folder_name[3:]
         elif folder_name.startswith("Global "):
@@ -93,11 +102,18 @@ def scan_econ_library(root=ECON_LIBRARY_ROOT):
         theme_slug = slugify(theme)
         theme = DASHBOARD_THEME_DISPLAY_NAMES.get((geography, theme), theme)
 
+        # A source override reads dashboard files/guide from a different
+        # folder than the one that determined geography/theme/theme_slug
+        # above -- "folder" below (used to build file-serving URLs) must
+        # point at wherever the actual files live, the override target.
+        source_folder_name = LIBRARY_SOURCE_OVERRIDES.get(folder_name, folder_name)
+        source_path = os.path.join(root, source_folder_name)
+
         dashboards = []
         guide_html = None
         updated_at = None
         try:
-            for f in sorted(os.scandir(entry.path), key=lambda e: e.name):
+            for f in sorted(os.scandir(source_path), key=lambda e: e.name):
                 if not f.is_file():
                     continue
                 if f.name.lower().endswith(".html"):
@@ -119,7 +135,7 @@ def scan_econ_library(root=ECON_LIBRARY_ROOT):
                 "theme": theme,
                 "theme_slug": theme_slug,
                 "description": DASHBOARD_THEME_DESCRIPTIONS.get(theme, ""),
-                "folder": folder_name,
+                "folder": source_folder_name,
                 "dashboards": dashboards,
                 "guide_html": guide_html,
                 "has_content": bool(dashboards) or bool(guide_html),

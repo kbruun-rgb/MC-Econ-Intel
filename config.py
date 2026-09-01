@@ -117,6 +117,7 @@ DASHBOARD_THEME_DISPLAY_NAMES = {
     ("Global", "Jobs & Labor"): "Global Labor",
     ("Global", "Price Response Indicators"): "International Price Response Indicators",
     ("Global", "ICS"): "Global Consumer Sentiment",
+    ("Global", "CHI"): "Global Consumer Health Index",
 }
 
 # One-line descriptions shown alongside a dashboard's name wherever it's
@@ -139,6 +140,7 @@ DASHBOARD_THEME_DESCRIPTIONS = {
     "Geopolitical Risk": "Consumer-perceived geopolitical risk across tracked countries.",
     "Global Labor": "Labor market conditions across international markets.",
     "International Price Response Indicators": "Price response and sensitivity trends outside the U.S.",
+    "Global Consumer Health Index": "Consumer demand index across 43 international markets, combining sentiment and labor market conditions.",
 }
 
 # Individual dashboard file titles default to a humanized filename (e.g.
@@ -147,6 +149,7 @@ DASHBOARD_THEME_DESCRIPTIONS = {
 # here when that happens.
 DASHBOARD_FILE_TITLES = {
     "labor_dashboard_mc.html": "Weekly Labor Dashboard",
+    "chi_dashboard.html": "Global CHI Dashboard",
 }
 
 # Dashboards with no built-in toggleTheme() get a generic CSS invert-filter

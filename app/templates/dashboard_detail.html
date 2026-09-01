@@ -65,6 +65,25 @@
     (doc.head || doc.documentElement).appendChild(style);
   }
 
+  // Applied to every dashboard iframe unconditionally (not just dark ones)
+  // -- the one universal, safe piece of the new brand system we can apply
+  // to dashboards we don't own without touching their source files. Colors/
+  // layout are NOT touched here: each dashboard's own CSS varies too much
+  // (some use custom properties, some hardcode hex everywhere) to safely
+  // blanket-recolor via injection, and chart series colors are drawn via
+  // Chart.js/canvas JS config, which CSS categorically cannot reach at all.
+  function applyBrandFontOverride(doc) {
+    var style = doc.createElement('style');
+    style.textContent =
+      "@font-face { font-family:'GT Standard'; src: url('/static/fonts/GT-Standard-Regular.otf') format('opentype'); font-weight:400; }" +
+      "@font-face { font-family:'GT Standard'; src: url('/static/fonts/GT-Standard-Medium.otf') format('opentype'); font-weight:500; }" +
+      "@font-face { font-family:'GT Standard'; src: url('/static/fonts/GT-Standard-Semibold.otf') format('opentype'); font-weight:600; }" +
+      "@font-face { font-family:'GT Standard'; src: url('/static/fonts/GT-Standard-Bold.otf') format('opentype'); font-weight:700; }" +
+      "body, div, span, p, h1, h2, h3, h4, h5, h6, td, th, li, a, button, label, input, select, small, strong, em " +
+      "{ font-family: 'GT Standard', 'Geist', -apple-system, 'Segoe UI', sans-serif !important; }";
+    (doc.head || doc.documentElement).appendChild(style);
+  }
+
   function applyLightModeOverride(doc, filename) {
     var css = LIGHT_MODE_OVERRIDES[filename];
     if (css) {
@@ -81,6 +100,7 @@
       try {
         var win = iframe.contentWindow;
         var doc = iframe.contentDocument;
+        applyBrandFontOverride(doc);
         if (isDark(doc)) {
           if (typeof win.toggleTheme === 'function') {
             win.toggleTheme();

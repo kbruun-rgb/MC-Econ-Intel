@@ -1,17 +1,94 @@
+@font-face {
+  font-family: 'GT Standard';
+  src: url('../fonts/GT-Standard-Light.otf') format('opentype');
+  font-weight: 300;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'GT Standard';
+  src: url('../fonts/GT-Standard-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'GT Standard';
+  src: url('../fonts/GT-Standard-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'GT Standard';
+  src: url('../fonts/GT-Standard-Semibold.otf') format('opentype');
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'GT Standard';
+  src: url('../fonts/GT-Standard-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'MC Serrif';
+  src: url('../fonts/Serrif-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'MC Serrif';
+  src: url('../fonts/Serrif-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'MC Serrif';
+  src: url('../fonts/Serrif-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'MC Serrif';
+  src: url('../fonts/Serrif-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'MC Serrif';
+  src: url('../fonts/Serrif-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+
 :root {
-  --mc-teal: #018383;
-  --mc-teal-light: #0DD6CC;
-  --mc-near-black: #2B2B2B;
-  --mc-grid-gray: #757575;
-  --mc-subtle-gray: #949494;
-  --mc-light-gray: #E5E5E5;
-  /* MC's brand secondary color (2nd in the official chart-series palette) --
-     used sparingly, only where it encodes a real distinction, not as a
-     second "default" color competing with teal. */
-  --mc-purple: #4F18F9;
-  /* MC brand chart-series red -- used only for the content-health staleness flag. */
-  --mc-red: #D73034;
-  --font-stack: 'Proxima Nova', 'Avenir Next', 'Gill Sans', 'Trebuchet MS', sans-serif;
+  /* Design system tokens (2026 refresh -- see Downloads/Design system
+     export specs.zip for the full spec). Base neutrals + the three brand
+     accents (Dawn/Dusk/Horizon), one accent used at a time per the
+     system's "black, white, one accent" rule -- Dawn (blue) is primary. */
+  --mc-bg: #F3F3F3;              /* page background (neutral-base-50) */
+  --mc-surface: #E7E7E7;         /* card/block surface (neutral-base-100) */
+  --mc-text: #101112;            /* text primary (neutral-base-1000) */
+  --mc-text-secondary: #707071;  /* text secondary (neutral-base-600) */
+  --mc-text-muted: #A0A0A0;      /* text muted (neutral-base-400) */
+
+  --mc-dawn: #2224FF;            /* primary accent */
+  --mc-dawn-dark: #042C77;       /* accent hover/active */
+  --mc-dawn-light: #95E0FF;      /* light tint, borders */
+  --mc-dusk: #9838F2;            /* secondary accent */
+  --mc-red: #E4181A;             /* negative/error (extended palette) */
+
+  --font-stack: 'GT Standard', 'Geist', -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'MC Serrif', 'Lora', serif;
+
+  /* Aliases to the old variable names so every existing var(--mc-teal)
+     etc. reference below picks up the new palette automatically --
+     avoided needing to hunt down every individual selector. */
+  --mc-teal: var(--mc-dawn);
+  --mc-teal-light: var(--mc-dawn-light);
+  --mc-near-black: var(--mc-text);
+  --mc-grid-gray: var(--mc-text-secondary);
+  --mc-subtle-gray: var(--mc-text-muted);
+  --mc-light-gray: var(--mc-surface);
+  --mc-purple: var(--mc-dusk);
 }
 
 * { box-sizing: border-box; }
@@ -20,7 +97,7 @@ body {
   margin: 0;
   font-family: var(--font-stack);
   color: var(--mc-near-black);
-  background: #FAFAFA;
+  background: var(--mc-bg);
 }
 
 a { color: var(--mc-teal); text-decoration: none; }
@@ -72,7 +149,7 @@ header.site-header nav a:hover { opacity: 1; color: var(--mc-teal); text-decorat
 main {
   max-width: 1080px;
   margin: 0 auto;
-  padding: 2rem 1.5rem 4rem;
+  padding: 2rem 2.5rem 4rem;
 }
 
 .flash {
@@ -147,9 +224,9 @@ main {
 .path-card {
   display: flex;
   flex-direction: column;
-  background: linear-gradient(180deg, rgba(1,131,131,0.06), white 65%);
+  background: linear-gradient(180deg, rgba(34,36,255,0.06), var(--mc-bg) 65%);
   border: 1px solid var(--mc-teal-light);
-  border-radius: 12px;
+  border-radius: 40px;
   padding: 1.5rem;
 }
 
@@ -176,7 +253,7 @@ main {
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: rgba(1,131,131,0.12);
+  background: rgba(34,36,255,0.12);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -221,17 +298,17 @@ main {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  background: white;
+  background: var(--mc-surface);
   border: 1px solid var(--mc-light-gray);
-  border-radius: 8px;
+  border-radius: 17px;
   padding: 0.75rem 0.9rem;
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  transition: border-color 0.15s ease, background 0.15s ease;
 }
-.guide-checkbox-tile.selected { border-color: var(--mc-teal); background: rgba(1,131,131,0.05); }
-.guide-checkbox-tile:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+.guide-checkbox-tile.selected { border-color: var(--mc-teal); background: rgba(34,36,255,0.05); }
+.guide-checkbox-tile:hover { border-color: var(--mc-teal); }
 .guide-checkbox-tile input { flex-shrink: 0; }
 .guide-checkbox-tile .topic-icon { flex-shrink: 0; color: var(--mc-teal); }
 
@@ -254,14 +331,14 @@ main {
   align-items: center;
   gap: 0.6rem;
   text-align: center;
-  background: rgba(1,131,131,0.05);
+  background: rgba(34,36,255,0.05);
   border: 1px solid var(--mc-teal-light);
-  border-radius: 10px;
+  border-radius: 17px;
   padding: 1.3rem 0.75rem;
   color: var(--mc-near-black);
-  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  transition: border-color 0.15s ease;
 }
-.topic-tile:hover { text-decoration: none; box-shadow: 0 2px 10px rgba(0,0,0,0.06); border-color: var(--mc-teal); }
+.topic-tile:hover { text-decoration: none; border-color: var(--mc-teal); }
 .topic-tile span { font-size: 0.85rem; font-weight: 600; line-height: 1.25; }
 .topic-icon { color: var(--mc-teal); }
 
@@ -280,9 +357,9 @@ main {
 
 .topic-report-list { list-style: none; margin: 1rem 0 0; padding: 0; }
 .topic-report-list li {
-  background: white;
+  background: var(--mc-surface);
   border: 1px solid var(--mc-light-gray);
-  border-radius: 8px;
+  border-radius: 17px;
   padding: 0.85rem 1rem;
   margin-bottom: 0.75rem;
 }
@@ -290,13 +367,13 @@ main {
 .topic-report-actions { margin-top: 0.6rem; }
 
 .card {
-  background: white;
+  background: var(--mc-surface);
   border: 1px solid var(--mc-light-gray);
-  border-radius: 10px;
+  border-radius: 17px;
   padding: 1.1rem 1.2rem;
-  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  transition: border-color 0.15s ease;
 }
-.card:hover { box-shadow: 0 2px 10px rgba(0,0,0,0.06); border-color: var(--mc-teal-light); }
+.card:hover { border-color: var(--mc-teal-light); }
 
 .card h3 { margin: 0 0 0.35rem; font-size: 1.02rem; }
 .card a.card-link { display: block; color: inherit; text-decoration: none; }
@@ -312,8 +389,8 @@ main {
   color: var(--mc-grid-gray);
   margin-top: 0.4rem;
 }
-.badge.live { background: rgba(1,131,131,0.12); color: var(--mc-teal); }
-.badge.badge-global { background: rgba(79,24,249,0.1); color: var(--mc-purple); }
+.badge.live { background: rgba(34,36,255,0.12); color: var(--mc-teal); }
+.badge.badge-global { background: rgba(152,56,242,0.1); color: var(--mc-purple); }
 
 .stale-flag { color: var(--mc-red); font-weight: 600; }
 
@@ -327,7 +404,7 @@ main {
 .geography-title {
   font-size: 0.85rem;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   color: var(--mc-grid-gray);
   margin-bottom: 0.75rem;
   font-weight: 700;
@@ -339,28 +416,28 @@ main {
   background: var(--mc-teal);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 999px;
   padding: 0.55rem 1.1rem;
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
 }
-.btn:hover { background: #016b6b; text-decoration: none; }
+.btn:hover { background: var(--mc-dawn-dark); text-decoration: none; }
 
 .btn-secondary {
-  background: white;
+  background: transparent;
   color: var(--mc-near-black);
   border: 1px solid var(--mc-light-gray);
 }
-.btn-secondary:hover { background: var(--mc-light-gray); }
+.btn-secondary:hover { background: var(--mc-surface); }
 
 .token-status {
   max-width: 480px;
   margin-top: 2rem;
   padding: 1.1rem 1.2rem;
-  background: white;
+  background: var(--mc-surface);
   border: 1px solid var(--mc-light-gray);
-  border-radius: 10px;
+  border-radius: 17px;
 }
 .token-table { width: 100%; border-collapse: collapse; margin-top: 0.75rem; font-size: 0.9rem; }
 .token-table td { padding: 0.3rem 0; border-bottom: 1px solid var(--mc-light-gray); }
@@ -369,9 +446,9 @@ main {
 .login-wrap {
   max-width: 380px;
   margin: 4rem auto;
-  background: white;
+  background: var(--mc-surface);
   border: 1px solid var(--mc-light-gray);
-  border-radius: 12px;
+  border-radius: 40px;
   padding: 2rem;
 }
 .login-wrap h1 { font-size: 1.2rem; margin-bottom: 1.25rem; }
@@ -384,6 +461,7 @@ main {
   border-radius: 6px;
   font-size: 0.95rem;
   font-family: inherit;
+  background: white;
 }
 .field input:focus { outline: 2px solid var(--mc-teal-light); border-color: var(--mc-teal); }
 
@@ -422,22 +500,22 @@ main {
 .tabs a.active { background: var(--mc-teal); border-color: var(--mc-teal); color: white; }
 
 .guide-box {
-  background: white;
+  background: var(--mc-surface);
   border: 1px solid var(--mc-light-gray);
-  border-radius: 10px;
+  border-radius: 17px;
   padding: 1.25rem 1.5rem;
 }
 .guide-box h1, .guide-box h2, .guide-box h3 { font-size: 1rem; }
 .guide-box table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.88rem; }
 .guide-box table th, .guide-box table td { border: 1px solid var(--mc-light-gray); padding: 0.4rem 0.6rem; text-align: left; }
-.guide-box table th { background: #F4F4F4; }
-.guide-box code { background: #F4F4F4; padding: 0.1rem 0.35rem; border-radius: 4px; font-size: 0.85em; }
-.guide-box pre { background: #F4F4F4; padding: 0.8rem; border-radius: 6px; overflow-x: auto; }
+.guide-box table th { background: var(--mc-bg); }
+.guide-box code { background: var(--mc-bg); padding: 0.1rem 0.35rem; border-radius: 4px; font-size: 0.85em; }
+.guide-box pre { background: var(--mc-bg); padding: 0.8rem; border-radius: 6px; overflow-x: auto; }
 
 .article-box {
-  background: white;
+  background: var(--mc-surface);
   border: 1px solid var(--mc-light-gray);
-  border-radius: 10px;
+  border-radius: 17px;
   padding: 2rem 2.5rem;
   max-width: 760px;
   margin: 1rem auto 0;
@@ -459,7 +537,7 @@ main {
   font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   color: var(--mc-teal);
   margin: 1.75rem 0 0.75rem;
 }
@@ -486,7 +564,7 @@ main {
 .article-box h2 { font-size: 1.15rem; margin: 1.75rem 0 0.75rem; }
 .article-box table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.9rem; }
 .article-box table th, .article-box table td { border: 1px solid var(--mc-light-gray); padding: 0.5rem 0.7rem; text-align: left; }
-.article-box table th { background: #F4F4F4; }
+.article-box table th { background: var(--mc-bg); }
 
 .reports-toolbar {
   display: flex;
@@ -502,6 +580,7 @@ main {
   border-radius: 6px;
   font-size: 0.92rem;
   font-family: inherit;
+  background: white;
 }
 .chip {
   padding: 0.3rem 0.7rem;
@@ -526,10 +605,10 @@ main {
   background: white;
 }
 
-table.reports-table { width: 100%; border-collapse: collapse; background: white; border: 1px solid var(--mc-light-gray); border-radius: 10px; overflow: hidden; }
+table.reports-table { width: 100%; border-collapse: collapse; background: var(--mc-surface); border: 1px solid var(--mc-light-gray); border-radius: 17px; overflow: hidden; }
 table.reports-table th, table.reports-table td { text-align: left; padding: 0.7rem 1rem; border-bottom: 1px solid var(--mc-light-gray); font-size: 0.92rem; }
 table.reports-table td.actions-cell { display: flex; gap: 0.5rem; white-space: nowrap; }
-table.reports-table th { background: #F4F4F4; font-weight: 600; color: var(--mc-grid-gray); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; }
+table.reports-table th { background: var(--mc-bg); font-weight: 600; color: var(--mc-grid-gray); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; }
 table.reports-table tr:last-child td { border-bottom: none; }
 
 .theme-tag {
@@ -549,6 +628,6 @@ table.reports-table tr:last-child td { border-bottom: none; }
   padding: 0.15rem 0.5rem;
   border-radius: 999px;
 }
-.type-badge.type-analysis { background: rgba(79,24,249,0.1); color: #4F18F9; }
-.type-badge.type-report { background: rgba(1,131,131,0.12); color: var(--mc-teal); }
+.type-badge.type-analysis { background: rgba(152,56,242,0.1); color: var(--mc-purple); }
+.type-badge.type-report { background: rgba(34,36,255,0.12); color: var(--mc-teal); }
 table.reports-table tr.hidden { display: none; }

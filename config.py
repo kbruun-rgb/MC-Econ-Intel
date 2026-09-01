@@ -216,7 +216,7 @@ TOPIC_HUBS = [
         "slug": "consumer-financial-health",
         "label": "Financial Health",
         "icon": "wallet",
-        "dashboard_themes": ["Consumer Health Index", "Household Finances"],
+        "dashboard_themes": ["Consumer Health Index", "Household Finances", "Index of Consumer Sentiment", "Global Consumer Health Index"],
         "report_themes": ["Consumer Health Index", "Household Finances"],
     },
     {
@@ -244,14 +244,14 @@ TOPIC_HUBS = [
         "slug": "macro-outlook",
         "label": "Macro Outlook",
         "icon": "compass",
-        "dashboard_themes": ["Weekly Pulse", "Jobs & Labor", "Geopolitical Risk"],
+        "dashboard_themes": ["Weekly Pulse", "Jobs & Labor", "Geopolitical Risk", "Index of Consumer Sentiment", "Global Consumer Sentiment"],
         "report_themes": ["Macro Outlook", "Jobs & Labor", "Geopolitical Risk"],
     },
     {
         "slug": "global",
         "label": "Global",
         "icon": "globe",
-        "dashboard_themes": ["Geopolitical Risk", "International Price Response Indicators", "Global Labor"],
+        "dashboard_themes": ["Geopolitical Risk", "International Price Response Indicators", "Global Labor", "Global Consumer Sentiment", "Global Consumer Health Index"],
         "report_themes": [],
     },
     {

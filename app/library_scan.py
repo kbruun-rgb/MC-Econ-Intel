@@ -71,6 +71,49 @@ def _guess_geography(text):
     return "US"
 
 
+def _scan_dashboard_folder(folder_path):
+    """Reads the .html dashboards + interpretation_guide.md out of one
+    folder. Returns (dashboards, guide_html, updated_at), or (None, None,
+    None) if folder_path doesn't exist/isn't readable -- distinct from "no
+    dashboards yet" (empty list), which is a real, existing empty folder.
+    """
+    dashboards = []
+    guide_html = None
+    updated_at = None
+    try:
+        listing = sorted(os.scandir(folder_path), key=lambda e: e.name)
+    except OSError:
+        return None, None, None
+    for f in listing:
+        if not f.is_file():
+            continue
+        if f.name.lower().endswith(".html"):
+            title = DASHBOARD_FILE_TITLES.get(f.name, humanize(f.name))
+            dashboards.append({"filename": f.name, "title": title})
+            mtime = datetime.fromtimestamp(f.stat().st_mtime)
+            if updated_at is None or mtime > updated_at:
+                updated_at = mtime
+        elif f.name == GUIDE_FILENAME:
+            with open(f.path, "r", encoding="utf-8", errors="replace") as fh:
+                guide_html = markdown.markdown(fh.read(), extensions=["tables", "fenced_code"])
+    return dashboards, guide_html, updated_at
+
+
+def _theme_from_folder_name(folder_name):
+    if folder_name.startswith("US "):
+        geography, theme = "US", folder_name[3:]
+    elif folder_name.startswith("Global "):
+        geography, theme = "Global", folder_name[7:]
+    else:
+        geography, theme = "Other", folder_name
+    # theme_slug is derived from the raw folder-name theme so existing
+    # links/bookmarks keep working even when the display name is
+    # overridden below.
+    theme_slug = slugify(theme)
+    theme = DASHBOARD_THEME_DISPLAY_NAMES.get((geography, theme), theme)
+    return geography, theme, theme_slug
+
+
 def scan_econ_library(root=ECON_LIBRARY_ROOT):
     """Returns {geography: [theme_entry, ...]}, geography in ("US", "Global", "Other")."""
     library = {"US": [], "Global": [], "Other": []}
@@ -84,52 +127,49 @@ def scan_econ_library(root=ECON_LIBRARY_ROOT):
         folder_name = entry.name
         if folder_name in LIBRARY_FOLDERS_NOT_READY:
             continue
+        if folder_name in LIBRARY_SOURCE_OVERRIDES:
+            # Handled below, independent of whether this folder physically
+            # exists here -- see the comment on that loop.
+            continue
         if folder_name in LIBRARY_SOURCE_OVERRIDES.values():
             # This folder's content is surfaced under its paired public
             # folder's identity instead (see LIBRARY_SOURCE_OVERRIDES) --
             # skip it here so it doesn't also show up as its own theme.
             continue
-        if folder_name.startswith("US "):
-            geography, theme = "US", folder_name[3:]
-        elif folder_name.startswith("Global "):
-            geography, theme = "Global", folder_name[7:]
-        else:
-            geography, theme = "Other", folder_name
 
-        # theme_slug is derived from the raw folder-name theme so existing
-        # links/bookmarks keep working even when the display name is
-        # overridden below.
-        theme_slug = slugify(theme)
-        theme = DASHBOARD_THEME_DISPLAY_NAMES.get((geography, theme), theme)
-
-        # A source override reads dashboard files/guide from a different
-        # folder than the one that determined geography/theme/theme_slug
-        # above -- "folder" below (used to build file-serving URLs) must
-        # point at wherever the actual files live, the override target.
-        source_folder_name = LIBRARY_SOURCE_OVERRIDES.get(folder_name, folder_name)
-        source_path = os.path.join(root, source_folder_name)
-
-        dashboards = []
-        guide_html = None
-        updated_at = None
-        try:
-            for f in sorted(os.scandir(source_path), key=lambda e: e.name):
-                if not f.is_file():
-                    continue
-                if f.name.lower().endswith(".html"):
-                    title = DASHBOARD_FILE_TITLES.get(f.name, humanize(f.name))
-                    dashboards.append({"filename": f.name, "title": title})
-                    mtime = datetime.fromtimestamp(f.stat().st_mtime)
-                    if updated_at is None or mtime > updated_at:
-                        updated_at = mtime
-                elif f.name == GUIDE_FILENAME:
-                    with open(f.path, "r", encoding="utf-8", errors="replace") as fh:
-                        guide_html = markdown.markdown(
-                            fh.read(), extensions=["tables", "fenced_code"]
-                        )
-        except OSError:
+        geography, theme, theme_slug = _theme_from_folder_name(folder_name)
+        dashboards, guide_html, updated_at = _scan_dashboard_folder(entry.path)
+        if dashboards is None:
             continue
 
+        library[geography].append(
+            {
+                "theme": theme,
+                "theme_slug": theme_slug,
+                "description": DASHBOARD_THEME_DESCRIPTIONS.get(theme, ""),
+                "folder": folder_name,
+                "dashboards": dashboards,
+                "guide_html": guide_html,
+                "has_content": bool(dashboards) or bool(guide_html),
+                "updated_at": updated_at,
+            }
+        )
+
+    # Source overrides are handled as synthetic entries, not by finding the
+    # public-facing folder name during the scan above -- that folder may
+    # not physically exist at all in this root (e.g. the cloud-hydrated
+    # cache only ever contains folders that were actually uploaded, and
+    # sync_to_cloud.py uploads under the override TARGET's name, never the
+    # public key's name, since it resolves the override before uploading).
+    # Depending only on the target folder's existence is what makes this
+    # work identically against the real G: drive and the R2-hydrated cache.
+    for public_name, source_folder_name in LIBRARY_SOURCE_OVERRIDES.items():
+        geography, theme, theme_slug = _theme_from_folder_name(public_name)
+        dashboards, guide_html, updated_at = _scan_dashboard_folder(
+            os.path.join(root, source_folder_name)
+        )
+        if dashboards is None:
+            continue
         library[geography].append(
             {
                 "theme": theme,

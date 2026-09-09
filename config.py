@@ -118,6 +118,7 @@ DASHBOARD_THEME_DISPLAY_NAMES = {
     ("Global", "Price Response Indicators"): "International Price Response Indicators",
     ("Global", "ICS"): "Global Consumer Sentiment",
     ("Global", "CHI"): "Global Consumer Health Index",
+    ("US", "Inflation & Supply Chains"): "Inflation Perception & Expectations",
 }
 
 # One-line descriptions shown alongside a dashboard's name wherever it's
@@ -133,7 +134,7 @@ DASHBOARD_THEME_DESCRIPTIONS = {
     "Consumer Spending": "Real, seasonally-adjusted spending levels and category share of wallet.",
     "Household Finances": "Savings, debt, and financial cushion across income groups.",
     "Housing": "Home-buying sentiment, affordability, and housing-related spending.",
-    "Inflation & Supply Chains": "Price pressure and supply chain disruption signals.",
+    "Inflation Perception & Expectations": "Consumer inflation expectations (ICIE) and price surprise signals, updated weekly.",
     "Jobs & Labor": "Weekly unemployment, pay loss, and job search activity, plus a quarterly deep-dive survey.",
     "Price Response Indicators": "How consumers react to price changes -- absorption, trading down, and price sensitivity by category.",
     "Weekly Pulse": "A fast-moving snapshot of consumer sentiment and spending intent, updated weekly.",
@@ -150,6 +151,7 @@ DASHBOARD_THEME_DESCRIPTIONS = {
 DASHBOARD_FILE_TITLES = {
     "labor_dashboard_mc.html": "Weekly Labor Dashboard",
     "chi_dashboard.html": "Global CHI Dashboard",
+    "inflation_icie_dashboard.html": "Inflation Expectations Dashboard",
 }
 
 # Dashboards with no built-in toggleTheme() get a generic CSS invert-filter
@@ -244,7 +246,7 @@ TOPIC_HUBS = [
         "slug": "macro-outlook",
         "label": "Macro Outlook",
         "icon": "compass",
-        "dashboard_themes": ["Weekly Pulse", "Jobs & Labor", "Geopolitical Risk", "Index of Consumer Sentiment", "Global Consumer Sentiment"],
+        "dashboard_themes": ["Weekly Pulse", "Jobs & Labor", "Geopolitical Risk", "Index of Consumer Sentiment", "Global Consumer Sentiment", "Inflation Perception & Expectations"],
         "report_themes": ["Macro Outlook", "Jobs & Labor", "Geopolitical Risk"],
     },
     {

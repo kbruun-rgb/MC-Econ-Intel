@@ -6,6 +6,22 @@
   <p>Morning Consult Economics turns daily consumer survey data into real-time economic indicators &mdash; dashboards, category reports, and written analysis, all in one place. <a href="{{ url_for('main.about') }}">Learn more about Morning Consult Economics &rarr;</a></p>
 </div>
 
+{% if narrative %}
+<div class="article-box" style="margin:1.5rem auto;">
+  <h2 class="article-headline" style="font-size:1.25rem;">{{ narrative.headline }}</h2>
+  {% for para in narrative_paragraphs %}
+  <p>{{ para }}</p>
+  {% endfor %}
+  {% if narrative.chart_image %}
+  <figure class="article-figure">
+    <img class="article-img" src="{{ url_for('narrative.chart', slug='home') }}" alt="{{ narrative.chart_caption or '' }}">
+    {% if narrative.chart_caption %}<figcaption>{{ narrative.chart_caption }}</figcaption>{% endif %}
+  </figure>
+  {% endif %}
+  {% if narrative.source_note %}<p class="article-source">{{ narrative.source_note }}</p>{% endif %}
+</div>
+{% endif %}
+
 <h2 class="paths-headline">How would you like to get started?</h2>
 <div class="path-grid">
   <div class="path-card guide-card">

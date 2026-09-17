@@ -605,6 +605,21 @@ main {
   background: white;
 }
 
+.form-field { margin-bottom: 1.1rem; }
+.form-field label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--mc-grid-gray); margin-bottom: 0.35rem; }
+.form-field input[type="text"], .form-field select, .form-field textarea {
+  width: 100%;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--mc-light-gray);
+  border-radius: 6px;
+  font-size: 0.92rem;
+  font-family: inherit;
+  background: white;
+  box-sizing: border-box;
+}
+.form-field textarea { resize: vertical; }
+.form-field input[disabled] { background: var(--mc-bg); color: var(--mc-subtle-gray); }
+
 table.reports-table { width: 100%; border-collapse: collapse; background: var(--mc-surface); border: 1px solid var(--mc-light-gray); border-radius: 17px; overflow: hidden; }
 table.reports-table th, table.reports-table td { text-align: left; padding: 0.7rem 1rem; border-bottom: 1px solid var(--mc-light-gray); font-size: 0.92rem; }
 table.reports-table td.actions-cell { display: flex; gap: 0.5rem; white-space: nowrap; }

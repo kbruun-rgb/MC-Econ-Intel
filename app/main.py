@@ -5,6 +5,7 @@ from app import db
 from app.activity import build_recent_activity, build_top_content, build_user_summary
 from app.bible_scan import build_connect_prompt, build_llms_txt
 from app.content_health import build_health_rows
+from app.narrative import get_live_snippet, render_paragraphs
 from app.topics import build_wizard_data
 from config import ADMIN_EMAILS, TEAM, TOPIC_HUBS
 
@@ -14,7 +15,13 @@ main_bp = Blueprint("main", __name__)
 @main_bp.route("/")
 @login_required
 def home():
-    return render_template("home.html", topic_hubs=TOPIC_HUBS)
+    narrative = get_live_snippet("home")
+    return render_template(
+        "home.html",
+        topic_hubs=TOPIC_HUBS,
+        narrative=narrative,
+        narrative_paragraphs=render_paragraphs(narrative.body) if narrative else None,
+    )
 
 
 @main_bp.route("/about")

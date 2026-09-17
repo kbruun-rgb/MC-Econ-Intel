@@ -59,6 +59,29 @@ class User(UserMixin, db.Model):
         self.api_token_last_ip = ip_address
 
 
+class NarrativeSnippet(db.Model):
+    """A short chart-plus-narrative content block for a topic hub or the home
+    page. Agent-drafted rows start as status="draft" and never appear on the
+    site until an admin approves them (or writes one directly, which
+    publishes immediately since the act of writing it *is* the review). Only
+    the most recently-published "approved" row per topic_slug is ever live --
+    approving a new one archives whatever it replaces.
+    """
+
+    id = db.Column(db.Integer, primary_key=True)
+    topic_slug = db.Column(db.String(64), nullable=False)  # a TOPIC_HUBS slug, or "home"
+    headline = db.Column(db.Text, nullable=False)
+    body = db.Column(db.Text, nullable=False)  # two paragraphs, blank-line separated
+    chart_image = db.Column(db.LargeBinary, nullable=True)
+    chart_mimetype = db.Column(db.String(32), nullable=True)
+    chart_caption = db.Column(db.String(255), nullable=True)
+    source_note = db.Column(db.String(255), nullable=True)
+    status = db.Column(db.String(20), nullable=False, default="draft")  # draft | approved | rejected | archived
+    author = db.Column(db.String(255), nullable=False)  # "agent" or the approving admin's email
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+    published_at = db.Column(db.DateTime, nullable=True)
+
+
 class ActivityEvent(db.Model):
     """One row per login or page view -- the raw log behind the /activity
     admin page. A brand-new table rather than columns added to User, so

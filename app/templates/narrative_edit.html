@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit narrative' if snippet else 'Write new narrative' }} — Morning Consult Economic Intelligence{% endblock %}
+{% block content %}
+<p class="subtle"><a href="{{ url_for('narrative.queue') }}">&larr; Narrative Review</a></p>
+<h1 class="section-title">{{ 'Edit draft' if snippet else 'Write new narrative' }}</h1>
+{% if not snippet %}
+<p class="subtle">Publishes immediately &mdash; writing it here is the review.</p>
+{% endif %}
+
+<form class="guide-box" method="post" enctype="multipart/form-data" style="max-width:640px;">
+  <div class="form-field">
+    <label for="topic_slug">Topic</label>
+    {% if snippet %}
+    <input type="text" value="{{ snippet.topic_slug }}" disabled>
+    {% else %}
+    <select id="topic_slug" name="topic_slug" required>
+      {% for slug in topics %}
+      <option value="{{ slug }}">{{ slug }}</option>
+      {% endfor %}
+    </select>
+    {% endif %}
+  </div>
+
+  <div class="form-field">
+    <label for="headline">Headline</label>
+    <input type="text" id="headline" name="headline" required value="{{ snippet.headline if snippet else '' }}">
+  </div>
+
+  <div class="form-field">
+    <label for="body">Body (two short paragraphs)</label>
+    <textarea id="body" name="body" rows="8" required>{{ snippet.body if snippet else '' }}</textarea>
+  </div>
+
+  {% if not snippet %}
+  <div class="form-field">
+    <label for="source_note">Source note (optional)</label>
+    <input type="text" id="source_note" name="source_note" placeholder="Source: Morning Consult">
+  </div>
+
+  <div class="form-field">
+    <label for="chart">Chart image (optional)</label>
+    <input type="file" id="chart" name="chart" accept="image/png,image/jpeg">
+  </div>
+  {% endif %}
+
+  <button class="btn" type="submit">{{ 'Save draft' if snippet else 'Publish' }}</button>
+</form>
+{% endblock %}

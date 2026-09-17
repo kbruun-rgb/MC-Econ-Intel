@@ -266,6 +266,48 @@ TOPIC_HUBS = [
     },
 ]
 
+# Pilot for the narrative-content feature: which topic pages (a TOPIC_HUBS
+# slug, or "home" for the home page) get an agent-drafted, human-approved
+# chart-plus-insight block, and how often a fresh draft is generated. Cadence
+# should match how often the topic's underlying dataset actually moves --
+# add more topics here once the pilot proves out, no code changes needed.
+NARRATIVE_TOPICS = {
+    "macro-outlook": "weekly",
+    "labor-market": "weekly",
+    "home": "weekly",
+}
+
+# Auto-links the first mention of a known term in narrative body text to its
+# dashboard -- e.g. "Unemployment Index" in a labor-market snippet becomes a
+# link to the US Jobs & Labor dashboard. Scalable by design: adding coverage
+# for a new indicator is one more row here, no template or route changes.
+# Order matters -- list longer/more specific phrases before short acronyms
+# they contain (e.g. "Global Consumer Health Index" before "CHI") so the more
+# specific phrase gets first claim on a match. Each row is
+# (term, case_sensitive, geography, theme_slug) -- geography/theme_slug must
+# match a real entry from scan_econ_library() (see app/library_scan.py).
+# case_sensitive=True for short acronyms (ICS, CHI, PRI, ICIE, PSI) to avoid
+# matching those letters inside ordinary lowercase words.
+NARRATIVE_GLOSSARY = [
+    ("Global Consumer Health Index", False, "Global", "chi"),
+    ("Global Consumer Sentiment", False, "Global", "ics"),
+    ("Index of Consumer Sentiment", False, "US", "ics"),
+    ("Consumer Health Index", False, "US", "chi"),
+    ("Inflation Perception & Expectations", False, "US", "inflation-supply-chains"),
+    ("Unemployment Index", False, "US", "jobs-labor"),
+    ("Pay Loss Rate", False, "US", "jobs-labor"),
+    ("Household Finances", False, "US", "household-finances"),
+    ("Price Response Indicators", False, "US", "price-response-indicators"),
+    ("Weekly Pulse", False, "US", "weekly-pulse"),
+    ("Geopolitical Risk", False, "Global", "geopolitical-risk"),
+    ("Global Labor", False, "Global", "jobs-labor"),
+    ("ICIE", True, "US", "inflation-supply-chains"),
+    ("PSI", True, "US", "inflation-supply-chains"),
+    ("PRI", True, "US", "price-response-indicators"),
+    ("CHI", True, "US", "chi"),
+    ("ICS", True, "US", "ics"),
+]
+
 
 # Gates the /health content-freshness page (see app/content_health.py) --
 # internal maintenance info (script names, staleness flags), not something

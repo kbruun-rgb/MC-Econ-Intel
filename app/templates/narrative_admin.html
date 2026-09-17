@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Narrative Review — Morning Consult Economic Intelligence{% endblock %}
+{% block content %}
+<h1 class="section-title">Narrative Review</h1>
+<p class="subtle">Agent-drafted chart-plus-insight blocks for topic pages and the home page, waiting on approval. Nothing here is visible to clients until you approve it.</p>
+
+<a class="btn" href="{{ url_for('narrative.new') }}">Write new narrative</a>
+
+<h2 class="section-title" style="font-size:1.05rem; margin-top:2rem;">Pending drafts</h2>
+{% if drafts %}
+<div class="card-grid">
+  {% for d in drafts %}
+  <div class="card">
+    <span class="badge">{{ d.topic_slug }}</span>
+    <h3 style="margin:0.5rem 0 0.25rem;">{{ d.headline }}</h3>
+    <p class="subtle" style="margin:0 0 0.75rem;">{{ d.body[:220] }}{% if d.body|length > 220 %}&hellip;{% endif %}</p>
+    {% if d.chart_image %}
+    <img class="article-img" style="max-height:140px; width:auto;" src="{{ url_for('narrative.admin_chart', snippet_id=d.id) }}" alt="">
+    {% endif %}
+    <p class="subtle" style="margin-top:0.75rem;">Drafted by {{ d.author }} &middot; {{ d.created_at.strftime('%b %d, %Y') }}</p>
+    <div style="display:flex; gap:0.5rem; margin-top:0.75rem;">
+      <a class="btn btn-secondary" href="{{ url_for('narrative.edit', snippet_id=d.id) }}">Edit</a>
+      <form method="post" action="{{ url_for('narrative.approve', snippet_id=d.id) }}">
+        <button class="btn" type="submit">Approve</button>
+      </form>
+      <form method="post" action="{{ url_for('narrative.reject', snippet_id=d.id) }}">
+        <button class="btn btn-secondary" type="submit">Reject</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p class="subtle">Nothing pending review.</p>
+{% endif %}
+
+<h2 class="section-title" style="font-size:1.05rem; margin-top:2rem;">Currently live</h2>
+<table class="reports-table">
+  <thead><tr><th>Topic</th><th>Headline</th><th>Cadence</th><th>Published</th></tr></thead>
+  <tbody>
+    {% for slug, cadence in topics.items() %}
+    <tr>
+      <td>{{ slug }}</td>
+      <td>
+        {% if live[slug] %}{{ live[slug].headline }}{% else %}<span class="subtle">Nothing live yet</span>{% endif %}
+      </td>
+      <td>{{ cadence }}</td>
+      <td>{% if live[slug] %}{{ live[slug].published_at.strftime('%b %d, %Y') }}{% endif %}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

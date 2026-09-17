@@ -20,6 +20,7 @@
       {% if is_admin %}
       <a href="{{ url_for('main.health') }}">Content health</a>
       <a href="{{ url_for('main.activity') }}">Activity</a>
+      <a href="{{ url_for('narrative.queue') }}">Narrative review</a>
       {% endif %}
       <a href="{{ url_for('auth.logout') }}">Log out</a>
     </nav>

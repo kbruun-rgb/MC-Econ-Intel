@@ -8,6 +8,22 @@
   <h1 class="section-title" style="margin:0;">{{ topic.label }}</h1>
 </div>
 
+{% if narrative %}
+<div class="article-box" style="margin:1.5rem 0;">
+  <h2 class="article-headline" style="font-size:1.25rem;">{{ narrative.headline }}</h2>
+  {% for para in narrative_paragraphs %}
+  <p>{{ para }}</p>
+  {% endfor %}
+  {% if narrative.chart_image %}
+  <figure class="article-figure">
+    <img class="article-img" src="{{ url_for('narrative.chart', slug=topic.slug) }}" alt="{{ narrative.chart_caption or '' }}">
+    {% if narrative.chart_caption %}<figcaption>{{ narrative.chart_caption }}</figcaption>{% endif %}
+  </figure>
+  {% endif %}
+  {% if narrative.source_note %}<p class="article-source">{{ narrative.source_note }}</p>{% endif %}
+</div>
+{% endif %}
+
 <div class="topic-columns">
   <div class="topic-dashboards">
     <h2 class="section-title" style="font-size:1.05rem;">Dashboards</h2>

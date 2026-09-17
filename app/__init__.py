@@ -43,6 +43,7 @@ def create_app():
     from app.industry_reports import industry_reports_bp
     from app.topics_routes import topics_bp
     from app.files import files_bp
+    from app.narrative_routes import narrative_bp
 
     @app.context_processor
     def inject_is_admin():
@@ -55,6 +56,7 @@ def create_app():
     app.register_blueprint(industry_reports_bp)
     app.register_blueprint(topics_bp)
     app.register_blueprint(files_bp)
+    app.register_blueprint(narrative_bp)
 
     # Route-level @login_required decorators guard every page and file
     # response individually (see each blueprint) -- this hook is a second,

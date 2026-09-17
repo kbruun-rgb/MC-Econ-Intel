@@ -1,6 +1,7 @@
 from flask import Blueprint, abort, render_template
 from flask_login import login_required
 
+from app.narrative import get_live_snippet, render_paragraphs
 from app.topics import get_topic, topic_content
 
 topics_bp = Blueprint("topics", __name__, url_prefix="/topics")
@@ -13,4 +14,12 @@ def detail(slug):
     if topic is None:
         abort(404)
     dashboards, reports = topic_content(topic)
-    return render_template("topic_detail.html", topic=topic, dashboards=dashboards, reports=reports)
+    narrative = get_live_snippet(slug)
+    return render_template(
+        "topic_detail.html",
+        topic=topic,
+        dashboards=dashboards,
+        reports=reports,
+        narrative=narrative,
+        narrative_paragraphs=render_paragraphs(narrative.body) if narrative else None,
+    )

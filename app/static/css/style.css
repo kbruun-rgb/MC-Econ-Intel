@@ -384,6 +384,24 @@ main {
 .card-compact { padding: 0.7rem 0.9rem; }
 .card-compact h3 { font-size: 0.88rem; margin: 0 0 0.3rem; }
 
+.narrative-mini-home {
+  max-width: 100%;
+  margin: 1rem 0 1.5rem;
+  padding: 0.85rem 1.1rem;
+}
+.narrative-mini-home p {
+  /* Clamped, not just a shorter source string -- keeps the teaser compact
+     even if a future draft's first paragraph runs long. */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.narrative-mini-home .narrative-mini-figure { margin-top: 0.5rem; }
+.narrative-mini-home .narrative-mini-figure img { max-height: 100px; }
+.narrative-mini-link { margin: 0.5rem 0 0; font-size: 0.85rem; }
+.narrative-mini-link a { font-weight: 600; }
+
 .topic-report-list { list-style: none; margin: 1rem 0 0; padding: 0; }
 .topic-report-list li {
   background: var(--mc-surface);

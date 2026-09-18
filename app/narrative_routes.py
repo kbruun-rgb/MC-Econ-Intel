@@ -7,6 +7,7 @@ from app.narrative import (
     get_live_snippet,
     get_pending_drafts,
     get_snippet,
+    list_dashboards_for_picker,
     reject_snippet,
     update_draft,
 )
@@ -20,6 +21,17 @@ def _require_admin():
         # 404, not 403 -- matches /health and /activity: a non-admin should
         # see nothing that confirms this URL is real.
         abort(404)
+
+
+def _parse_related_dashboard():
+    """The picker's <select> posts a single "geography|theme_slug" value (or
+    empty for "None") -- split it back into the two column values.
+    """
+    raw = request.form.get("related_dashboard", "")
+    if "|" not in raw:
+        return None, None
+    geography, theme_slug = raw.split("|", 1)
+    return geography, theme_slug
 
 
 @narrative_bp.route("/admin/narrative")
@@ -40,6 +52,7 @@ def queue():
 def new():
     _require_admin()
     if request.method == "POST":
+        related_geography, related_theme_slug = _parse_related_dashboard()
         create_manual_snippet(
             topic_slug=request.form["topic_slug"],
             headline=request.form["headline"].strip(),
@@ -47,10 +60,14 @@ def new():
             source_note=request.form.get("source_note", "").strip() or None,
             admin_email=current_user.email,
             chart_file=request.files.get("chart"),
+            related_geography=related_geography,
+            related_theme_slug=related_theme_slug,
         )
         flash("Published.")
         return redirect(url_for("narrative.queue"))
-    return render_template("narrative_edit.html", topics=NARRATIVE_TOPICS, snippet=None)
+    return render_template(
+        "narrative_edit.html", topics=NARRATIVE_TOPICS, snippet=None, dashboard_options=list_dashboards_for_picker()
+    )
 
 
 @narrative_bp.route("/admin/narrative/<int:snippet_id>/edit", methods=["GET", "POST"])
@@ -59,10 +76,19 @@ def edit(snippet_id):
     _require_admin()
     snippet = get_snippet(snippet_id) or abort(404)
     if request.method == "POST":
-        update_draft(snippet, request.form["headline"].strip(), request.form["body"].strip())
+        related_geography, related_theme_slug = _parse_related_dashboard()
+        update_draft(
+            snippet,
+            request.form["headline"].strip(),
+            request.form["body"].strip(),
+            related_geography=related_geography,
+            related_theme_slug=related_theme_slug,
+        )
         flash("Draft updated.")
         return redirect(url_for("narrative.queue"))
-    return render_template("narrative_edit.html", topics=NARRATIVE_TOPICS, snippet=snippet)
+    return render_template(
+        "narrative_edit.html", topics=NARRATIVE_TOPICS, snippet=snippet, dashboard_options=list_dashboards_for_picker()
+    )
 
 
 @narrative_bp.route("/admin/narrative/<int:snippet_id>/approve", methods=["POST"])

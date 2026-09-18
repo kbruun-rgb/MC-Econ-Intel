@@ -31,6 +31,16 @@
     <textarea id="body" name="body" rows="8" required>{{ snippet.body if snippet else '' }}</textarea>
   </div>
 
+  <div class="form-field">
+    <label for="related_dashboard">Related dashboard link (optional)</label>
+    <select id="related_dashboard" name="related_dashboard">
+      <option value="">None</option>
+      {% for geography, theme_slug, label in dashboard_options %}
+      <option value="{{ geography }}|{{ theme_slug }}" {{ 'selected' if snippet and snippet.related_geography == geography and snippet.related_theme_slug == theme_slug }}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
   {% if not snippet %}
   <div class="form-field">
     <label for="source_note">Source note (optional)</label>

@@ -7,18 +7,19 @@
 </div>
 
 {% if narrative %}
-<div class="article-box" style="margin:1.5rem auto;">
-  <h2 class="article-headline" style="font-size:1.25rem;">{{ narrative.headline }}</h2>
+<div class="narrative-mini narrative-mini-home">
+  <h2 class="narrative-mini-headline">{{ narrative.headline }}</h2>
   {% for para in narrative_paragraphs %}
   <p>{{ para }}</p>
   {% endfor %}
   {% if narrative.chart_image %}
-  <figure class="article-figure">
-    <img class="article-img" src="{{ url_for('narrative.chart', slug='home') }}" alt="{{ narrative.chart_caption or '' }}">
-    {% if narrative.chart_caption %}<figcaption>{{ narrative.chart_caption }}</figcaption>{% endif %}
+  <figure class="narrative-mini-figure">
+    <img src="{{ url_for('narrative.chart', slug='home') }}" alt="{{ narrative.chart_caption or '' }}">
   </figure>
   {% endif %}
-  {% if narrative.source_note %}<p class="article-source">{{ narrative.source_note }}</p>{% endif %}
+  {% if narrative_link %}
+  <p class="narrative-mini-link"><a href="{{ narrative_link[0] }}">See the {{ narrative_link[1] }} dashboard &rarr;</a></p>
+  {% endif %}
 </div>
 {% endif %}
 

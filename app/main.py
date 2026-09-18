@@ -5,7 +5,7 @@ from app import db
 from app.activity import build_recent_activity, build_top_content, build_user_summary
 from app.bible_scan import build_connect_prompt, build_llms_txt
 from app.content_health import build_health_rows
-from app.narrative import get_live_snippet, render_paragraphs
+from app.narrative import get_live_snippet, related_dashboard_link, render_paragraphs
 from app.topics import build_wizard_data
 from config import ADMIN_EMAILS, TEAM, TOPIC_HUBS
 
@@ -20,7 +20,10 @@ def home():
         "home.html",
         topic_hubs=TOPIC_HUBS,
         narrative=narrative,
-        narrative_paragraphs=render_paragraphs(narrative.body) if narrative else None,
+        # Home is a compact teaser -- only the first paragraph, not the full
+        # snippet -- so keep the path grid visible without scrolling.
+        narrative_paragraphs=render_paragraphs(narrative.body)[:1] if narrative else None,
+        narrative_link=related_dashboard_link(narrative) if narrative else None,
     )
 
 

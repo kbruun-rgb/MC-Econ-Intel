@@ -11,8 +11,35 @@ from flask import url_for
 from markupsafe import Markup, escape
 
 from app import db
+from app.library_scan import find_theme, scan_econ_library
 from app.models import NarrativeSnippet
 from config import NARRATIVE_GLOSSARY
+
+
+def list_dashboards_for_picker():
+    """(geography, theme_slug, label) for every real dashboard, for the
+    "related dashboard" dropdown on the narrative admin forms.
+    """
+    options = []
+    for geography, entries in scan_econ_library().items():
+        for entry in entries:
+            if entry["has_content"]:
+                options.append((geography, entry["theme_slug"], f"{geography} – {entry['theme']}"))
+    return sorted(options, key=lambda o: o[2])
+
+
+def related_dashboard_link(snippet):
+    """(url, label) for a snippet's optional "related dashboard" pointer, or
+    None if it doesn't have one or the dashboard it points to no longer
+    exists.
+    """
+    if not snippet.related_geography or not snippet.related_theme_slug:
+        return None
+    entry = find_theme(snippet.related_geography, snippet.related_theme_slug)
+    if entry is None:
+        return None
+    url = url_for("dashboards.detail", geography=snippet.related_geography.lower(), theme_slug=snippet.related_theme_slug)
+    return url, entry["theme"]
 
 
 def render_paragraphs(body):
@@ -64,9 +91,11 @@ def get_snippet(snippet_id):
     return db.session.get(NarrativeSnippet, snippet_id)
 
 
-def update_draft(snippet, headline, body):
+def update_draft(snippet, headline, body, related_geography=None, related_theme_slug=None):
     snippet.headline = headline
     snippet.body = body
+    snippet.related_geography = related_geography or None
+    snippet.related_theme_slug = related_theme_slug or None
     db.session.commit()
 
 
@@ -91,7 +120,9 @@ def reject_snippet(snippet):
     db.session.commit()
 
 
-def create_manual_snippet(topic_slug, headline, body, source_note, admin_email, chart_file=None):
+def create_manual_snippet(
+    topic_slug, headline, body, source_note, admin_email, chart_file=None, related_geography=None, related_theme_slug=None
+):
     """A human-authored snippet publishes immediately -- Kayla writing it
     directly *is* the review step, so there's no separate approval click.
     """
@@ -103,6 +134,8 @@ def create_manual_snippet(topic_slug, headline, body, source_note, admin_email, 
         status="approved",
         author=admin_email,
         published_at=datetime.now(timezone.utc),
+        related_geography=related_geography or None,
+        related_theme_slug=related_theme_slug or None,
     )
     if chart_file and chart_file.filename:
         snippet.chart_image = chart_file.read()

@@ -81,6 +81,14 @@ class NarrativeSnippet(db.Model):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     published_at = db.Column(db.DateTime, nullable=True)
 
+    # Optional explicit "see the underlying data" link, independent of the
+    # in-text NARRATIVE_GLOSSARY auto-linking -- for placements (like the
+    # home page) that don't already show dashboard tiles alongside the
+    # narrative. Must match a real (geography, theme_slug) pair from
+    # scan_econ_library() (see app/library_scan.py).
+    related_geography = db.Column(db.String(32), nullable=True)
+    related_theme_slug = db.Column(db.String(64), nullable=True)
+
 
 class ActivityEvent(db.Model):
     """One row per login or page view -- the raw log behind the /activity

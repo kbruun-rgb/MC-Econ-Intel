@@ -372,6 +372,7 @@ main {
   border-radius: 17px;
   padding: 1.1rem 1.3rem;
   line-height: 1.5;
+  overflow: hidden; /* contains the floated chart so the card's height fits its content */
 }
 .narrative-mini p { margin: 0 0 0.6rem; font-size: 0.88rem; }
 .narrative-mini-headline { font-size: 1.05rem; font-weight: 700; color: var(--mc-near-black); margin: 0 0 0.5rem; }
@@ -379,6 +380,29 @@ main {
 .narrative-mini-figure img { max-width: 100%; max-height: 160px; border-radius: 6px; }
 .narrative-mini-figure figcaption { font-size: 0.72rem; color: var(--mc-subtle-gray); margin-top: 0.3rem; }
 .narrative-mini-source { font-size: 0.74rem; color: var(--mc-subtle-gray); margin: 0.5rem 0 0; }
+
+/* Topic pages float the chart into the text instead of stacking it below --
+   denser, and framed in white since the chart PNGs render on a white
+   background (matplotlib default), which read as a mismatch against the
+   grey card otherwise. */
+.narrative-mini-figure-float {
+  float: right;
+  width: 190px;
+  margin: 0 0 0.5rem 1rem;
+  text-align: center;
+}
+.narrative-mini-figure-float img {
+  max-width: 100%;
+  max-height: 140px;
+  background: white;
+  border: 1px solid var(--mc-light-gray);
+  border-radius: 8px;
+  padding: 0.4rem;
+  box-sizing: border-box;
+}
+@media (max-width: 480px) {
+  .narrative-mini-figure-float { float: none; width: auto; margin: 0.75rem 0 0; }
+}
 
 .topic-dashboards-stack { display: flex; flex-direction: column; gap: 0.6rem; }
 .card-compact { padding: 0.7rem 0.9rem; }

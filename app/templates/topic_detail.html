@@ -37,37 +37,40 @@
 <div class="topic-highlight">
   <div class="narrative-mini">
     <h2 class="narrative-mini-headline">{{ narrative.headline }}</h2>
-    {% for para in narrative_paragraphs %}
-    <p>{{ para }}</p>
-    {% endfor %}
     {% if narrative.chart_image %}
-    <figure class="narrative-mini-figure">
+    <figure class="narrative-mini-figure narrative-mini-figure-float">
       <img src="{{ url_for('narrative.chart', slug=topic.slug) }}" alt="{{ narrative.chart_caption or '' }}">
       {% if narrative.chart_caption %}<figcaption>{{ narrative.chart_caption }}</figcaption>{% endif %}
     </figure>
     {% endif %}
+    {% for para in narrative_paragraphs %}
+    <p>{{ para }}</p>
+    {% endfor %}
     {% if narrative.source_note %}<p class="narrative-mini-source">{{ narrative.source_note }}</p>{% endif %}
   </div>
 
-  <div class="topic-dashboards-stack">
-    <h2 class="section-title" style="font-size:0.95rem; margin:0 0 0.75rem;">Dashboards</h2>
-    {% if dashboards %}
-    {% for d in dashboards %}
-    <div class="card card-compact">
-      <a class="card-link" href="{{ url_for('dashboards.detail', geography=d.geography.lower(), theme_slug=d.theme_slug) }}">
-        <h3>{{ d.theme }}</h3>
-        <span class="badge {{ 'badge-global' if d.geography == 'Global' }}">{{ d.geography }}</span>
-      </a>
+  <div>
+    <h2 class="section-title" style="font-size:0.95rem; margin:0 0 0.2rem;">Dashboards</h2>
+    <p class="subtle" style="margin:0 0 0.75rem; font-size:0.8rem;">See the data</p>
+    <div class="topic-dashboards-stack">
+      {% if dashboards %}
+      {% for d in dashboards %}
+      <div class="card card-compact">
+        <a class="card-link" href="{{ url_for('dashboards.detail', geography=d.geography.lower(), theme_slug=d.theme_slug) }}">
+          <h3>{{ d.theme }}</h3>
+          <span class="badge {{ 'badge-global' if d.geography == 'Global' }}">{{ d.geography }}</span>
+        </a>
+      </div>
+      {% endfor %}
+      {% else %}
+      <p class="subtle">No dashboards tagged for this topic yet.</p>
+      {% endif %}
     </div>
-    {% endfor %}
-    {% else %}
-    <p class="subtle">No dashboards tagged for this topic yet.</p>
-    {% endif %}
+
+    <h2 class="section-title" style="font-size:0.95rem; margin:1.5rem 0 0.75rem;">Related Analysis &amp; Reports</h2>
+    {{ reports_list(reports) }}
   </div>
 </div>
-
-<h2 class="section-title" style="font-size:1.05rem;">Related Analysis &amp; Reports</h2>
-{{ reports_list(reports) }}
 
 {% else %}
 <div class="topic-columns">

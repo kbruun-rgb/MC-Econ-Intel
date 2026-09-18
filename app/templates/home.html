@@ -9,14 +9,14 @@
 {% if narrative %}
 <div class="narrative-mini narrative-mini-home">
   <h2 class="narrative-mini-headline">{{ narrative.headline }}</h2>
-  {% for para in narrative_paragraphs %}
-  <p>{{ para }}</p>
-  {% endfor %}
   {% if narrative.chart_image %}
-  <figure class="narrative-mini-figure">
+  <figure class="narrative-mini-figure narrative-mini-figure-float">
     <img src="{{ url_for('narrative.chart', slug='home') }}" alt="{{ narrative.chart_caption or '' }}">
   </figure>
   {% endif %}
+  {% for para in narrative_paragraphs %}
+  <p>{{ para }}</p>
+  {% endfor %}
   {% if narrative_link %}
   <p class="narrative-mini-link"><a href="{{ narrative_link[0] }}">See the {{ narrative_link[1] }} dashboard &rarr;</a></p>
   {% endif %}

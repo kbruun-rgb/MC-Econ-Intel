@@ -374,26 +374,28 @@ main {
   line-height: 1.5;
   overflow: hidden; /* contains the floated chart so the card's height fits its content */
 }
-.narrative-mini p { margin: 0 0 0.6rem; font-size: 0.88rem; }
-.narrative-mini-headline { font-size: 1.05rem; font-weight: 700; color: var(--mc-near-black); margin: 0 0 0.5rem; }
+.narrative-mini p { margin: 0 0 0.55rem; font-size: 0.8rem; line-height: 1.45; }
+.narrative-mini-headline { font-size: 0.95rem; font-weight: 600; color: var(--mc-near-black); margin: 0 0 0.5rem; }
 .narrative-mini-figure { margin: 0.75rem 0 0; text-align: center; }
 .narrative-mini-figure img { max-width: 100%; max-height: 160px; border-radius: 6px; }
-.narrative-mini-figure figcaption { font-size: 0.72rem; color: var(--mc-subtle-gray); margin-top: 0.3rem; }
-.narrative-mini-source { font-size: 0.74rem; color: var(--mc-subtle-gray); margin: 0.5rem 0 0; }
+.narrative-mini-figure figcaption { font-size: 0.7rem; color: var(--mc-subtle-gray); margin-top: 0.3rem; }
 
 /* Topic pages float the chart into the text instead of stacking it below --
    denser, and framed in white since the chart PNGs render on a white
    background (matplotlib default), which read as a mismatch against the
-   grey card otherwise. */
+   grey card otherwise. Sized larger than the surrounding (now smaller/finer)
+   text so the chart, not the copy, is the focal point. The figcaption
+   (methodology/date detail) lives right here, next to the chart -- there's
+   no separate source line elsewhere in the card. */
 .narrative-mini-figure-float {
   float: right;
-  width: 190px;
-  margin: 0 0 0.5rem 1rem;
+  width: 230px;
+  margin: 0 0 0.5rem 1.1rem;
   text-align: center;
 }
 .narrative-mini-figure-float img {
   max-width: 100%;
-  max-height: 140px;
+  max-height: 175px;
   background: white;
   border: 1px solid var(--mc-light-gray);
   border-radius: 8px;
@@ -413,7 +415,11 @@ main {
   margin: 1rem 0 1.5rem;
   padding: 0.85rem 1.1rem;
 }
+/* Smaller, lighter headline and body so the chart -- not the text -- reads
+   as the focal point of this teaser. */
+.narrative-mini-home .narrative-mini-headline { font-size: 0.88rem; font-weight: 600; }
 .narrative-mini-home p {
+  font-size: 0.78rem;
   /* Clamped, not just a shorter source string -- keeps the teaser compact
      even if a future draft's first paragraph runs long. */
   display: -webkit-box;
@@ -421,8 +427,11 @@ main {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.narrative-mini-home .narrative-mini-figure { margin-top: 0.5rem; }
-.narrative-mini-home .narrative-mini-figure img { max-height: 100px; }
+.narrative-mini-home .narrative-mini-figure-float {
+  width: 250px;
+  margin: 0.15rem 0 0.5rem 1.1rem;
+}
+.narrative-mini-home .narrative-mini-figure-float img { max-height: 200px; }
 .narrative-mini-link { margin: 0.5rem 0 0; font-size: 0.85rem; }
 .narrative-mini-link a { font-weight: 600; }
 

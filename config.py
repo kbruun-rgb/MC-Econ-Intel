@@ -266,6 +266,14 @@ TOPIC_HUBS = [
     },
 ]
 
+# Kill switch for the narrative-content pilot: set to False to pull the
+# chart+insight blocks off every live page (home and topic pages) without
+# touching any of the underlying feature -- the admin review queue, the
+# NarrativeSnippet rows already drafted/approved, and the two scheduled
+# generation tasks are all untouched, so flipping this back to True picks
+# up exactly where it left off. Paused 2026-09-18 pending a redesign pass.
+NARRATIVE_ENABLED = False
+
 # Pilot for the narrative-content feature: which topic pages (a TOPIC_HUBS
 # slug, or "home" for the home page) get an agent-drafted, human-approved
 # chart-plus-insight block, and how often a fresh draft is generated. Cadence

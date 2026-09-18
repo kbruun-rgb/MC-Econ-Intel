@@ -7,7 +7,7 @@ from app.bible_scan import build_connect_prompt, build_llms_txt
 from app.content_health import build_health_rows
 from app.narrative import get_live_snippet, related_dashboard_link, render_paragraphs
 from app.topics import build_wizard_data
-from config import ADMIN_EMAILS, TEAM, TOPIC_HUBS
+from config import ADMIN_EMAILS, NARRATIVE_ENABLED, TEAM, TOPIC_HUBS
 
 main_bp = Blueprint("main", __name__)
 
@@ -15,7 +15,7 @@ main_bp = Blueprint("main", __name__)
 @main_bp.route("/")
 @login_required
 def home():
-    narrative = get_live_snippet("home")
+    narrative = get_live_snippet("home") if NARRATIVE_ENABLED else None
     return render_template(
         "home.html",
         topic_hubs=TOPIC_HUBS,

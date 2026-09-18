@@ -3,6 +3,7 @@ from flask_login import login_required
 
 from app.narrative import get_live_snippet, render_paragraphs
 from app.topics import get_topic, topic_content
+from config import NARRATIVE_ENABLED
 
 topics_bp = Blueprint("topics", __name__, url_prefix="/topics")
 
@@ -14,7 +15,7 @@ def detail(slug):
     if topic is None:
         abort(404)
     dashboards, reports = topic_content(topic)
-    narrative = get_live_snippet(slug)
+    narrative = get_live_snippet(slug) if NARRATIVE_ENABLED else None
     return render_template(
         "topic_detail.html",
         topic=topic,

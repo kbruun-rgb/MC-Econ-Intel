@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, redirect, url_for, request
 from flask_login import LoginManager, current_user, login_user
 from flask_sqlalchemy import SQLAlchemy
@@ -48,6 +50,21 @@ def create_app():
     @app.context_processor
     def inject_is_admin():
         return {"is_admin": current_user.is_authenticated and current_user.email in config.ADMIN_EMAILS}
+
+    @app.context_processor
+    def inject_asset_version():
+        # A style.css edit changed layout multiple times in one afternoon
+        # this session, and a stale browser-cached copy of the file (same
+        # filename every deploy) made an already-fixed layout look broken.
+        # Query-string cache-busting off the file's own mtime means every
+        # CSS change is visible immediately without anyone needing a hard
+        # refresh, while unrelated deploys still get the cached copy.
+        css_path = os.path.join(app.static_folder, "css", "style.css")
+        try:
+            asset_version = int(os.path.getmtime(css_path))
+        except OSError:
+            asset_version = 0
+        return {"asset_version": asset_version}
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(main_bp)

@@ -420,18 +420,16 @@ main {
 .narrative-mini-home .narrative-mini-headline { font-size: 0.88rem; font-weight: 600; }
 .narrative-mini-home p {
   font-size: 0.78rem;
-  /* Clamped, not just a shorter source string -- keeps the teaser compact
-     even if a future draft's first paragraph runs long. */
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  /* No line-clamp -- letting the one paragraph run its natural length reads
+     better than an abrupt mid-sentence "..." cutoff. Only the first
+     paragraph is passed to this template at all (see app/main.py), so
+     length is already bounded upstream. */
 }
 .narrative-mini-home .narrative-mini-figure-float {
-  width: 250px;
+  width: 320px;
   margin: 0.15rem 0 0.5rem 1.1rem;
 }
-.narrative-mini-home .narrative-mini-figure-float img { max-height: 200px; }
+.narrative-mini-home .narrative-mini-figure-float img { max-height: 260px; }
 .narrative-mini-link { margin: 0.5rem 0 0; font-size: 0.85rem; }
 .narrative-mini-link a { font-weight: 600; }
 

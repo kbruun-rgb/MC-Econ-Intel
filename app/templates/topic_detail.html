@@ -1,6 +1,31 @@
 {% extends "base.html" %}
 {% import "_icons.html" as icons %}
 {% block title %}{{ topic.label }} — Morning Consult Economic Intelligence{% endblock %}
+
+{% macro reports_list(reports) %}
+{% if reports %}
+<ul class="topic-report-list">
+  {% for r in reports %}
+  <li>
+    <div class="topic-report-title">{{ r.title }}</div>
+    <div class="subtle">{{ r.date.strftime('%b %d, %Y') }} &middot; {{ r.type }} &middot; <span class="badge {{ 'badge-global' if r.geography == 'Global' }}">{{ r.geography }}</span></div>
+    <div class="topic-report-actions">
+      {% if r.kind == 'article' %}
+      <a class="btn" href="{{ url_for('reports.article', folder=r.folder) }}">Read</a>
+      {% elif r.kind == 'industry' %}
+      <a class="btn" href="{{ url_for('industry_reports.detail', slug=r.slug) }}">Read</a>
+      {% else %}
+      <a class="btn" href="{{ url_for('reports.deck_read', folder=r.folder) }}">Read</a>
+      {% endif %}
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="subtle">No reports tagged for this topic yet.</p>
+{% endif %}
+{% endmacro %}
+
 {% block content %}
 <p class="subtle"><a href="{{ url_for('main.home') }}">&larr; Home</a></p>
 <div class="topic-header">
@@ -9,21 +34,42 @@
 </div>
 
 {% if narrative %}
-<div class="article-box" style="margin:1.5rem 0;">
-  <h2 class="article-headline" style="font-size:1.25rem;">{{ narrative.headline }}</h2>
-  {% for para in narrative_paragraphs %}
-  <p>{{ para }}</p>
-  {% endfor %}
-  {% if narrative.chart_image %}
-  <figure class="article-figure">
-    <img class="article-img" src="{{ url_for('narrative.chart', slug=topic.slug) }}" alt="{{ narrative.chart_caption or '' }}">
-    {% if narrative.chart_caption %}<figcaption>{{ narrative.chart_caption }}</figcaption>{% endif %}
-  </figure>
-  {% endif %}
-  {% if narrative.source_note %}<p class="article-source">{{ narrative.source_note }}</p>{% endif %}
-</div>
-{% endif %}
+<div class="topic-highlight">
+  <div class="narrative-mini">
+    <h2 class="narrative-mini-headline">{{ narrative.headline }}</h2>
+    {% for para in narrative_paragraphs %}
+    <p>{{ para }}</p>
+    {% endfor %}
+    {% if narrative.chart_image %}
+    <figure class="narrative-mini-figure">
+      <img src="{{ url_for('narrative.chart', slug=topic.slug) }}" alt="{{ narrative.chart_caption or '' }}">
+      {% if narrative.chart_caption %}<figcaption>{{ narrative.chart_caption }}</figcaption>{% endif %}
+    </figure>
+    {% endif %}
+    {% if narrative.source_note %}<p class="narrative-mini-source">{{ narrative.source_note }}</p>{% endif %}
+  </div>
 
+  <div class="topic-dashboards-stack">
+    <h2 class="section-title" style="font-size:0.95rem; margin:0 0 0.75rem;">Dashboards</h2>
+    {% if dashboards %}
+    {% for d in dashboards %}
+    <div class="card card-compact">
+      <a class="card-link" href="{{ url_for('dashboards.detail', geography=d.geography.lower(), theme_slug=d.theme_slug) }}">
+        <h3>{{ d.theme }}</h3>
+        <span class="badge {{ 'badge-global' if d.geography == 'Global' }}">{{ d.geography }}</span>
+      </a>
+    </div>
+    {% endfor %}
+    {% else %}
+    <p class="subtle">No dashboards tagged for this topic yet.</p>
+    {% endif %}
+  </div>
+</div>
+
+<h2 class="section-title" style="font-size:1.05rem;">Related Analysis &amp; Reports</h2>
+{{ reports_list(reports) }}
+
+{% else %}
 <div class="topic-columns">
   <div class="topic-dashboards">
     <h2 class="section-title" style="font-size:1.05rem;">Dashboards</h2>
@@ -48,27 +94,8 @@
 
   <div class="topic-reports">
     <h2 class="section-title" style="font-size:1.05rem;">Related Analysis &amp; Reports</h2>
-    {% if reports %}
-    <ul class="topic-report-list">
-      {% for r in reports %}
-      <li>
-        <div class="topic-report-title">{{ r.title }}</div>
-        <div class="subtle">{{ r.date.strftime('%b %d, %Y') }} &middot; {{ r.type }} &middot; <span class="badge {{ 'badge-global' if r.geography == 'Global' }}">{{ r.geography }}</span></div>
-        <div class="topic-report-actions">
-          {% if r.kind == 'article' %}
-          <a class="btn" href="{{ url_for('reports.article', folder=r.folder) }}">Read</a>
-          {% elif r.kind == 'industry' %}
-          <a class="btn" href="{{ url_for('industry_reports.detail', slug=r.slug) }}">Read</a>
-          {% else %}
-          <a class="btn" href="{{ url_for('reports.deck_read', folder=r.folder) }}">Read</a>
-          {% endif %}
-        </div>
-      </li>
-      {% endfor %}
-    </ul>
-    {% else %}
-    <p class="subtle">No reports tagged for this topic yet.</p>
-    {% endif %}
+    {{ reports_list(reports) }}
   </div>
 </div>
+{% endif %}
 {% endblock %}

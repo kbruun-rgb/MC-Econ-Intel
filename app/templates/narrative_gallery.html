@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Insights — Morning Consult Economic Intelligence{% endblock %}
+{% block content %}
+<h1 class="section-title">Insights</h1>
+<p class="subtle">This week's automatically-drafted findings, one per topic, each reviewed and approved before it lands here.</p>
+
+{% if cards %}
+<div class="insight-grid">
+  {% for c in cards %}
+  <article class="insight-card">
+    <span class="badge">{{ c.topic_label }}</span>
+    <h2 class="insight-headline">{{ c.snippet.headline }}</h2>
+    {% if c.snippet.chart_image %}
+    <figure class="insight-figure">
+      <img src="{{ url_for('narrative.chart', slug=c.snippet.topic_slug) }}" alt="{{ c.snippet.chart_caption or '' }}">
+      {% if c.snippet.chart_caption %}<figcaption>{{ c.snippet.chart_caption }}</figcaption>{% endif %}
+    </figure>
+    {% endif %}
+    {% for para in c.paragraphs %}
+    <p>{{ para }}</p>
+    {% endfor %}
+    {% if c.link %}
+    <p class="narrative-mini-link"><a href="{{ c.link[0] }}">See the {{ c.link[1] }} dashboard &rarr;</a></p>
+    {% endif %}
+    <p class="updated-at">Updated {{ c.snippet.published_at.strftime('%b %d, %Y') }}</p>
+  </article>
+  {% endfor %}
+</div>
+{% else %}
+<p class="subtle">Nothing published yet.</p>
+{% endif %}
+{% endblock %}

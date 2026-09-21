@@ -4,11 +4,15 @@ from flask_login import current_user, login_required
 from app.narrative import (
     approve_snippet,
     create_manual_snippet,
+    get_all_live_snippets,
     get_live_snippet,
     get_pending_drafts,
     get_snippet,
     list_dashboards_for_picker,
     reject_snippet,
+    related_dashboard_link,
+    render_paragraphs,
+    topic_label,
     update_draft,
 )
 from config import ADMIN_EMAILS, NARRATIVE_TOPICS
@@ -32,6 +36,26 @@ def _parse_related_dashboard():
         return None, None
     geography, theme_slug = raw.split("|", 1)
     return geography, theme_slug
+
+
+@narrative_bp.route("/insights")
+@login_required
+def gallery():
+    # Deliberately not gated by config.NARRATIVE_ENABLED -- that flag is
+    # specifically about embedding narrative blocks into home/topic pages,
+    # which is paused pending a redesign. This page exists so approved
+    # content still has *somewhere* to be seen in the meantime, and stays
+    # independent of wherever landing pages end up putting it later.
+    cards = [
+        {
+            "snippet": s,
+            "topic_label": topic_label(s.topic_slug),
+            "paragraphs": render_paragraphs(s.body),
+            "link": related_dashboard_link(s),
+        }
+        for s in get_all_live_snippets()
+    ]
+    return render_template("narrative_gallery.html", cards=cards)
 
 
 @narrative_bp.route("/admin/narrative")

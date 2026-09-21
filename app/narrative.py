@@ -13,7 +13,18 @@ from markupsafe import Markup, escape
 from app import db
 from app.library_scan import find_theme, scan_econ_library
 from app.models import NarrativeSnippet
-from config import NARRATIVE_GLOSSARY
+from config import NARRATIVE_GLOSSARY, TOPIC_HUBS
+
+
+def topic_label(topic_slug):
+    """Human-readable label for a topic_slug, for the /insights gallery's
+    per-card badge. "home" isn't a real TOPIC_HUBS entry (see config.py),
+    so it needs its own case.
+    """
+    if topic_slug == "home":
+        return "Home"
+    topic = next((t for t in TOPIC_HUBS if t["slug"] == topic_slug), None)
+    return topic["label"] if topic else topic_slug
 
 
 def list_dashboards_for_picker():
@@ -81,6 +92,15 @@ def get_live_snippet(topic_slug):
         .order_by(NarrativeSnippet.published_at.desc())
         .first()
     )
+
+
+def get_all_live_snippets():
+    """Every currently-approved snippet across every topic, most recent
+    first -- feeds the standalone /insights gallery (see narrative_routes.py)
+    where all of them are shown together, independent of whether any
+    individual landing page also surfaces them (see config.NARRATIVE_ENABLED).
+    """
+    return NarrativeSnippet.query.filter_by(status="approved").order_by(NarrativeSnippet.published_at.desc()).all()
 
 
 def get_pending_drafts():

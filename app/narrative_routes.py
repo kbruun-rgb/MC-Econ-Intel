@@ -5,6 +5,7 @@ from app.narrative import (
     approve_snippet,
     create_manual_snippet,
     get_all_live_snippets,
+    get_archived_snippets,
     get_live_snippet,
     get_pending_drafts,
     get_snippet,
@@ -12,6 +13,7 @@ from app.narrative import (
     reject_snippet,
     related_dashboard_link,
     render_paragraphs,
+    restore_snippet,
     topic_label,
     update_draft,
 )
@@ -41,11 +43,13 @@ def _parse_related_dashboard():
 @narrative_bp.route("/insights")
 @login_required
 def gallery():
-    # Deliberately not gated by config.NARRATIVE_ENABLED -- that flag is
-    # specifically about embedding narrative blocks into home/topic pages,
-    # which is paused pending a redesign. This page exists so approved
-    # content still has *somewhere* to be seen in the meantime, and stays
-    # independent of wherever landing pages end up putting it later.
+    # Admin-only for now (same 404-not-403 pattern as /health, /activity) --
+    # this is still demo/preview content while the concept gets worked out,
+    # not something to show every client yet. Separately, deliberately not
+    # gated by config.NARRATIVE_ENABLED -- that flag is specifically about
+    # embedding narrative blocks into home/topic pages, which is paused
+    # pending a redesign; this page is independent of that.
+    _require_admin()
     cards = [
         {
             "snippet": s,
@@ -68,6 +72,7 @@ def queue():
         drafts=get_pending_drafts(),
         live=live,
         topics=NARRATIVE_TOPICS,
+        topic_label=topic_label,
     )
 
 
@@ -89,8 +94,19 @@ def new():
         )
         flash("Published.")
         return redirect(url_for("narrative.queue"))
+    # ?from=<archived snippet id> pre-fills the form from an old entry --
+    # the "resurface with an updated chart/text" path from /admin/narrative/archive.
+    # The chart itself is deliberately NOT carried over -- the whole point is
+    # to attach a fresher one, so leaving the old image in place would be too
+    # easy to publish by accident without actually updating it.
+    prefill = get_snippet(request.args.get("from", type=int)) if request.args.get("from") else None
     return render_template(
-        "narrative_edit.html", topics=NARRATIVE_TOPICS, snippet=None, dashboard_options=list_dashboards_for_picker()
+        "narrative_edit.html",
+        topics=NARRATIVE_TOPICS,
+        snippet=None,
+        prefill=prefill,
+        dashboard_options=list_dashboards_for_picker(),
+        topic_label=topic_label,
     )
 
 
@@ -111,7 +127,12 @@ def edit(snippet_id):
         flash("Draft updated.")
         return redirect(url_for("narrative.queue"))
     return render_template(
-        "narrative_edit.html", topics=NARRATIVE_TOPICS, snippet=snippet, dashboard_options=list_dashboards_for_picker()
+        "narrative_edit.html",
+        topics=NARRATIVE_TOPICS,
+        snippet=snippet,
+        prefill=None,
+        dashboard_options=list_dashboards_for_picker(),
+        topic_label=topic_label,
     )
 
 
@@ -133,6 +154,29 @@ def reject(snippet_id):
     reject_snippet(snippet)
     flash("Rejected.")
     return redirect(url_for("narrative.queue"))
+
+
+@narrative_bp.route("/admin/narrative/archive")
+@login_required
+def archive():
+    _require_admin()
+    return render_template(
+        "narrative_archive.html",
+        snippets=[
+            {"snippet": s, "topic_label": topic_label(s.topic_slug)}
+            for s in get_archived_snippets()
+        ],
+    )
+
+
+@narrative_bp.route("/admin/narrative/<int:snippet_id>/restore", methods=["POST"])
+@login_required
+def restore(snippet_id):
+    _require_admin()
+    snippet = get_snippet(snippet_id) or abort(404)
+    restore_snippet(snippet, current_user.email)
+    flash("Restored -- live again, exactly as it was.")
+    return redirect(url_for("narrative.archive"))
 
 
 @narrative_bp.route("/admin/narrative/<int:snippet_id>/chart.png")

@@ -107,6 +107,33 @@ def get_pending_drafts():
     return NarrativeSnippet.query.filter_by(status="draft").order_by(NarrativeSnippet.created_at.desc()).all()
 
 
+def get_archived_snippets():
+    """Every snippet that was once live and got replaced -- nothing is ever
+    deleted when a new one is approved (see approve_snippet/
+    create_manual_snippet), just flipped to status="archived", so this is a
+    full history to browse or restore from.
+    """
+    return NarrativeSnippet.query.filter_by(status="archived").order_by(NarrativeSnippet.published_at.desc()).all()
+
+
+def restore_snippet(snippet, admin_email):
+    """Re-publishes a previously-archived snippet exactly as it was
+    (same chart, same text) -- the one-click "resurface as-is" path. To
+    resurface it with fresher data instead, use the edit form (pre-filled
+    from this snippet via /admin/narrative/new?from=<id>) to swap in an
+    updated chart/text before publishing, or ask for the topic's finding to
+    be regenerated -- rebuilding a chart from current data isn't something
+    a database update alone can do.
+    """
+    previous = get_live_snippet(snippet.topic_slug)
+    if previous and previous.id != snippet.id:
+        previous.status = "archived"
+
+    snippet.status = "approved"
+    snippet.published_at = datetime.now(timezone.utc)
+    db.session.commit()
+
+
 def get_snippet(snippet_id):
     return db.session.get(NarrativeSnippet, snippet_id)
 

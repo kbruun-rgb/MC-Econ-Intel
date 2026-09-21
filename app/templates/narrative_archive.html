@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Narrative Archive — Morning Consult Economic Intelligence{% endblock %}
+{% block content %}
+<p class="subtle"><a href="{{ url_for('narrative.queue') }}">&larr; Narrative Review</a></p>
+<h1 class="section-title">Archive</h1>
+<p class="subtle">Every snippet that was once live and got replaced. Nothing here is ever deleted -- restore one exactly as it was, or start a new entry pre-filled from it if it needs an updated chart first.</p>
+
+{% if snippets %}
+<div class="card-grid">
+  {% for entry in snippets %}
+  {% set s = entry.snippet %}
+  <div class="card">
+    <span class="badge">{{ entry.topic_label }}</span>
+    <h3 style="margin:0.5rem 0 0.25rem;">{{ s.headline }}</h3>
+    <p class="subtle" style="margin:0 0 0.75rem;">{{ s.body[:220] }}{% if s.body|length > 220 %}&hellip;{% endif %}</p>
+    {% if s.chart_image %}
+    <img class="article-img" style="max-height:120px; width:auto;" src="{{ url_for('narrative.admin_chart', snippet_id=s.id) }}" alt="">
+    {% endif %}
+    <p class="subtle" style="margin-top:0.75rem;">Was live until {{ s.published_at.strftime('%b %d, %Y') if s.published_at else 'unknown' }} &middot; by {{ s.author }}</p>
+    <div style="display:flex; gap:0.5rem; margin-top:0.75rem; flex-wrap:wrap;">
+      <form method="post" action="{{ url_for('narrative.restore', snippet_id=s.id) }}">
+        <button class="btn" type="submit">Restore as-is</button>
+      </form>
+      <a class="btn btn-secondary" href="{{ url_for('narrative.new', from=s.id) }}">Restore with updated chart&hellip;</a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p class="subtle">Nothing archived yet.</p>
+{% endif %}
+{% endblock %}

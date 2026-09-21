@@ -274,15 +274,22 @@ TOPIC_HUBS = [
 # up exactly where it left off. Paused 2026-09-18 pending a redesign pass.
 NARRATIVE_ENABLED = False
 
-# Pilot for the narrative-content feature: which topic pages (a TOPIC_HUBS
-# slug, or "home" for the home page) get an agent-drafted, human-approved
-# chart-plus-insight block, and how often a fresh draft is generated. Cadence
-# should match how often the topic's underlying dataset actually moves --
-# add more topics here once the pilot proves out, no code changes needed.
+# Which topic pages (a TOPIC_HUBS slug, or "home" for the home page) get an
+# agent-drafted, human-approved chart-plus-insight block, and how often a
+# fresh draft is generated. Cadence should match how often the topic's
+# underlying dataset actually moves. Expanded 2026-09-21 to cover every
+# subject matter, not just the original 3-topic pilot -- output currently
+# lands at /insights (admin-only) rather than on the topic pages themselves,
+# see NARRATIVE_ENABLED above.
 NARRATIVE_TOPICS = {
+    "home": "weekly",
     "macro-outlook": "weekly",
     "labor-market": "weekly",
-    "home": "weekly",
+    "consumer-financial-health": "weekly",
+    "consumer-spending": "weekly",
+    "housing": "weekly",
+    "global": "weekly",
+    "category-level-spending": "weekly",
 }
 
 # Auto-links the first mention of a known term in narrative body text to its

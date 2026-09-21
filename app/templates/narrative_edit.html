@@ -6,16 +6,19 @@
 {% if not snippet %}
 <p class="subtle">Publishes immediately &mdash; writing it here is the review.</p>
 {% endif %}
+{% if prefill %}
+<p class="subtle">Pre-filled from an archived entry. The old chart wasn't carried over on purpose &mdash; attach an updated one below before publishing.</p>
+{% endif %}
 
 <form class="guide-box" method="post" enctype="multipart/form-data" style="max-width:640px;">
   <div class="form-field">
     <label for="topic_slug">Topic</label>
     {% if snippet %}
-    <input type="text" value="{{ snippet.topic_slug }}" disabled>
+    <input type="text" value="{{ topic_label(snippet.topic_slug) }}" disabled>
     {% else %}
     <select id="topic_slug" name="topic_slug" required>
       {% for slug in topics %}
-      <option value="{{ slug }}">{{ slug }}</option>
+      <option value="{{ slug }}" {{ 'selected' if prefill and prefill.topic_slug == slug }}>{{ topic_label(slug) }}</option>
       {% endfor %}
     </select>
     {% endif %}
@@ -23,20 +26,21 @@
 
   <div class="form-field">
     <label for="headline">Headline</label>
-    <input type="text" id="headline" name="headline" required value="{{ snippet.headline if snippet else '' }}">
+    <input type="text" id="headline" name="headline" required value="{{ (snippet.headline if snippet else prefill.headline if prefill else '') }}">
   </div>
 
   <div class="form-field">
     <label for="body">Body (two short paragraphs)</label>
-    <textarea id="body" name="body" rows="8" required>{{ snippet.body if snippet else '' }}</textarea>
+    <textarea id="body" name="body" rows="8" required>{{ snippet.body if snippet else prefill.body if prefill else '' }}</textarea>
   </div>
 
   <div class="form-field">
     <label for="related_dashboard">Related dashboard link (optional)</label>
     <select id="related_dashboard" name="related_dashboard">
       <option value="">None</option>
+      {% set ref = snippet or prefill %}
       {% for geography, theme_slug, label in dashboard_options %}
-      <option value="{{ geography }}|{{ theme_slug }}" {{ 'selected' if snippet and snippet.related_geography == geography and snippet.related_theme_slug == theme_slug }}>{{ label }}</option>
+      <option value="{{ geography }}|{{ theme_slug }}" {{ 'selected' if ref and ref.related_geography == geography and ref.related_theme_slug == theme_slug }}>{{ label }}</option>
       {% endfor %}
     </select>
   </div>
@@ -44,12 +48,12 @@
   {% if not snippet %}
   <div class="form-field">
     <label for="source_note">Source note (optional)</label>
-    <input type="text" id="source_note" name="source_note" placeholder="Source: Morning Consult">
+    <input type="text" id="source_note" name="source_note" placeholder="Source: Morning Consult" value="{{ prefill.source_note if prefill and prefill.source_note else '' }}">
   </div>
 
   <div class="form-field">
-    <label for="chart">Chart image (optional)</label>
-    <input type="file" id="chart" name="chart" accept="image/png,image/jpeg">
+    <label for="chart">Chart image {{ '(required -- see note above)' if prefill else '(optional)' }}</label>
+    <input type="file" id="chart" name="chart" accept="image/png,image/jpeg" {{ 'required' if prefill }}>
   </div>
   {% endif %}
 

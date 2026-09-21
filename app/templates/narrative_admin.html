@@ -5,13 +5,15 @@
 <p class="subtle">Agent-drafted chart-plus-insight blocks for topic pages and the home page, waiting on approval. Nothing here is visible to clients until you approve it.</p>
 
 <a class="btn" href="{{ url_for('narrative.new') }}">Write new narrative</a>
+<a class="btn btn-secondary" href="{{ url_for('narrative.archive') }}">View archive</a>
+<a class="btn btn-secondary" href="{{ url_for('narrative.gallery') }}">View /insights</a>
 
 <h2 class="section-title" style="font-size:1.05rem; margin-top:2rem;">Pending drafts</h2>
 {% if drafts %}
 <div class="card-grid">
   {% for d in drafts %}
   <div class="card">
-    <span class="badge">{{ d.topic_slug }}</span>
+    <span class="badge">{{ topic_label(d.topic_slug) }}</span>
     <h3 style="margin:0.5rem 0 0.25rem;">{{ d.headline }}</h3>
     <p class="subtle" style="margin:0 0 0.75rem;">{{ d.body[:220] }}{% if d.body|length > 220 %}&hellip;{% endif %}</p>
     {% if d.chart_image %}
@@ -40,7 +42,7 @@
   <tbody>
     {% for slug, cadence in topics.items() %}
     <tr>
-      <td>{{ slug }}</td>
+      <td>{{ topic_label(slug) }}</td>
       <td>
         {% if live[slug] %}{{ live[slug].headline }}{% else %}<span class="subtle">Nothing live yet</span>{% endif %}
       </td>

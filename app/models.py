@@ -89,6 +89,13 @@ class NarrativeSnippet(db.Model):
     review_note = db.Column(db.Text, nullable=True)
     reviewed_at = db.Column(db.DateTime, nullable=True)
 
+    # Set when an admin clicks "Try again" on a rejected draft. The website
+    # itself can't launch a Claude Code session, so this just flags the row
+    # -- a frequent scheduled task (narrative-retry-check) polls for this and
+    # actually regenerates it, informed by review_note. Cleared once that
+    # run inserts the new draft.
+    retry_requested_at = db.Column(db.DateTime, nullable=True)
+
     # Optional explicit "see the underlying data" link, independent of the
     # in-text NARRATIVE_GLOSSARY auto-linking -- for placements (like the
     # home page) that don't already show dashboard tiles alongside the

@@ -183,6 +183,29 @@ def reject_snippet(snippet, note=None):
     db.session.commit()
 
 
+def request_retry(snippet):
+    """Flags a rejected draft for automatic regeneration -- the website
+    can't launch a Claude Code session itself, so this just marks the row;
+    the narrative-retry-check scheduled task polls for these and does the
+    actual regeneration, informed by this snippet's review_note.
+    """
+    snippet.retry_requested_at = datetime.now(timezone.utc)
+    db.session.commit()
+
+
+def get_pending_retries():
+    return (
+        NarrativeSnippet.query.filter(NarrativeSnippet.retry_requested_at.isnot(None))
+        .order_by(NarrativeSnippet.retry_requested_at.asc())
+        .all()
+    )
+
+
+def clear_retry(snippet):
+    snippet.retry_requested_at = None
+    db.session.commit()
+
+
 def get_recent_feedback(topic_slug, limit=5):
     """The last few review notes left for a topic (rejected drafts, or
     approvals with a note attached), most recent first. This is how a

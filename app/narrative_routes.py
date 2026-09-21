@@ -15,6 +15,7 @@ from app.narrative import (
     reject_snippet,
     related_dashboard_link,
     render_paragraphs,
+    request_retry,
     restore_snippet,
     topic_label,
     update_draft,
@@ -174,6 +175,19 @@ def archive():
             for s in get_rejected_snippets()
         ],
     )
+
+
+@narrative_bp.route("/admin/narrative/<int:snippet_id>/retry", methods=["POST"])
+@login_required
+def retry(snippet_id):
+    _require_admin()
+    snippet = get_snippet(snippet_id) or abort(404)
+    request_retry(snippet)
+    flash(
+        "Regeneration requested -- the narrative-retry-check task picks this up within about "
+        "30 minutes and drops a fresh draft in the queue, informed by your rejection note."
+    )
+    return redirect(url_for("narrative.archive"))
 
 
 @narrative_bp.route("/admin/narrative/<int:snippet_id>/restore", methods=["POST"])

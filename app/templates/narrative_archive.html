@@ -51,7 +51,14 @@
     <p class="subtle" style="margin-top:0.4rem;">No reason given.</p>
     {% endif %}
     <div style="display:flex; gap:0.5rem; margin-top:0.75rem; flex-wrap:wrap;">
-      <a class="btn btn-secondary" href="{{ url_for('narrative.new', from=s.id) }}">Try again with updated chart&hellip;</a>
+      {% if s.retry_requested_at %}
+      <span class="badge live">Regenerating&hellip;</span>
+      {% else %}
+      <form method="post" action="{{ url_for('narrative.retry', snippet_id=s.id) }}">
+        <button class="btn" type="submit">Try again (auto-regenerate)</button>
+      </form>
+      {% endif %}
+      <a class="btn btn-secondary" href="{{ url_for('narrative.new', from=s.id) }}">Write it myself instead&hellip;</a>
     </div>
   </div>
   {% endfor %}

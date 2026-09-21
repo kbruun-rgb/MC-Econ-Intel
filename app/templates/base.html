@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Morning Consult Economic Intelligence{% endblock %}</title>
+  {% import "_icons.html" as icons %}
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v={{ asset_version }}">
 </head>
 <body>
@@ -18,11 +19,14 @@
       <a href="{{ url_for('reports.index') }}">Analysis &amp; Reports</a>
       <a href="{{ url_for('industry_reports.index') }}">Industry Reports</a>
       {% if is_admin %}
-      <a href="{{ url_for('main.health') }}">Content health</a>
-      <a href="{{ url_for('main.activity') }}">Activity</a>
-      <a href="{{ url_for('narrative.queue') }}">Narrative review</a>
-      <a href="{{ url_for('narrative.archive') }}">Narrative archive</a>
-      <a href="{{ url_for('narrative.gallery') }}">Insights</a>
+      <span class="nav-admin-group">
+        <span class="nav-admin-label">{{ icons.topic_icon('lock', 13) }} Admin</span>
+        <a href="{{ url_for('main.health') }}">Content health</a>
+        <a href="{{ url_for('main.activity') }}">Activity</a>
+        <a href="{{ url_for('narrative.queue') }}">Narrative review</a>
+        <a href="{{ url_for('narrative.archive') }}">Narrative archive</a>
+        <a href="{{ url_for('narrative.gallery') }}">Insights</a>
+      </span>
       {% endif %}
       <a href="{{ url_for('auth.logout') }}">Log out</a>
     </nav>

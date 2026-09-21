@@ -146,6 +146,25 @@ header.site-header nav a {
 }
 header.site-header nav a:hover { opacity: 1; color: var(--mc-teal); text-decoration: underline; }
 
+.nav-admin-group {
+  margin-left: 1.25rem;
+  padding-left: 1.1rem;
+  border-left: 1px solid var(--mc-light-gray);
+}
+.nav-admin-group a { margin-left: 1rem; }
+.nav-admin-group a:first-of-type { margin-left: 0; }
+.nav-admin-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mc-subtle-gray);
+}
+.nav-admin-label .topic-icon { color: var(--mc-subtle-gray); }
+
 main {
   max-width: 1080px;
   margin: 0 auto;

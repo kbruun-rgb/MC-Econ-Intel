@@ -41,6 +41,10 @@
   <circle cx="9" cy="12" r="1.6" fill="currentColor"/>
   <circle cx="9" cy="24" r="1.6" fill="currentColor"/>
   <circle cx="9" cy="36" r="1.6" fill="currentColor"/>
+  {% elif name == 'lock' %}
+  <rect x="12" y="22" width="24" height="18" rx="3"/>
+  <path d="M16 22v-6a8 8 0 0 1 16 0v6"/>
+  <circle cx="24" cy="31" r="2" fill="currentColor" stroke="none"/>
   {% endif %}
 </svg>
 {% endmacro %}

@@ -8,6 +8,8 @@ from app.narrative import (
     get_archived_snippets,
     get_live_snippet,
     get_pending_drafts,
+    get_recent_feedback,
+    get_rejected_snippets,
     get_snippet,
     list_dashboards_for_picker,
     reject_snippet,
@@ -73,6 +75,7 @@ def queue():
         live=live,
         topics=NARRATIVE_TOPICS,
         topic_label=topic_label,
+        get_recent_feedback=get_recent_feedback,
     )
 
 
@@ -141,7 +144,7 @@ def edit(snippet_id):
 def approve(snippet_id):
     _require_admin()
     snippet = get_snippet(snippet_id) or abort(404)
-    approve_snippet(snippet, current_user.email)
+    approve_snippet(snippet, current_user.email, note=request.form.get("note", "").strip() or None)
     flash("Published.")
     return redirect(url_for("narrative.queue"))
 
@@ -151,7 +154,7 @@ def approve(snippet_id):
 def reject(snippet_id):
     _require_admin()
     snippet = get_snippet(snippet_id) or abort(404)
-    reject_snippet(snippet)
+    reject_snippet(snippet, note=request.form.get("note", "").strip() or None)
     flash("Rejected.")
     return redirect(url_for("narrative.queue"))
 
@@ -165,6 +168,10 @@ def archive():
         snippets=[
             {"snippet": s, "topic_label": topic_label(s.topic_slug)}
             for s in get_archived_snippets()
+        ],
+        rejected=[
+            {"snippet": s, "topic_label": topic_label(s.topic_slug)}
+            for s in get_rejected_snippets()
         ],
     )
 

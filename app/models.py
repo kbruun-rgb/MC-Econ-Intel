@@ -81,6 +81,14 @@ class NarrativeSnippet(db.Model):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     published_at = db.Column(db.DateTime, nullable=True)
 
+    # Freeform "why" left at approve/reject time -- e.g. "wrong framing,
+    # this measures actual unemployment not concern" or "chart too busy."
+    # The narrative-draft skill reads recent notes for a topic before
+    # drafting again, so this is the mechanism for a human correction to
+    # actually change future agent-generated output, not just this one row.
+    review_note = db.Column(db.Text, nullable=True)
+    reviewed_at = db.Column(db.DateTime, nullable=True)
+
     # Optional explicit "see the underlying data" link, independent of the
     # in-text NARRATIVE_GLOSSARY auto-linking -- for placements (like the
     # home page) that don't already show dashboard tiles alongside the

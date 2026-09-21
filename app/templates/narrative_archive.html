@@ -3,8 +3,9 @@
 {% block content %}
 <p class="subtle"><a href="{{ url_for('narrative.queue') }}">&larr; Narrative Review</a></p>
 <h1 class="section-title">Archive</h1>
-<p class="subtle">Every snippet that was once live and got replaced. Nothing here is ever deleted -- restore one exactly as it was, or start a new entry pre-filled from it if it needs an updated chart first.</p>
+<p class="subtle">Every snippet that was once live and got replaced, plus every rejected draft. Nothing here is ever deleted -- restore one exactly as it was, or start a new entry pre-filled from it if it needs an updated chart first.</p>
 
+<h2 class="section-title" style="font-size:1.05rem; margin-top:2rem;">Was live, since replaced</h2>
 {% if snippets %}
 <div class="card-grid">
   {% for entry in snippets %}
@@ -17,6 +18,7 @@
     <img class="article-img" style="max-height:120px; width:auto;" src="{{ url_for('narrative.admin_chart', snippet_id=s.id) }}" alt="">
     {% endif %}
     <p class="subtle" style="margin-top:0.75rem;">Was live until {{ s.published_at.strftime('%b %d, %Y') if s.published_at else 'unknown' }} &middot; by {{ s.author }}</p>
+    {% if s.review_note %}<p class="subtle" style="font-style:italic;">&ldquo;{{ s.review_note }}&rdquo;</p>{% endif %}
     <div style="display:flex; gap:0.5rem; margin-top:0.75rem; flex-wrap:wrap;">
       <form method="post" action="{{ url_for('narrative.restore', snippet_id=s.id) }}">
         <button class="btn" type="submit">Restore as-is</button>
@@ -28,5 +30,33 @@
 </div>
 {% else %}
 <p class="subtle">Nothing archived yet.</p>
+{% endif %}
+
+<h2 class="section-title" style="font-size:1.05rem; margin-top:2.5rem;">Rejected drafts</h2>
+{% if rejected %}
+<div class="card-grid">
+  {% for entry in rejected %}
+  {% set s = entry.snippet %}
+  <div class="card">
+    <span class="badge">{{ entry.topic_label }}</span>
+    <h3 style="margin:0.5rem 0 0.25rem;">{{ s.headline }}</h3>
+    <p class="subtle" style="margin:0 0 0.75rem;">{{ s.body[:220] }}{% if s.body|length > 220 %}&hellip;{% endif %}</p>
+    {% if s.chart_image %}
+    <img class="article-img" style="max-height:120px; width:auto;" src="{{ url_for('narrative.admin_chart', snippet_id=s.id) }}" alt="">
+    {% endif %}
+    <p class="subtle" style="margin-top:0.75rem;">Rejected {{ s.reviewed_at.strftime('%b %d, %Y') if s.reviewed_at else '' }} &middot; drafted by {{ s.author }}</p>
+    {% if s.review_note %}
+    <p style="margin-top:0.4rem; font-style:italic;">&ldquo;{{ s.review_note }}&rdquo;</p>
+    {% else %}
+    <p class="subtle" style="margin-top:0.4rem;">No reason given.</p>
+    {% endif %}
+    <div style="display:flex; gap:0.5rem; margin-top:0.75rem; flex-wrap:wrap;">
+      <a class="btn btn-secondary" href="{{ url_for('narrative.new', from=s.id) }}">Try again with updated chart&hellip;</a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p class="subtle">Nothing rejected yet.</p>
 {% endif %}
 {% endblock %}

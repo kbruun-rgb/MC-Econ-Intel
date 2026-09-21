@@ -107,6 +107,16 @@ def get_pending_drafts():
     return NarrativeSnippet.query.filter_by(status="draft").order_by(NarrativeSnippet.created_at.desc()).all()
 
 
+def get_rejected_snippets():
+    """Every snippet a draft was rejected, most recently reviewed first --
+    same purpose as get_archived_snippets but for content that never went
+    live. Kept (not deleted) specifically so the review_note explaining
+    *why* survives for both a human to see and the next generation run to
+    read.
+    """
+    return NarrativeSnippet.query.filter_by(status="rejected").order_by(NarrativeSnippet.reviewed_at.desc()).all()
+
+
 def get_archived_snippets():
     """Every snippet that was once live and got replaced -- nothing is ever
     deleted when a new one is approved (see approve_snippet/
@@ -146,9 +156,11 @@ def update_draft(snippet, headline, body, related_geography=None, related_theme_
     db.session.commit()
 
 
-def approve_snippet(snippet, admin_email):
+def approve_snippet(snippet, admin_email, note=None):
     """Publishes a draft, archiving whatever was previously live for the same
-    topic so exactly one approved row is ever considered current.
+    topic so exactly one approved row is ever considered current. `note` is
+    optional feedback even on approval (e.g. "good, but trim the second
+    paragraph next time") -- see get_recent_feedback.
     """
     previous = get_live_snippet(snippet.topic_slug)
     if previous and previous.id != snippet.id:
@@ -156,15 +168,38 @@ def approve_snippet(snippet, admin_email):
 
     snippet.status = "approved"
     snippet.published_at = datetime.now(timezone.utc)
+    snippet.reviewed_at = datetime.now(timezone.utc)
+    snippet.review_note = note or None
     if snippet.author == "agent":
         # Record who signed off, without erasing that the agent drafted it.
         snippet.author = f"agent (approved by {admin_email})"
     db.session.commit()
 
 
-def reject_snippet(snippet):
+def reject_snippet(snippet, note=None):
     snippet.status = "rejected"
+    snippet.reviewed_at = datetime.now(timezone.utc)
+    snippet.review_note = note or None
     db.session.commit()
+
+
+def get_recent_feedback(topic_slug, limit=5):
+    """The last few review notes left for a topic (rejected drafts, or
+    approvals with a note attached), most recent first. This is how a
+    correction left at review time actually reaches the next generation
+    run -- the narrative-draft skill reads this before drafting again
+    rather than repeating whatever it did last time.
+    """
+    return (
+        NarrativeSnippet.query.filter(
+            NarrativeSnippet.topic_slug == topic_slug,
+            NarrativeSnippet.review_note.isnot(None),
+            NarrativeSnippet.review_note != "",
+        )
+        .order_by(NarrativeSnippet.reviewed_at.desc())
+        .limit(limit)
+        .all()
+    )
 
 
 def create_manual_snippet(

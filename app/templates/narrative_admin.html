@@ -20,15 +20,25 @@
     <img class="article-img" style="max-height:140px; width:auto;" src="{{ url_for('narrative.admin_chart', snippet_id=d.id) }}" alt="">
     {% endif %}
     <p class="subtle" style="margin-top:0.75rem;">Drafted by {{ d.author }} &middot; {{ d.created_at.strftime('%b %d, %Y') }}</p>
-    <div style="display:flex; gap:0.5rem; margin-top:0.75rem;">
-      <a class="btn btn-secondary" href="{{ url_for('narrative.edit', snippet_id=d.id) }}">Edit</a>
-      <form method="post" action="{{ url_for('narrative.approve', snippet_id=d.id) }}">
-        <button class="btn" type="submit">Approve</button>
-      </form>
-      <form method="post" action="{{ url_for('narrative.reject', snippet_id=d.id) }}">
-        <button class="btn btn-secondary" type="submit">Reject</button>
-      </form>
-    </div>
+    {% set past_feedback = get_recent_feedback(d.topic_slug) %}
+    {% if past_feedback %}
+    <details style="margin-top:0.5rem;">
+      <summary class="subtle" style="cursor:pointer;">Past feedback for this topic ({{ past_feedback|length }})</summary>
+      <ul style="margin:0.4rem 0 0; padding-left:1.1rem; font-size:0.82rem; color:var(--mc-subtle-gray);">
+        {% for f in past_feedback %}
+        <li>{{ f.reviewed_at.strftime('%b %d') }} &mdash; {{ f.review_note }}</li>
+        {% endfor %}
+      </ul>
+    </details>
+    {% endif %}
+    <form method="post" style="margin-top:0.75rem;">
+      <textarea name="note" class="form-field" style="width:100%; font-size:0.85rem; padding:0.5rem; border:1px solid var(--mc-light-gray); border-radius:6px; font-family:inherit;" rows="2" placeholder="Optional: why approve/reject -- e.g. &quot;wrong framing, this tracks unemployment not concern&quot;"></textarea>
+      <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
+        <a class="btn btn-secondary" href="{{ url_for('narrative.edit', snippet_id=d.id) }}">Edit</a>
+        <button class="btn" type="submit" formaction="{{ url_for('narrative.approve', snippet_id=d.id) }}">Approve</button>
+        <button class="btn btn-secondary" type="submit" formaction="{{ url_for('narrative.reject', snippet_id=d.id) }}">Reject</button>
+      </div>
+    </form>
   </div>
   {% endfor %}
 </div>

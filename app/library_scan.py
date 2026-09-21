@@ -125,6 +125,13 @@ def scan_econ_library(root=ECON_LIBRARY_ROOT):
         if not entry.is_dir():
             continue
         folder_name = entry.name
+        if folder_name.startswith((".", "__")):
+            # Tooling artifacts (__pycache__, .git, etc.) that end up sitting
+            # directly in the library root -- never real content, but with
+            # no dashboards they'd otherwise sail through as an empty
+            # "Other" geography entry. A real __pycache__ did exactly this
+            # on 2026-09-22 (moved out separately); this stops it recurring.
+            continue
         if folder_name in LIBRARY_FOLDERS_NOT_READY:
             continue
         if folder_name in LIBRARY_SOURCE_OVERRIDES:

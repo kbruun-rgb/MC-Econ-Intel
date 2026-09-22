@@ -42,5 +42,32 @@
     {% endwith %}
     {% block content %}{% endblock %}
   </main>
+
+  <div class="lightbox-overlay" id="lightbox-overlay" aria-hidden="true">
+    <img id="lightbox-img" src="" alt="">
+  </div>
+  <script>
+    // Click any <img class="zoomable"> anywhere on the site to open it
+    // enlarged in an overlay -- click the overlay (or press Escape) to
+    // close. Delegated on document so it works for images added to any
+    // page without wiring listeners per-template.
+    (function () {
+      var overlay = document.getElementById('lightbox-overlay');
+      var img = document.getElementById('lightbox-img');
+      document.addEventListener('click', function (e) {
+        var target = e.target.closest('.zoomable');
+        if (target) {
+          img.src = target.currentSrc || target.src;
+          img.alt = target.alt || '';
+          overlay.classList.add('open');
+        } else if (e.target === overlay) {
+          overlay.classList.remove('open');
+        }
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') overlay.classList.remove('open');
+      });
+    })();
+  </script>
 </body>
 </html>

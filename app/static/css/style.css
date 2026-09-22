@@ -774,3 +774,29 @@ table.reports-table tr:last-child td { border-bottom: none; }
 .type-badge.type-analysis { background: rgba(152,56,242,0.1); color: var(--mc-purple); }
 .type-badge.type-report { background: rgba(34,36,255,0.12); color: var(--mc-teal); }
 table.reports-table tr.hidden { display: none; }
+
+/* Click any img.zoomable to open it enlarged here -- see base.html for the
+   click-delegation script. */
+img.zoomable { cursor: zoom-in; }
+.lightbox-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(16,17,18,0.85);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  box-sizing: border-box;
+  cursor: zoom-out;
+}
+.lightbox-overlay.open { display: flex; }
+.lightbox-overlay img {
+  max-width: 100%;
+  max-height: 100%;
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  box-sizing: border-box;
+  cursor: default;
+}

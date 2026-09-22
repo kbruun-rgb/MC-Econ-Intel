@@ -11,7 +11,7 @@
   <h2 class="narrative-mini-headline">{{ narrative.headline }}</h2>
   {% if narrative.chart_image %}
   <figure class="narrative-mini-figure narrative-mini-figure-float">
-    <img src="{{ url_for('narrative.chart', slug='home') }}" alt="{{ narrative.chart_caption or '' }}">
+    <img class="zoomable" src="{{ url_for('narrative.chart', slug='home') }}" alt="{{ narrative.chart_caption or '' }}">
   </figure>
   {% endif %}
   {% for para in narrative_paragraphs %}

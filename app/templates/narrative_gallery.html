@@ -12,7 +12,7 @@
     <h2 class="insight-headline">{{ c.snippet.headline }}</h2>
     {% if c.snippet.chart_image %}
     <figure class="insight-figure">
-      <img src="{{ url_for('narrative.chart', slug=c.snippet.topic_slug) }}" alt="{{ c.snippet.chart_caption or '' }}">
+      <img class="zoomable" src="{{ url_for('narrative.chart', slug=c.snippet.topic_slug) }}" alt="{{ c.snippet.chart_caption or '' }}">
       {% if c.snippet.chart_caption %}<figcaption>{{ c.snippet.chart_caption }}</figcaption>{% endif %}
     </figure>
     {% endif %}

@@ -393,7 +393,7 @@ main {
   line-height: 1.5;
   overflow: hidden; /* contains the floated chart so the card's height fits its content */
 }
-.narrative-mini p { margin: 0 0 0.55rem; font-size: 0.8rem; line-height: 1.45; }
+.narrative-mini p { margin: 0 0 0.55rem; font-size: 0.76rem; font-weight: 300; line-height: 1.45; }
 .narrative-mini-headline { font-size: 0.95rem; font-weight: 600; color: var(--mc-near-black); margin: 0 0 0.5rem; }
 .narrative-mini-figure { margin: 0.75rem 0 0; text-align: center; }
 .narrative-mini-figure img { max-width: 100%; max-height: 160px; border-radius: 6px; }
@@ -438,7 +438,8 @@ main {
    as the focal point of this teaser. */
 .narrative-mini-home .narrative-mini-headline { font-size: 0.88rem; font-weight: 600; }
 .narrative-mini-home p {
-  font-size: 0.78rem;
+  font-size: 0.74rem;
+  font-weight: 300;
   /* No line-clamp -- letting the one paragraph run its natural length reads
      better than an abrupt mid-sentence "..." cutoff. Only the first
      paragraph is passed to this template at all (see app/main.py), so
@@ -469,7 +470,7 @@ main {
   padding: 1.5rem 1.75rem;
   line-height: 1.6;
 }
-.insight-card p { margin: 0 0 0.85rem; font-size: 0.92rem; }
+.insight-card p { margin: 0 0 0.85rem; font-size: 0.85rem; font-weight: 300; }
 .insight-headline { font-size: 1.2rem; font-weight: 700; color: var(--mc-near-black); margin: 0.6rem 0 0.9rem; }
 .insight-figure { margin: 0 0 1.1rem; text-align: center; }
 .insight-figure img {

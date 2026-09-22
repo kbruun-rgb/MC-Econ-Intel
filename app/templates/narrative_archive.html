@@ -17,7 +17,7 @@
     <img class="article-img zoomable" style="max-height:200px; width:auto; display:block; margin:0 auto 0.75rem;" src="{{ url_for('narrative.admin_chart', snippet_id=s.id) }}" alt="">
     {% endif %}
     {% for para in s.body.split('\n\n') %}
-    <p class="subtle" style="margin:0 0 0.5rem;">{{ para }}</p>
+    <p class="subtle" style="margin:0 0 0.5rem; font-weight:300; font-size:0.85rem;">{{ para }}</p>
     {% endfor %}
     <p class="subtle" style="margin-top:0.75rem;">Was live until {{ s.published_at.strftime('%b %d, %Y') if s.published_at else 'unknown' }} &middot; by {{ s.author }}</p>
     {% if s.review_note %}<p class="subtle" style="font-style:italic;">&ldquo;{{ s.review_note }}&rdquo;</p>{% endif %}
@@ -46,7 +46,7 @@
     <img class="article-img zoomable" style="max-height:200px; width:auto; display:block; margin:0 auto 0.75rem;" src="{{ url_for('narrative.admin_chart', snippet_id=s.id) }}" alt="">
     {% endif %}
     {% for para in s.body.split('\n\n') %}
-    <p class="subtle" style="margin:0 0 0.5rem;">{{ para }}</p>
+    <p class="subtle" style="margin:0 0 0.5rem; font-weight:300; font-size:0.85rem;">{{ para }}</p>
     {% endfor %}
     <p class="subtle" style="margin-top:0.75rem;">Rejected {{ s.reviewed_at.strftime('%b %d, %Y') if s.reviewed_at else '' }} &middot; drafted by {{ s.author }}</p>
     {% if s.review_note %}

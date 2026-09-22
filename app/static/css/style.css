@@ -490,10 +490,10 @@ main {
    and there's no dead whitespace between chart and copy. */
 .insight-figure-float {
   float: right;
-  width: 280px;
+  width: 340px;
   margin: 0 0 0.75rem 1.25rem;
 }
-.insight-figure-float img { max-height: 220px; }
+.insight-figure-float img { max-height: 280px; }
 @media (max-width: 480px) {
   .insight-figure-float { float: none; width: auto; margin: 0 0 1.1rem; }
 }

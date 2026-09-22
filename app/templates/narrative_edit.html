@@ -47,13 +47,13 @@
 
   {% if not snippet %}
   <div class="form-field">
-    <label for="source_note">Source note (optional)</label>
-    <input type="text" id="source_note" name="source_note" placeholder="Source: Morning Consult" value="{{ prefill.source_note if prefill and prefill.source_note else '' }}">
+    <label for="chart">Chart image {{ '(required -- see note above)' if prefill else '(optional)' }}</label>
+    <input type="file" id="chart" name="chart" accept="image/png,image/jpeg" {{ 'required' if prefill }}>
   </div>
 
   <div class="form-field">
-    <label for="chart">Chart image {{ '(required -- see note above)' if prefill else '(optional)' }}</label>
-    <input type="file" id="chart" name="chart" accept="image/png,image/jpeg" {{ 'required' if prefill }}>
+    <label for="chart_caption">Chart caption / source (shown at the bottom of the chart)</label>
+    <input type="text" id="chart_caption" name="chart_caption" placeholder="Source: Morning Consult" value="{{ prefill.chart_caption if prefill and prefill.chart_caption else '' }}">
   </div>
   {% endif %}
 

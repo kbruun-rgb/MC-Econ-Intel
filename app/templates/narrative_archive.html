@@ -10,11 +10,14 @@
 <div class="card-grid">
   {% for entry in snippets %}
   {% set s = entry.snippet %}
-  <div class="card">
+  <div class="card card-narrative">
     <span class="badge">{{ entry.topic_label }}</span>
     <h3 style="margin:0.5rem 0 0.25rem;">{{ s.headline }}</h3>
     {% if s.chart_image %}
-    <img class="article-img zoomable" style="max-height:200px; width:auto; display:block; margin:0 auto 0.75rem;" src="{{ url_for('narrative.admin_chart', snippet_id=s.id) }}" alt="">
+    <figure class="insight-figure insight-figure-float">
+      <img class="zoomable" src="{{ url_for('narrative.admin_chart', snippet_id=s.id) }}" alt="{{ s.chart_caption or '' }}">
+      {% if s.chart_caption %}<figcaption>{{ s.chart_caption }}</figcaption>{% endif %}
+    </figure>
     {% endif %}
     {% for para in s.body.split('\n\n') %}
     <p class="subtle" style="margin:0 0 0.5rem; font-weight:300; font-size:0.85rem;">{{ para }}</p>
@@ -39,11 +42,14 @@
 <div class="card-grid">
   {% for entry in rejected %}
   {% set s = entry.snippet %}
-  <div class="card">
+  <div class="card card-narrative">
     <span class="badge">{{ entry.topic_label }}</span>
     <h3 style="margin:0.5rem 0 0.25rem;">{{ s.headline }}</h3>
     {% if s.chart_image %}
-    <img class="article-img zoomable" style="max-height:200px; width:auto; display:block; margin:0 auto 0.75rem;" src="{{ url_for('narrative.admin_chart', snippet_id=s.id) }}" alt="">
+    <figure class="insight-figure insight-figure-float">
+      <img class="zoomable" src="{{ url_for('narrative.admin_chart', snippet_id=s.id) }}" alt="{{ s.chart_caption or '' }}">
+      {% if s.chart_caption %}<figcaption>{{ s.chart_caption }}</figcaption>{% endif %}
+    </figure>
     {% endif %}
     {% for para in s.body.split('\n\n') %}
     <p class="subtle" style="margin:0 0 0.5rem; font-weight:300; font-size:0.85rem;">{{ para }}</p>

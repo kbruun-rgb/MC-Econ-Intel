@@ -469,6 +469,7 @@ main {
   border-radius: 17px;
   padding: 1.5rem 1.75rem;
   line-height: 1.6;
+  overflow: hidden; /* contains the floated figure -- textbook-style wrap, see below */
 }
 .insight-card p { margin: 0 0 0.85rem; font-size: 0.85rem; font-weight: 300; }
 .insight-headline { font-size: 1.2rem; font-weight: 700; color: var(--mc-near-black); margin: 0.6rem 0 0.9rem; }
@@ -483,6 +484,23 @@ main {
   box-sizing: border-box;
 }
 .insight-figure figcaption { font-size: 0.78rem; color: var(--mc-subtle-gray); margin-top: 0.4rem; }
+
+/* Textbook-figure treatment: the chart floats into the paragraph text
+   instead of sitting in its own block above it, so text wraps around it
+   and there's no dead whitespace between chart and copy. */
+.insight-figure-float {
+  float: right;
+  width: 280px;
+  margin: 0 0 0.75rem 1.25rem;
+}
+.insight-figure-float img { max-height: 220px; }
+@media (max-width: 480px) {
+  .insight-figure-float { float: none; width: auto; margin: 0 0 1.1rem; }
+}
+
+/* Archive/rejected cards reuse the plain .card grid but still need to
+   contain the floated chart figure the same way .insight-card does. */
+.card-narrative { overflow: hidden; }
 
 .topic-report-list { list-style: none; margin: 1rem 0 0; padding: 0; }
 .topic-report-list li {

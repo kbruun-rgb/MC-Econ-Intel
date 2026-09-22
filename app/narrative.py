@@ -226,7 +226,7 @@ def get_recent_feedback(topic_slug, limit=5):
 
 
 def create_manual_snippet(
-    topic_slug, headline, body, source_note, admin_email, chart_file=None, related_geography=None, related_theme_slug=None
+    topic_slug, headline, body, chart_caption, admin_email, chart_file=None, related_geography=None, related_theme_slug=None
 ):
     """A human-authored snippet publishes immediately -- Kayla writing it
     directly *is* the review step, so there's no separate approval click.
@@ -235,7 +235,7 @@ def create_manual_snippet(
         topic_slug=topic_slug,
         headline=headline,
         body=body,
-        source_note=source_note,
+        chart_caption=chart_caption,
         status="approved",
         author=admin_email,
         published_at=datetime.now(timezone.utc),

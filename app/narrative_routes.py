@@ -90,7 +90,7 @@ def new():
             topic_slug=request.form["topic_slug"],
             headline=request.form["headline"].strip(),
             body=request.form["body"].strip(),
-            source_note=request.form.get("source_note", "").strip() or None,
+            chart_caption=request.form.get("chart_caption", "").strip() or None,
             admin_email=current_user.email,
             chart_file=request.files.get("chart"),
             related_geography=related_geography,

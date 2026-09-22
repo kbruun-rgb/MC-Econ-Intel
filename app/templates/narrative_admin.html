@@ -16,7 +16,10 @@
     <span class="badge">{{ topic_label(d.topic_slug) }}</span>
     <h3 class="insight-headline" style="font-size:1.05rem;">{{ d.headline }}</h3>
     {% if d.chart_image %}
-    <img class="article-img zoomable" style="max-height:260px; width:auto; display:block; margin:0 auto 0.75rem;" src="{{ url_for('narrative.admin_chart', snippet_id=d.id) }}" alt="">
+    <figure class="insight-figure insight-figure-float">
+      <img class="zoomable" src="{{ url_for('narrative.admin_chart', snippet_id=d.id) }}" alt="{{ d.chart_caption or '' }}">
+      {% if d.chart_caption %}<figcaption>{{ d.chart_caption }}</figcaption>{% endif %}
+    </figure>
     {% endif %}
     {% for para in d.body.split('\n\n') %}
     <p>{{ para }}</p>

@@ -11,7 +11,7 @@
     <span class="badge">{{ c.topic_label }}</span>
     <h2 class="insight-headline">{{ c.snippet.headline }}</h2>
     {% if c.snippet.chart_image %}
-    <figure class="insight-figure">
+    <figure class="insight-figure insight-figure-float">
       <img class="zoomable" src="{{ url_for('narrative.chart', slug=c.snippet.topic_slug) }}" alt="{{ c.snippet.chart_caption or '' }}">
       {% if c.snippet.chart_caption %}<figcaption>{{ c.snippet.chart_caption }}</figcaption>{% endif %}
     </figure>

@@ -40,7 +40,6 @@
     {% if narrative.chart_image %}
     <figure class="narrative-mini-figure narrative-mini-figure-float">
       <img class="zoomable" src="{{ url_for('narrative.chart', slug=topic.slug) }}" alt="{{ narrative.chart_caption or '' }}">
-      {% if narrative.chart_caption %}<figcaption>{{ narrative.chart_caption }}</figcaption>{% endif %}
     </figure>
     {% endif %}
     {% for para in narrative_paragraphs %}

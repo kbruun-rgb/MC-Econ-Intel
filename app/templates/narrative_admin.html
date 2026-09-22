@@ -18,7 +18,6 @@
     {% if d.chart_image %}
     <figure class="insight-figure insight-figure-float">
       <img class="zoomable" src="{{ url_for('narrative.admin_chart', snippet_id=d.id) }}" alt="{{ d.chart_caption or '' }}">
-      {% if d.chart_caption %}<figcaption>{{ d.chart_caption }}</figcaption>{% endif %}
     </figure>
     {% endif %}
     {% for para in d.body.split('\n\n') %}

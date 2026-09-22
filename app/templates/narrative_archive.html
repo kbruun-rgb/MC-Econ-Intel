@@ -16,7 +16,6 @@
     {% if s.chart_image %}
     <figure class="insight-figure insight-figure-float">
       <img class="zoomable" src="{{ url_for('narrative.admin_chart', snippet_id=s.id) }}" alt="{{ s.chart_caption or '' }}">
-      {% if s.chart_caption %}<figcaption>{{ s.chart_caption }}</figcaption>{% endif %}
     </figure>
     {% endif %}
     {% for para in s.body.split('\n\n') %}
@@ -48,7 +47,6 @@
     {% if s.chart_image %}
     <figure class="insight-figure insight-figure-float">
       <img class="zoomable" src="{{ url_for('narrative.admin_chart', snippet_id=s.id) }}" alt="{{ s.chart_caption or '' }}">
-      {% if s.chart_caption %}<figcaption>{{ s.chart_caption }}</figcaption>{% endif %}
     </figure>
     {% endif %}
     {% for para in s.body.split('\n\n') %}

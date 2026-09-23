@@ -602,6 +602,26 @@ main {
 .topic-report-title { font-weight: 600; font-size: 0.92rem; margin-bottom: 0.2rem; }
 .topic-report-actions { margin-top: 0.6rem; }
 
+/* Full-width variant: once the narrative box takes the sidebar's old job
+   of surfacing "go look at this," a report list has the whole page width
+   to work with instead of a cramped 1fr column. Short, wide rows (title +
+   metadata on the left, Read on the right, one row per report) scan faster
+   than square tiles for a link list that's mostly text and grows over
+   time -- square tiles suit a handful of visual/browsable items (like the
+   dashboard cards above), not an open-ended list of reports. */
+.topic-report-list-wide { margin-top: 0; }
+.topic-report-list-wide li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.75rem 1.25rem;
+}
+.topic-report-list-wide .topic-report-actions { margin-top: 0; flex-shrink: 0; }
+@media (max-width: 560px) {
+  .topic-report-list-wide li { flex-direction: column; align-items: stretch; gap: 0.6rem; }
+}
+
 .card {
   background: var(--mc-surface);
   border: 1px solid var(--mc-light-gray);

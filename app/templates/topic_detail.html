@@ -2,13 +2,15 @@
 {% import "_icons.html" as icons %}
 {% block title %}{{ topic.label }} — Morning Consult Economic Intelligence{% endblock %}
 
-{% macro reports_list(reports) %}
+{% macro reports_list(reports, wide=False) %}
 {% if reports %}
-<ul class="topic-report-list">
+<ul class="topic-report-list{{ ' topic-report-list-wide' if wide }}">
   {% for r in reports %}
   <li>
-    <div class="topic-report-title">{{ r.title }}</div>
-    <div class="subtle">{{ r.date.strftime('%b %d, %Y') }} &middot; {{ r.type }} &middot; <span class="badge {{ 'badge-global' if r.geography == 'Global' }}">{{ r.geography }}</span></div>
+    <div>
+      <div class="topic-report-title">{{ r.title }}</div>
+      <div class="subtle">{{ r.date.strftime('%b %d, %Y') }} &middot; {{ r.type }} &middot; <span class="badge {{ 'badge-global' if r.geography == 'Global' }}">{{ r.geography }}</span></div>
+    </div>
     <div class="topic-report-actions">
       {% if r.kind == 'article' %}
       <a class="btn" href="{{ url_for('reports.article', folder=r.folder) }}">Read</a>
@@ -64,11 +66,11 @@
       <p class="subtle">No dashboards tagged for this topic yet.</p>
       {% endif %}
     </div>
-
-    <h2 class="section-title" style="font-size:0.95rem; margin:1.5rem 0 0.75rem;">Related Analysis &amp; Reports</h2>
-    {{ reports_list(reports) }}
   </div>
 </div>
+
+<h2 class="section-title" style="font-size:1.05rem; margin:0 0 0.75rem;">Related Analysis &amp; Reports</h2>
+{{ reports_list(reports, wide=True) }}
 
 {% else %}
 <div class="topic-columns">

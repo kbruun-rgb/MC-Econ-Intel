@@ -191,14 +191,21 @@ header.site-header nav a:hover { opacity: 1; color: var(--mc-teal); text-decorat
 
 .nav-dropdown-panel {
   position: absolute;
+  /* Flush against the trigger (no margin-top gap) -- the panel is
+     absolutely positioned, so a gap here isn't part of ".nav-dropdown"'s
+     hoverable box at all. A mouse moving from the trigger down toward the
+     panel would cross that gap, drop out of :hover, and the panel would
+     vanish (display:none) before the cursor ever reached it -- reported
+     as "disappears when I drag down." Any visual breathing room has to
+     come from padding (inside the box, still hoverable), not margin. */
   top: 100%;
   left: 0;
-  margin-top: 0.6rem;
+  margin-top: 0;
   background: white;
   border: 1px solid var(--mc-light-gray);
   border-radius: 10px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  padding: 0.4rem;
+  padding: 0.6rem 0.4rem 0.4rem;
   min-width: 190px;
   display: none;
   flex-direction: column;

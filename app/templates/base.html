@@ -18,14 +18,33 @@
       <a href="{{ url_for('dashboards.index') }}">Dashboards</a>
       <a href="{{ url_for('reports.index') }}">Analysis &amp; Reports</a>
       <a href="{{ url_for('industry_reports.index') }}">Industry Reports</a>
+      <span class="nav-dropdown">
+        <button type="button" class="nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">
+          Topics
+          <svg class="nav-dropdown-caret" width="10" height="10" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 16l16 16 16-16"/></svg>
+        </button>
+        <span class="nav-dropdown-panel" role="menu">
+          {% for topic in topic_hubs %}
+          <a href="{{ url_for('topics.detail', slug=topic.slug) }}" role="menuitem">{{ icons.topic_icon(topic.icon, 16) }} {{ topic.label }}</a>
+          {% endfor %}
+        </span>
+      </span>
       {% if is_admin %}
       <span class="nav-admin-group">
         <span class="nav-admin-label">{{ icons.topic_icon('lock', 13) }} Admin</span>
         <a href="{{ url_for('main.health') }}">Content health</a>
         <a href="{{ url_for('main.activity') }}">Activity</a>
-        <a href="{{ url_for('narrative.queue') }}">Narrative review</a>
-        <a href="{{ url_for('narrative.archive') }}">Narrative archive</a>
-        <a href="{{ url_for('narrative.gallery') }}">Insights</a>
+        <span class="nav-dropdown">
+          <button type="button" class="nav-dropdown-trigger" aria-expanded="false" aria-haspopup="true">
+            Narrative
+            <svg class="nav-dropdown-caret" width="10" height="10" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 16l16 16 16-16"/></svg>
+          </button>
+          <span class="nav-dropdown-panel nav-dropdown-panel-right" role="menu">
+            <a href="{{ url_for('narrative.queue') }}" role="menuitem">Narrative review</a>
+            <a href="{{ url_for('narrative.archive') }}" role="menuitem">Narrative archive</a>
+            <a href="{{ url_for('narrative.gallery') }}" role="menuitem">Insights</a>
+          </span>
+        </span>
       </span>
       {% endif %}
       <a href="{{ url_for('auth.logout') }}">Log out</a>
@@ -66,6 +85,36 @@
       });
       document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') overlay.classList.remove('open');
+      });
+    })();
+
+    // Nav "Topics" / "Narrative" dropdowns. CSS alone (:hover/:focus-within)
+    // covers desktop mouse and keyboard use, but a touch tap on the trigger
+    // has no hover state, so it needs an explicit click toggle too -- same
+    // delegated-on-document pattern as the lightbox above.
+    (function () {
+      function closeAll(except) {
+        document.querySelectorAll('.nav-dropdown.open').forEach(function (el) {
+          if (el !== except) {
+            el.classList.remove('open');
+            el.querySelector('.nav-dropdown-trigger').setAttribute('aria-expanded', 'false');
+          }
+        });
+      }
+      document.addEventListener('click', function (e) {
+        var trigger = e.target.closest('.nav-dropdown-trigger');
+        if (trigger) {
+          var dropdown = trigger.closest('.nav-dropdown');
+          var opening = !dropdown.classList.contains('open');
+          closeAll(opening ? dropdown : null);
+          dropdown.classList.toggle('open', opening);
+          trigger.setAttribute('aria-expanded', String(opening));
+        } else if (!e.target.closest('.nav-dropdown-panel')) {
+          closeAll();
+        }
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeAll();
       });
     })();
   </script>

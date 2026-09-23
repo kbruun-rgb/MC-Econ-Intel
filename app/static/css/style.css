@@ -153,6 +153,7 @@ header.site-header nav a:hover { opacity: 1; color: var(--mc-teal); text-decorat
 }
 .nav-admin-group a { margin-left: 1rem; }
 .nav-admin-group a:first-of-type { margin-left: 0; }
+.nav-admin-group .nav-dropdown { margin-left: 1rem; }
 .nav-admin-label {
   display: inline-flex;
   align-items: center;
@@ -164,6 +165,64 @@ header.site-header nav a:hover { opacity: 1; color: var(--mc-teal); text-decorat
   color: var(--mc-subtle-gray);
 }
 .nav-admin-label .topic-icon { color: var(--mc-subtle-gray); }
+
+/* Nav "Topics" / "Narrative" dropdowns -- a menu button that reveals a
+   short list of links, instead of every link sitting flat in the bar.
+   Opens on hover/focus (desktop) or a click toggle (touch -- see the JS in
+   base.html), never both at once thanks to closeAll(). */
+.nav-dropdown { position: relative; display: inline-block; margin-left: 1.25rem; }
+.nav-dropdown-trigger {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: var(--mc-near-black);
+  font-size: 0.92rem;
+  opacity: 0.85;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.nav-dropdown-trigger:hover,
+.nav-dropdown.open .nav-dropdown-trigger { opacity: 1; color: var(--mc-teal); }
+.nav-dropdown-caret { transition: transform 0.15s ease; flex-shrink: 0; }
+.nav-dropdown.open .nav-dropdown-caret { transform: rotate(180deg); }
+
+.nav-dropdown-panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 0.6rem;
+  background: white;
+  border: 1px solid var(--mc-light-gray);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 0.4rem;
+  min-width: 190px;
+  display: none;
+  flex-direction: column;
+  z-index: 20;
+}
+/* Menu items further right in the bar (e.g. inside the admin group) open
+   leftward instead of off the edge of the viewport. */
+.nav-dropdown-panel-right { left: auto; right: 0; }
+.nav-dropdown.open .nav-dropdown-panel,
+.nav-dropdown:hover .nav-dropdown-panel,
+.nav-dropdown:focus-within .nav-dropdown-panel { display: flex; }
+header.site-header .nav-dropdown-panel a {
+  margin-left: 0;
+  opacity: 1;
+  color: var(--mc-near-black);
+  font-size: 0.88rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+header.site-header .nav-dropdown-panel a:hover { background: var(--mc-bg); color: var(--mc-teal); text-decoration: none; }
+.nav-dropdown-panel .topic-icon { flex-shrink: 0; color: var(--mc-subtle-gray); }
 
 main {
   max-width: 1080px;

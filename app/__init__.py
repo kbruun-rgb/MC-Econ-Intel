@@ -52,6 +52,13 @@ def create_app():
         return {"is_admin": current_user.is_authenticated and current_user.email in config.ADMIN_EMAILS}
 
     @app.context_processor
+    def inject_topic_hubs():
+        # Every page's nav needs the topic list for the "Topics" dropdown --
+        # injected here rather than passed by each view so it can't drift
+        # out of sync on a view that forgets to pass it.
+        return {"topic_hubs": config.TOPIC_HUBS}
+
+    @app.context_processor
     def inject_asset_version():
         # A style.css edit changed layout multiple times in one afternoon
         # this session, and a stale browser-cached copy of the file (same

@@ -392,6 +392,7 @@ main {
   padding: 1.1rem 1.3rem;
   line-height: 1.5;
   overflow: hidden; /* contains the floated chart so the card's height fits its content */
+  container-type: inline-size;
 }
 .narrative-mini p { margin: 0 0 0.55rem; font-size: 0.76rem; font-weight: 300; line-height: 1.45; }
 .narrative-mini-headline { font-size: 0.95rem; font-weight: 600; color: var(--mc-near-black); margin: 0 0 0.5rem; }
@@ -407,10 +408,17 @@ main {
    (methodology/date detail) lives right here, next to the chart -- there's
    no separate source line elsewhere in the card. */
 .narrative-mini-figure-float {
-  float: right;
-  width: 230px;
-  margin: 0 0 0.5rem 1.1rem;
+  float: none;
+  width: auto;
+  margin: 0.75rem 0 0;
   text-align: center;
+}
+@container (min-width: 480px) {
+  .narrative-mini-figure-float {
+    float: right;
+    width: 230px;
+    margin: 0 0 0.5rem 1.1rem;
+  }
 }
 .narrative-mini-figure-float img {
   max-width: 100%;
@@ -420,9 +428,6 @@ main {
   border-radius: 8px;
   padding: 0.4rem;
   box-sizing: border-box;
-}
-@media (max-width: 480px) {
-  .narrative-mini-figure-float { float: none; width: auto; margin: 0.75rem 0 0; }
 }
 
 .topic-dashboards-stack { display: flex; flex-direction: column; gap: 0.6rem; }
@@ -445,9 +450,11 @@ main {
      paragraph is passed to this template at all (see app/main.py), so
      length is already bounded upstream. */
 }
-.narrative-mini-home .narrative-mini-figure-float {
-  width: 320px;
-  margin: 0.15rem 0 0.5rem 1.1rem;
+@container (min-width: 600px) {
+  .narrative-mini-home .narrative-mini-figure-float {
+    width: 320px;
+    margin: 0.15rem 0 0.5rem 1.1rem;
+  }
 }
 .narrative-mini-home .narrative-mini-figure-float img { max-height: 260px; }
 .narrative-mini-link { margin: 0.5rem 0 0; font-size: 0.85rem; }
@@ -470,6 +477,8 @@ main {
   padding: 1.5rem 1.75rem;
   line-height: 1.6;
   overflow: hidden; /* contains the floated figure -- textbook-style wrap, see below */
+  container-type: inline-size; /* lets the float rule react to the CARD's
+    own rendered width, not the viewport -- see the container query below */
 }
 .insight-card p { margin: 0 0 0.85rem; font-size: 0.85rem; font-weight: 300; }
 .insight-headline { font-size: 1.2rem; font-weight: 700; color: var(--mc-near-black); margin: 0.6rem 0 0.9rem; }
@@ -487,20 +496,41 @@ main {
 
 /* Textbook-figure treatment: the chart floats into the paragraph text
    instead of sitting in its own block above it, so text wraps around it
-   and there's no dead whitespace between chart and copy. */
+   and there's no dead whitespace between chart and copy.
+
+   This used to be a plain float gated by a viewport media query, which
+   broke whenever the CARD (not the viewport) ended up narrow -- e.g. the
+   grid settling on its 420px minimum column width with a 340px float left
+   almost no room for text, wrapping body copy into a one-word-per-line
+   sliver next to the chart. A viewport check can't see that: the grid's
+   actual column width depends on how many cards fit per row, which has no
+   fixed relationship to viewport width. A container query does see it --
+   it reacts to the card's own rendered width, so the float only ever
+   turns on once there's confirmed room for a comfortable text column
+   beside it. Below the threshold, the chart safely stacks full-width
+   above the text instead of squeezing it. */
 .insight-figure-float {
-  float: right;
-  width: 340px;
-  margin: 0 0 0.75rem 1.25rem;
+  float: none;
+  width: auto;
+  margin: 0 0 1.1rem;
+}
+@container (min-width: 620px) {
+  .insight-figure-float {
+    float: right;
+    width: 340px;
+    margin: 0 0 0.75rem 1.25rem;
+  }
 }
 .insight-figure-float img { max-height: 280px; }
-@media (max-width: 480px) {
-  .insight-figure-float { float: none; width: auto; margin: 0 0 1.1rem; }
-}
 
 /* Archive/rejected cards reuse the plain .card grid but still need to
-   contain the floated chart figure the same way .insight-card does. */
-.card-narrative { overflow: hidden; }
+   contain the floated chart figure the same way .insight-card does, and
+   need their own container so the same min-width query above applies to
+   THEIR width, not .insight-card's. */
+.card-narrative {
+  overflow: hidden;
+  container-type: inline-size;
+}
 
 .topic-report-list { list-style: none; margin: 1rem 0 0; padding: 0; }
 .topic-report-list li {

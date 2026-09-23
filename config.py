@@ -271,8 +271,9 @@ TOPIC_HUBS = [
 # touching any of the underlying feature -- the admin review queue, the
 # NarrativeSnippet rows already drafted/approved, and the two scheduled
 # generation tasks are all untouched, so flipping this back to True picks
-# up exactly where it left off. Paused 2026-09-18 pending a redesign pass.
-NARRATIVE_ENABLED = False
+# up exactly where it left off. Paused 2026-09-18 pending a redesign pass,
+# re-enabled 2026-09-23 once the layout/wrap/word-cap fixes landed.
+NARRATIVE_ENABLED = True
 
 # Which topic pages (a TOPIC_HUBS slug, or "home" for the home page) get an
 # agent-drafted, human-approved chart-plus-insight block, and how often a

@@ -462,6 +462,15 @@ main {
 }
 .narrative-mini p { margin: 0 0 0.55rem; font-size: 0.76rem; font-weight: 300; line-height: 1.45; }
 .narrative-mini-headline { font-size: 0.95rem; font-weight: 600; color: var(--mc-near-black); margin: 0 0 0.5rem; }
+.narrative-eyebrow {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--mc-teal);
+  margin-bottom: 0.4rem;
+}
 .narrative-mini-figure { margin: 0.75rem 0 0; text-align: center; }
 .narrative-mini-figure img { max-width: 100%; max-height: 160px; border-radius: 6px; }
 .narrative-mini-figure figcaption { font-size: 0.7rem; color: var(--mc-subtle-gray); margin-top: 0.3rem; }
@@ -503,7 +512,7 @@ main {
 .narrative-mini-home {
   max-width: 100%;
   margin: 1rem 0 1.5rem;
-  padding: 0.85rem 1.1rem;
+  padding: 1.1rem 1.5rem;
 }
 /* Smaller, lighter headline and body so the chart -- not the text -- reads
    as the focal point of this teaser. */
@@ -516,15 +525,39 @@ main {
      paragraph is passed to this template at all (see app/main.py), so
      length is already bounded upstream. */
 }
-@container (min-width: 600px) {
-  .narrative-mini-home .narrative-mini-figure-float {
-    width: 320px;
-    margin: 0.15rem 0 0.5rem 1.1rem;
-  }
-}
-.narrative-mini-home .narrative-mini-figure-float img { max-height: 260px; }
 .narrative-mini-link { margin: 0.5rem 0 0; font-size: 0.85rem; }
 .narrative-mini-link a { font-weight: 600; }
+
+/* The home teaser doesn't float the chart into the text like topic pages
+   do -- a float top-aligns, and the home body is capped to one short
+   paragraph, so it was ending well before the (taller) chart and leaving a
+   slab of empty card below the text with nothing to visually balance it.
+   Topic pages don't have this problem as visibly because the narrative box
+   sits next to a Dashboards column of its own; home's box stands alone, so
+   the mismatch was the whole story. A flex row with both sides vertically
+   centered against each other closes that gap regardless of exactly how
+   short the text ends up being. */
+.narrative-mini-home-row {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+.narrative-mini-home-text { flex: 1 1 auto; min-width: 0; }
+.narrative-mini-home-row .narrative-mini-figure { margin: 0; flex: 0 0 320px; }
+.narrative-mini-home-row .narrative-mini-figure img {
+  max-width: 100%;
+  max-height: 260px;
+  background: white;
+  border: 1px solid var(--mc-light-gray);
+  border-radius: 8px;
+  padding: 0.4rem;
+  box-sizing: border-box;
+  display: block;
+}
+@media (max-width: 640px) {
+  .narrative-mini-home-row { flex-direction: column; align-items: stretch; gap: 1rem; }
+  .narrative-mini-home-row .narrative-mini-figure { flex-basis: auto; }
+}
 
 /* /insights gallery: unlike the (paused) landing-page narrative-mini cards,
    nothing here competes with dashboard tiles or a "how do I get started"

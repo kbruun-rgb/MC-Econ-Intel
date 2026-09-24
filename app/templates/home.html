@@ -8,18 +8,23 @@
 
 {% if narrative %}
 <div class="narrative-mini narrative-mini-home">
-  <h2 class="narrative-mini-headline">{{ narrative.headline }}</h2>
-  {% if narrative.chart_image %}
-  <figure class="narrative-mini-figure narrative-mini-figure-float">
-    <img class="zoomable" src="{{ url_for('narrative.chart', slug='home') }}" alt="{{ narrative.chart_caption or '' }}">
-  </figure>
-  {% endif %}
-  {% for para in narrative_paragraphs %}
-  <p>{{ para }}</p>
-  {% endfor %}
-  {% if narrative_link %}
-  <p class="narrative-mini-link"><a href="{{ narrative_link[0] }}">See the {{ narrative_link[1] }} dashboard &rarr;</a></p>
-  {% endif %}
+  <span class="narrative-eyebrow">Chart of the Week</span>
+  <div class="narrative-mini-home-row">
+    <div class="narrative-mini-home-text">
+      <h2 class="narrative-mini-headline">{{ narrative.headline }}</h2>
+      {% for para in narrative_paragraphs %}
+      <p>{{ para }}</p>
+      {% endfor %}
+      {% if narrative_link %}
+      <p class="narrative-mini-link"><a href="{{ narrative_link[0] }}">See the {{ narrative_link[1] }} dashboard &rarr;</a></p>
+      {% endif %}
+    </div>
+    {% if narrative.chart_image %}
+    <figure class="narrative-mini-figure">
+      <img class="zoomable" src="{{ url_for('narrative.chart', slug='home') }}" alt="{{ narrative.chart_caption or '' }}">
+    </figure>
+    {% endif %}
+  </div>
 </div>
 {% endif %}
 

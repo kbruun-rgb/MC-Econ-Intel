@@ -550,7 +550,6 @@ main {
    headline), so lining those up at the top reads cleaner than centering
    two blocks of different height against each other. */
 .narrative-mini-home-chart-col { flex: 1 1 0; min-width: 0; }
-.narrative-mini-home-chart-col .narrative-eyebrow { margin-bottom: 0.6rem; }
 .narrative-mini-home-text { flex: 1 1 0; min-width: 0; }
 .narrative-mini-home-row .narrative-mini-figure { margin: 0; }
 .narrative-mini-home-row .narrative-mini-figure img {

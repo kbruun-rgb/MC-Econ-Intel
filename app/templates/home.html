@@ -8,17 +8,16 @@
 
 {% if narrative %}
 <div class="narrative-mini narrative-mini-home">
+  <span class="narrative-eyebrow">Chart of the Week</span>
   <div class="narrative-mini-home-row">
     {% if narrative.chart_image %}
     <div class="narrative-mini-home-chart-col">
-      <span class="narrative-eyebrow">Chart of the Week</span>
       <figure class="narrative-mini-figure">
         <img class="zoomable" src="{{ url_for('narrative.chart', slug='home') }}" alt="{{ narrative.chart_caption or '' }}">
       </figure>
     </div>
     {% endif %}
     <div class="narrative-mini-home-text">
-      {% if not narrative.chart_image %}<span class="narrative-eyebrow">Chart of the Week</span>{% endif %}
       <h2 class="narrative-mini-headline">{{ narrative.headline }}</h2>
       {% for para in narrative_paragraphs %}
       <p>{{ para }}</p>

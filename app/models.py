@@ -104,6 +104,14 @@ class NarrativeSnippet(db.Model):
     related_geography = db.Column(db.String(32), nullable=True)
     related_theme_slug = db.Column(db.String(64), nullable=True)
 
+    # A short slug identifying the specific series/cut this draft is built
+    # on (e.g. "unemployment_index_topline", "pay_loss_rate_by_income") --
+    # set by the narrative-draft skill, read back via get_recent_angles() so
+    # a future run can avoid repeating the same angle when fresh data
+    # supports a different one, or recognize it's fine to recycle when the
+    # underlying series (e.g. a monthly print) hasn't actually updated.
+    angle = db.Column(db.String(255), nullable=True)
+
 
 class ActivityEvent(db.Model):
     """One row per login or page view -- the raw log behind the /activity

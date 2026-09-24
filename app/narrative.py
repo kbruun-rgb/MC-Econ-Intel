@@ -225,6 +225,36 @@ def get_recent_feedback(topic_slug, limit=5):
     )
 
 
+def get_recent_angles(topic_slug, limit=5):
+    """The last few (angle, headline, chart_caption, created_at) used for a
+    topic, across any status, most recent first. The narrative-draft skill
+    reads this before picking an angle so it can (a) avoid repeating the
+    same specific series/cut two or three runs in a row when a genuinely
+    different, valid angle exists this cycle, and (b) recognize when a
+    monthly-cadence (or otherwise slow-moving) series hasn't actually
+    posted a new value since the last draft -- in which case recycling the
+    same angle is expected, not a problem to work around.
+    """
+    rows = (
+        NarrativeSnippet.query.filter(
+            NarrativeSnippet.topic_slug == topic_slug,
+            NarrativeSnippet.angle.isnot(None),
+        )
+        .order_by(NarrativeSnippet.created_at.desc())
+        .limit(limit)
+        .all()
+    )
+    return [
+        {
+            "angle": r.angle,
+            "headline": r.headline,
+            "chart_caption": r.chart_caption,
+            "created_at": r.created_at,
+        }
+        for r in rows
+    ]
+
+
 def create_manual_snippet(
     topic_slug, headline, body, chart_caption, admin_email, chart_file=None, related_geography=None, related_theme_slug=None
 ):

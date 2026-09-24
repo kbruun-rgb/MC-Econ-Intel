@@ -539,14 +539,24 @@ main {
    short the text ends up being. */
 .narrative-mini-home-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 2rem;
 }
-.narrative-mini-home-text { flex: 1 1 auto; min-width: 0; }
-.narrative-mini-home-row .narrative-mini-figure { margin: 0; flex: 0 0 320px; }
+/* Chart on the left (under its own "Chart of the Week" label), text on the
+   right -- given roughly equal width instead of the text column taking
+   whatever's left over, so the chart reads as genuinely larger/wider, not
+   just "the thing next to the text." Top-aligned rather than centered:
+   both columns now start with their own heading (the eyebrow, the
+   headline), so lining those up at the top reads cleaner than centering
+   two blocks of different height against each other. */
+.narrative-mini-home-chart-col { flex: 1 1 0; min-width: 0; }
+.narrative-mini-home-chart-col .narrative-eyebrow { margin-bottom: 0.6rem; }
+.narrative-mini-home-text { flex: 1 1 0; min-width: 0; }
+.narrative-mini-home-row .narrative-mini-figure { margin: 0; }
 .narrative-mini-home-row .narrative-mini-figure img {
   max-width: 100%;
-  max-height: 260px;
+  max-height: 340px;
+  width: 100%;
   background: white;
   border: 1px solid var(--mc-light-gray);
   border-radius: 8px;
@@ -556,7 +566,6 @@ main {
 }
 @media (max-width: 640px) {
   .narrative-mini-home-row { flex-direction: column; align-items: stretch; gap: 1rem; }
-  .narrative-mini-home-row .narrative-mini-figure { flex-basis: auto; }
 }
 
 /* /insights gallery: unlike the (paused) landing-page narrative-mini cards,

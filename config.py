@@ -96,6 +96,7 @@ THEME_KEYWORDS = {
     "Household Finances": ["household", "finance", "income"],
     "Weekly Pulse": ["weekly", "pulse"],
     "Geopolitical Risk": ["geopolitical", "gpr", "political"],
+    "SMB Tracker": ["smb", "small-business", "small-medium-business"],
 }
 
 # Keyword-guessed geography for an analysis, same best-effort approach as
@@ -119,6 +120,7 @@ DASHBOARD_THEME_DISPLAY_NAMES = {
     ("Global", "ICS"): "Global Consumer Sentiment",
     ("Global", "CHI"): "Global Consumer Health Index",
     ("US", "Inflation & Supply Chains"): "Inflation Perception & Expectations",
+    ("US", "SMB"): "SMB Tracker",
 }
 
 # One-line descriptions shown alongside a dashboard's name wherever it's
@@ -142,6 +144,7 @@ DASHBOARD_THEME_DESCRIPTIONS = {
     "Global Labor": "Labor market conditions across international markets.",
     "International Price Response Indicators": "Price response and sensitivity trends outside the U.S.",
     "Global Consumer Health Index": "Consumer demand index across 43 international markets, combining sentiment and labor market conditions.",
+    "SMB Tracker": "Business conditions, outlook, labor, financing, and challenges among small and medium U.S. business owners.",
 }
 
 # Individual dashboard file titles default to a humanized filename (e.g.
@@ -152,6 +155,7 @@ DASHBOARD_FILE_TITLES = {
     "labor_dashboard_mc.html": "Weekly Labor Dashboard",
     "chi_dashboard.html": "Global CHI Dashboard",
     "inflation_icie_dashboard.html": "Inflation Expectations Dashboard",
+    "smb_tracker_dashboard.html": "SMB Tracker Dashboard",
 }
 
 # Dashboards with no built-in toggleTheme() get a generic CSS invert-filter
@@ -263,6 +267,16 @@ TOPIC_HUBS = [
         "dashboard_themes": ["Consumer Spending", "Price Response Indicators"],
         "report_themes": ["Consumer Spending", "Housing"],
         "include_all_industry_reports": True,
+    },
+    {
+        # The one hub whose audience is business owners/decision-makers,
+        # not consumers -- every other hub above surveys consumers. Kept
+        # deliberately separate rather than folded into an existing hub.
+        "slug": "small-business",
+        "label": "Small Business",
+        "icon": "store",
+        "dashboard_themes": ["SMB Tracker"],
+        "report_themes": [],
     },
 ]
 

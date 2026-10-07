@@ -1,7 +1,7 @@
 from flask import Blueprint, abort, send_file
 from flask_login import login_required
 
-from app.library_scan import DELIVERABLE_RE, INDUSTRY_REPORT_RE
+from app.library_scan import INDUSTRY_REPORT_RE
 from app.safe_files import resolve_within_root
 from config import ANALYSES_ROOT, ECON_LIBRARY_ROOT, INDUSTRY_REPORTS_ROOT
 
@@ -24,7 +24,7 @@ def dashboard_file(relpath):
 def report_file(relpath):
     filename = relpath.rsplit("/", 1)[-1]
     lower = filename.lower()
-    if not lower.endswith((".pdf", ".docx", ".pptx")) or not DELIVERABLE_RE.search(filename):
+    if filename.startswith("~$") or not lower.endswith((".pdf", ".docx", ".pptx")):
         abort(404)
     path = resolve_within_root(ANALYSES_ROOT, relpath)
     if path is None:

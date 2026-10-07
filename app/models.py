@@ -113,6 +113,26 @@ class NarrativeSnippet(db.Model):
     angle = db.Column(db.String(255), nullable=True)
 
 
+class ApiQueryLog(db.Model):
+    """One row per tool call against the public econ-data MCP server. Written
+    by that separate service (same DATABASE_URL, no shared code) on every
+    request, so Kayla can see everything anyone does with a self-serve key --
+    her explicit requirement, not just a usage count. A new table, so
+    db.create_all() picks it up with no migration, same reasoning as
+    ActivityEvent above.
+    """
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    tool_name = db.Column(db.String(64), nullable=False)
+    dataset = db.Column(db.String(128), nullable=True)
+    query_text = db.Column(db.Text, nullable=True)  # truncated SQL, if the tool took one
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+    ip_address = db.Column(db.String(64), nullable=True)
+
+    user = db.relationship("User")
+
+
 class ActivityEvent(db.Model):
     """One row per login or page view -- the raw log behind the /activity
     admin page. A brand-new table rather than columns added to User, so

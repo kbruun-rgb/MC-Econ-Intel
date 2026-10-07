@@ -27,7 +27,6 @@ from config import (
 GUIDE_FILENAME = "interpretation_guide.md"
 PUBLISH_FILENAME = "publish.json"
 ANALYSIS_FOLDER_RE = re.compile(r"^(\d{4})-(\d{2})-(\d{2})-(.+)$")
-DELIVERABLE_RE = re.compile(r"(memo|brief)", re.IGNORECASE)
 INDUSTRY_REPORT_RE = re.compile(r"^Industry Report - (.+)\.pdf$", re.IGNORECASE)
 
 # The generator regenerates every category together in one run each month, so
@@ -249,11 +248,19 @@ def scan_reports(root=ANALYSES_ROOT):
             continue
 
         try:
+            # Extension + "not a transient Office lock file" is the real
+            # signal that a file is a deliverable -- the keyword match this
+            # used to require (memo/brief/...) was a fragile second gate
+            # that silently hid real analyses whenever Kayla named a file
+            # something else (e.g. "housing_share_fact_list.docx"). The
+            # actual safety gate against publishing bespoke/brand work is
+            # publish.json (explicitly opted into per-folder), not the
+            # filename.
             candidates = [
                 f
                 for f in os.scandir(entry.path)
                 if f.is_file()
-                and DELIVERABLE_RE.search(f.name)
+                and not f.name.startswith("~$")
                 and f.name.lower().endswith((".pdf", ".docx", ".pptx"))
             ]
         except OSError:

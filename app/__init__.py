@@ -1,4 +1,6 @@
 import os
+from datetime import timezone
+from zoneinfo import ZoneInfo
 
 from flask import Flask, redirect, url_for, request
 from flask_login import LoginManager, current_user, login_user
@@ -46,6 +48,18 @@ def create_app():
     from app.topics_routes import topics_bp
     from app.files import files_bp
     from app.narrative_routes import narrative_bp
+
+    @app.template_filter("eastern")
+    def format_eastern(dt, fmt="%b %d, %Y %I:%M %p"):
+        # Timestamps are stored naive via db.func.now() -- Neon Postgres's
+        # server clock is UTC, so naive here means UTC, not local. Kayla's
+        # in DC; the /activity page showed raw UTC until she asked for this.
+        if dt is None:
+            return "—"
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        eastern = dt.astimezone(ZoneInfo("America/New_York"))
+        return eastern.strftime(fmt) + " ET"
 
     @app.context_processor
     def inject_is_admin():
@@ -119,7 +133,7 @@ def create_app():
     TRACKED_BLUEPRINTS = {"main", "dashboards", "reports", "industry_reports", "topics"}
     # The admin pages' own view counts would just be Kayla checking them,
     # not client engagement -- excluded so they don't pollute the log.
-    UNTRACKED_ENDPOINTS = {"main.health", "main.activity"}
+    UNTRACKED_ENDPOINTS = {"main.health", "main.activity", "main.admin_revoke_key"}
 
     @app.after_request
     def record_page_view(response):

@@ -10,4 +10,29 @@
 </div>
 
 <p><a class="btn" href="{{ url_for('main.connect_download') }}">Download AI prompt (.txt)</a></p>
+
+{% if is_admin %}
+<h2 class="section-title" style="font-size:1.05rem; margin-top:2.5rem;">API key <span class="subtle" style="font-weight:normal;">(admin-only preview -- not yet visible to other users)</span></h2>
+<div class="home-intro">
+  <p>Connect an MCP-compatible client (Claude Desktop, Claude Code, or any other MCP client) directly to Morning Consult's underlying economic data &mdash; the same datasets behind the dashboards on this site, queryable programmatically. Generate a personal key below and use it as a bearer token when connecting to:</p>
+  <p><code>{{ mcp_server_url }}</code></p>
+</div>
+
+{% if current_user.api_token and current_user.api_token_is_valid() %}
+  <p><code style="font-size:0.95rem; padding:0.5rem 0.75rem; background:#f4f4f4; border-radius:4px; display:inline-block;">{{ current_user.api_token }}</code></p>
+  <p class="subtle">Key active, created {{ current_user.api_token_created_at|eastern }}, expires {{ current_user.api_token_expires_at|eastern }}.
+  {% if current_user.api_token_use_count %}Used {{ current_user.api_token_use_count }} time(s), last on {{ current_user.api_token_last_used_at|eastern }}.{% else %}Not used yet.{% endif %}</p>
+  <form method="post" action="{{ url_for('main.connect_regenerate') }}" style="display:inline;">
+    <button type="submit" class="btn">Regenerate key</button>
+  </form>
+  <form method="post" action="{{ url_for('main.connect_revoke') }}" style="display:inline;" onsubmit="return confirm('Revoke your API key? Any client using it will stop working immediately.');">
+    <button type="submit" class="btn btn-secondary">Revoke key</button>
+  </form>
+{% else %}
+  <p class="subtle">No active key.</p>
+  <form method="post" action="{{ url_for('main.connect_regenerate') }}">
+    <button type="submit" class="btn">Generate API key</button>
+  </form>
+{% endif %}
+{% endif %}
 {% endblock %}

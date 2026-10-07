@@ -82,6 +82,18 @@ R2_ACCESS_KEY_ID = os.environ.get("R2_ACCESS_KEY_ID")
 R2_SECRET_ACCESS_KEY = os.environ.get("R2_SECRET_ACCESS_KEY")
 R2_BUCKET_NAME = os.environ.get("R2_BUCKET_NAME")
 
+# The public econ-data MCP server is a separate service (its own Render
+# deployment) that shares this app's DATABASE_URL (for API-key validation
+# and query logging) and R2 bucket (reading a new "data/" prefix this app
+# never touches) -- see /connect. Not yet deployed; defaults to a localhost
+# placeholder until Kayla stands up the real service and sets this env var.
+MCP_SERVER_URL = os.environ.get("MCP_SERVER_URL", "http://localhost:8800/mcp (not yet deployed)")
+
+# New R2 prefix, sibling to dashboards/ and reports/ -- raw per-dataset tidy
+# data for the public MCP server, exported by update_econ_data_library.py's
+# export_mcp_datasets() step (separate from the HTML dashboard sync).
+R2_DATA_PREFIX = "data"
+
 # Theme vocabulary shared by the dashboards library and the reports theme
 # filter, used to best-guess a theme tag for each analysis from its slug.
 # The dict key is also what's displayed as the theme name, so it's spelled

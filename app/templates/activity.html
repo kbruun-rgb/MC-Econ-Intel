@@ -2,6 +2,13 @@
 {% block title %}Activity — Morning Consult Economic Intelligence{% endblock %}
 {% block content %}
 <h1 class="section-title">Activity</h1>
+
+<div class="tabs">
+  <a href="#page-activity" class="activity-tab active" data-index="page-activity">Page Activity</a>
+  <a href="#api-usage" class="activity-tab" data-index="api-usage">API Usage</a>
+</div>
+
+<div class="activity-panel" data-index="page-activity">
 <p class="subtle">Logins and page views by account, tracked since this page shipped -- there's no history from before then.</p>
 
 <h2 class="section-title" style="font-size:1.05rem;">By account</h2>
@@ -60,8 +67,12 @@
 {% if not top_content %}
 <p class="subtle" style="margin-top:1rem;">No page views logged yet.</p>
 {% endif %}
+</div>
 
-<h2 class="section-title" style="font-size:1.05rem; margin-top:2rem;">API keys</h2>
+<div class="activity-panel" data-index="api-usage" style="display:none;">
+<p class="subtle">Every self-serve econ-data API key and every query logged against it.</p>
+
+<h2 class="section-title" style="font-size:1.05rem;">API keys</h2>
 <table class="reports-table">
   <thead>
     <tr><th>Name</th><th>Email</th><th>Status</th><th>Created (ET)</th><th>Expires (ET)</th><th>Uses</th><th>Last used (ET)</th><th>Last IP</th><th></th></tr>
@@ -114,4 +125,18 @@
 {% if not recent_queries %}
 <p class="subtle" style="margin-top:1rem;">No API queries logged yet.</p>
 {% endif %}
+</div>
+
+<script>
+document.querySelectorAll('.activity-tab').forEach(function (tab) {
+  tab.addEventListener('click', function (e) {
+    e.preventDefault();
+    var idx = tab.getAttribute('data-index');
+    document.querySelectorAll('.activity-tab').forEach(function (t) { t.classList.toggle('active', t === tab); });
+    document.querySelectorAll('.activity-panel').forEach(function (p) {
+      p.style.display = (p.getAttribute('data-index') === idx) ? '' : 'none';
+    });
+  });
+});
+</script>
 {% endblock %}

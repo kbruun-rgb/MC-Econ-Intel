@@ -50,8 +50,8 @@
 }</code></pre>
   <p class="subtle">Replace <code>YOUR_KEY_HERE</code> with the key above. Once added, ask Claude something like "what datasets are available from mc-econ-data?" to confirm it's connected.</p>
 
-  <h3 style="margin-top:1.25rem;">Claude Desktop / claude.ai <span class="subtle" style="font-weight:normal;">(not yet supported)</span></h3>
-  <p class="subtle">Their standard "Add custom connector" flow expects a full OAuth login step, which this server doesn't implement yet (it uses a simpler API-key model, same as the setup above). Adding it there today will likely fail at the login step. Use Claude Code for now, or ask your own developer to call it directly -- any MCP client that lets you set a static <code>Authorization</code> header will work the same way as the Claude Code example above.</p>
+  <h3 style="margin-top:1.25rem;">Claude Desktop / claude.ai</h3>
+  <p class="subtle">Go to Settings &rarr; Connectors &rarr; Add custom connector, and paste in <code>{{ mcp_server_url }}</code>. No key needed -- you'll be asked to log into your Morning Consult Economic Intelligence account directly and approve the connection.</p>
 
   <h3 style="margin-top:1.25rem;">Calling it directly <span class="subtle" style="font-weight:normal;">(for your own scripts/tools)</span></h3>
   <p>This is a standard MCP server (Streamable HTTP transport) at <code>{{ mcp_server_url }}</code>, bearer-token authenticated. Five tools: <code>list_datasets</code>, <code>describe_dataset</code>, <code>query_dataset</code> for data; <code>list_methodology_docs</code>, <code>get_methodology</code> for interpretation guidance. Any MCP client library (Python, TypeScript, etc.) can connect using the key above as the bearer token.</p>

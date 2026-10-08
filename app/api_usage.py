@@ -5,7 +5,9 @@ ApiQueryLog rows written by the separate MCP service on every tool call.
 Mirrors app/activity.py's style: plain per-purpose query functions, no ORM
 abstraction layer.
 """
-from app.models import ApiQueryLog, User
+from datetime import datetime, timezone
+
+from app.models import ApiQueryLog, OAuthToken, User
 
 
 def build_token_holders():
@@ -29,6 +31,35 @@ def build_token_holders():
             }
         )
     rows.sort(key=lambda r: r["last_used_at"] or r["created_at"], reverse=True)
+    return rows
+
+
+def build_oauth_connections():
+    """One row per OAuth token ever issued (Claude Desktop/claude.ai, via
+    the /oauth/* flow in app/oauth_server.py) -- the OAuth-side equivalent
+    of build_token_holders() above for the manual-key path. Most recent
+    first; never includes the token strings themselves (see OAuthToken's
+    surrogate int id in app/models.py), only enough to identify and revoke
+    a connection.
+    """
+    rows = []
+    for t in OAuthToken.query.order_by(OAuthToken.created_at.desc()).all():
+        expires_at = t.refresh_token_expires_at
+        if expires_at and expires_at.tzinfo is None:
+            expires_at = expires_at.replace(tzinfo=timezone.utc)
+        active = not t.revoked and expires_at is not None and datetime.now(timezone.utc) < expires_at
+        rows.append(
+            {
+                "id": t.id,
+                "name": t.user.name if t.user else "(deleted user)",
+                "email": t.user.email if t.user else "—",
+                "client_name": t.client.client_name if t.client else "(unknown client)",
+                "active": active,
+                "created_at": t.created_at,
+                "access_token_expires_at": t.access_token_expires_at,
+                "refresh_token_expires_at": t.refresh_token_expires_at,
+            }
+        )
     return rows
 
 

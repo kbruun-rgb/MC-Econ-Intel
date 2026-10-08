@@ -133,6 +133,85 @@ class ApiQueryLog(db.Model):
     user = db.relationship("User")
 
 
+class OAuthClient(db.Model):
+    """A client registered via Dynamic Client Registration (RFC 7591) --
+    e.g. Claude Desktop, registered the first time someone there clicks "Add
+    custom connector" and points it at the public econ-data MCP server.
+    Distinct from User.api_token (a single static key per *user*, for
+    Claude Code): this is a registry of *client apps*, since OAuth allows
+    many users to each separately authorize the same client, and a client's
+    registration is independent of any one user's tokens.
+    """
+
+    # Explicit, not Flask-SQLAlchemy's default CamelCase->snake_case name
+    # (which would turn "OAuthClient" into "o_auth_client") -- the separate
+    # MCP service queries this table with raw SQL (no shared ORM code), so
+    # the name needs to be unambiguous and typed out once here.
+    __tablename__ = "oauth_client"
+
+    client_id = db.Column(db.String(64), primary_key=True)
+    # Null for a public/native client (token_endpoint_auth_method="none",
+    # e.g. Desktop) -- it can't keep a secret, so it authenticates via PKCE
+    # alone. Only set for a confidential client, which this app doesn't
+    # expect to see in practice yet but supports per spec.
+    client_secret = db.Column(db.String(128), nullable=True)
+    client_name = db.Column(db.String(255), nullable=True)
+    redirect_uris = db.Column(db.Text, nullable=False)  # JSON-encoded list
+    token_endpoint_auth_method = db.Column(db.String(32), nullable=False, default="none")
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+
+
+class OAuthAuthorizationCode(db.Model):
+    """A short-lived, single-use code issued after a user clicks Allow on
+    the consent screen, exchanged at /oauth/token for the actual access
+    token. Bound to one user_id, one client_id, and the exact redirect_uri +
+    PKCE challenge presented at /authorize -- all re-checked at exchange
+    time so a code can't be replayed or redirected elsewhere.
+    """
+
+    __tablename__ = "oauth_authorization_code"
+
+    code = db.Column(db.String(128), primary_key=True)
+    client_id = db.Column(db.String(64), db.ForeignKey("oauth_client.client_id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    redirect_uri = db.Column(db.String(512), nullable=False)
+    code_challenge = db.Column(db.String(128), nullable=False)
+    expires_at = db.Column(db.DateTime, nullable=False)
+    used = db.Column(db.Boolean, nullable=False, default=False)
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+
+    client = db.relationship("OAuthClient")
+    user = db.relationship("User")
+
+
+class OAuthToken(db.Model):
+    """An access/refresh token pair issued from a redeemed authorization
+    code, or from a prior refresh (rotation replaces the row's tokens
+    in place -- old values stop working the moment new ones are issued).
+    Separate from User.api_token because OAuth allows multiple issued
+    tokens per user (one per connected client), where the manual key is
+    deliberately a single value per user.
+    """
+
+    __tablename__ = "oauth_token"
+
+    # A surrogate int id, not the token string, is the primary key -- so an
+    # admin "revoke" link/form can reference a row (e.g. /admin/..../<id>)
+    # without ever putting a live bearer credential into a URL or page HTML.
+    id = db.Column(db.Integer, primary_key=True)
+    access_token = db.Column(db.String(128), unique=True, nullable=False)
+    refresh_token = db.Column(db.String(128), unique=True, nullable=True)
+    client_id = db.Column(db.String(64), db.ForeignKey("oauth_client.client_id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    access_token_expires_at = db.Column(db.DateTime, nullable=False)
+    refresh_token_expires_at = db.Column(db.DateTime, nullable=True)
+    revoked = db.Column(db.Boolean, nullable=False, default=False)
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+
+    client = db.relationship("OAuthClient")
+    user = db.relationship("User")
+
+
 class ActivityEvent(db.Model):
     """One row per login or page view -- the raw log behind the /activity
     admin page. A brand-new table rather than columns added to User, so

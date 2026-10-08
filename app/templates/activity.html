@@ -125,6 +125,36 @@
 {% if not recent_queries %}
 <p class="subtle" style="margin-top:1rem;">No API queries logged yet.</p>
 {% endif %}
+
+<h2 class="section-title" style="font-size:1.05rem; margin-top:2rem;">Claude Desktop / OAuth connections</h2>
+<p class="subtle">Every connection made via "Add custom connector" (Claude Desktop, claude.ai), as opposed to a pasted API key.</p>
+<table class="reports-table">
+  <thead>
+    <tr><th>Name</th><th>Email</th><th>Client</th><th>Status</th><th>Connected (ET)</th><th>Refresh expires (ET)</th><th></th></tr>
+  </thead>
+  <tbody>
+    {% for c in oauth_connections %}
+    <tr>
+      <td>{{ c.name }}</td>
+      <td>{{ c.email }}</td>
+      <td>{{ c.client_name }}</td>
+      <td>{{ "Active" if c.active else "Revoked/expired" }}</td>
+      <td>{{ c.created_at|eastern }}</td>
+      <td>{{ c.refresh_token_expires_at|eastern }}</td>
+      <td>
+        {% if c.active %}
+        <form method="post" action="{{ url_for('main.admin_revoke_oauth', token_id=c.id) }}" onsubmit="return confirm('Revoke this OAuth connection for ' + {{ c.email|tojson }} + '? It will stop working immediately.');">
+          <button type="submit" class="btn btn-secondary" style="padding:0.25rem 0.6rem; font-size:0.85rem;">Revoke</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% if not oauth_connections %}
+<p class="subtle" style="margin-top:1rem;">No OAuth connections yet.</p>
+{% endif %}
 </div>
 
 <script>

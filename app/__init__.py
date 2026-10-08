@@ -48,6 +48,7 @@ def create_app():
     from app.topics_routes import topics_bp
     from app.files import files_bp
     from app.narrative_routes import narrative_bp
+    from app.oauth_server import oauth_bp
 
     @app.template_filter("eastern")
     def format_eastern(dt, fmt="%b %d, %Y %I:%M %p"):
@@ -95,12 +96,29 @@ def create_app():
     app.register_blueprint(topics_bp)
     app.register_blueprint(files_bp)
     app.register_blueprint(narrative_bp)
+    app.register_blueprint(oauth_bp)
 
     # Route-level @login_required decorators guard every page and file
     # response individually (see each blueprint) -- this hook is a second,
     # coarse-grained backstop so a newly added route can never accidentally
     # ship unauthenticated by omission.
-    EXEMPT_ENDPOINTS = {"auth.login", "static", "main.llms_txt"}
+    #
+    # The oauth.* routes are the OAuth authorization server's wire protocol
+    # (see app/oauth_server.py): metadata/register/token are called directly
+    # by an MCP client, never a logged-in browser, so they must stay
+    # reachable unauthenticated. oauth.authorize *does* require a login, but
+    # handles that redirect itself (preserving the full query string via
+    # request.full_path) -- this hook's own redirect only forwards
+    # request.path, which would drop client_id/redirect_uri/code_challenge.
+    EXEMPT_ENDPOINTS = {
+        "auth.login",
+        "static",
+        "main.llms_txt",
+        "oauth.metadata",
+        "oauth.register",
+        "oauth.token",
+        "oauth.authorize",
+    }
 
     # Lets a plain URL-fetch AI tool (no session, no cookies) read gated
     # content via ?token=... instead of a real login -- see
@@ -133,7 +151,7 @@ def create_app():
     TRACKED_BLUEPRINTS = {"main", "dashboards", "reports", "industry_reports", "topics"}
     # The admin pages' own view counts would just be Kayla checking them,
     # not client engagement -- excluded so they don't pollute the log.
-    UNTRACKED_ENDPOINTS = {"main.health", "main.activity", "main.admin_revoke_key"}
+    UNTRACKED_ENDPOINTS = {"main.health", "main.activity", "main.admin_revoke_key", "main.admin_revoke_oauth"}
 
     @app.after_request
     def record_page_view(response):

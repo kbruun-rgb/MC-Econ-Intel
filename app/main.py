@@ -3,8 +3,8 @@ from flask_login import current_user, login_required
 
 from app import db
 from app.activity import build_recent_activity, build_top_content, build_user_summary
-from app.api_usage import build_recent_queries, build_token_holders
-from app.models import User
+from app.api_usage import build_oauth_connections, build_recent_queries, build_token_holders
+from app.models import OAuthToken, User
 from app.bible_scan import build_connect_prompt, build_llms_txt
 from app.content_health import build_health_rows
 from app.narrative import get_live_snippet, related_dashboard_link, render_paragraphs
@@ -67,6 +67,7 @@ def activity():
         recent_activity=build_recent_activity(),
         token_holders=build_token_holders(),
         recent_queries=build_recent_queries(),
+        oauth_connections=build_oauth_connections(),
     )
 
 
@@ -82,6 +83,20 @@ def admin_revoke_key(user_id):
     target.api_token_expires_at = None
     db.session.commit()
     flash(f"Revoked API key for {target.name} ({target.email}).")
+    return redirect(url_for("main.activity"))
+
+
+@main_bp.route("/admin/revoke-oauth/<int:token_id>", methods=["POST"])
+@login_required
+def admin_revoke_oauth(token_id):
+    if current_user.email not in ADMIN_EMAILS:
+        abort(404)
+    target = db.session.get(OAuthToken, token_id)
+    if target is None:
+        abort(404)
+    target.revoked = True
+    db.session.commit()
+    flash("Revoked OAuth connection.")
     return redirect(url_for("main.activity"))
 
 

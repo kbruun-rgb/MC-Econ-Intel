@@ -83,11 +83,11 @@ R2_SECRET_ACCESS_KEY = os.environ.get("R2_SECRET_ACCESS_KEY")
 R2_BUCKET_NAME = os.environ.get("R2_BUCKET_NAME")
 
 # The public econ-data MCP server is a separate service (its own Render
-# deployment) that shares this app's DATABASE_URL (for API-key validation
-# and query logging) and R2 bucket (reading a new "data/" prefix this app
-# never touches) -- see /connect. Not yet deployed; defaults to a localhost
-# placeholder until Kayla stands up the real service and sets this env var.
-MCP_SERVER_URL = os.environ.get("MCP_SERVER_URL", "http://localhost:8800/mcp (not yet deployed)")
+# deployment, github.com/kbruun-rgb/MC-Econ-Data-MCP) that shares this app's
+# DATABASE_URL (for API-key validation and query logging) and R2 bucket
+# (reading "data/" and "econ_bible/" prefixes this app never touches) --
+# see /connect. Deployed 2026-10-08 at mc-econ-data-mcp.onrender.com.
+MCP_SERVER_URL = os.environ.get("MCP_SERVER_URL", "https://mc-econ-data-mcp.onrender.com/mcp")
 
 # New R2 prefix, sibling to dashboards/ and reports/ -- raw per-dataset tidy
 # data for the public MCP server, exported by update_econ_data_library.py's

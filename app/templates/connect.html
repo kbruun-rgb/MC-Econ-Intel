@@ -14,8 +14,7 @@
 {% if is_admin %}
 <h2 class="section-title" style="font-size:1.05rem; margin-top:2.5rem;">API key <span class="subtle" style="font-weight:normal;">(admin-only preview -- not yet visible to other users)</span></h2>
 <div class="home-intro">
-  <p>Connect an MCP-compatible client (Claude Desktop, Claude Code, or any other MCP client) directly to Morning Consult's underlying economic data &mdash; the same datasets behind the dashboards on this site, queryable programmatically. Generate a personal key below and use it as a bearer token when connecting to:</p>
-  <p><code>{{ mcp_server_url }}</code></p>
+  <p>Connect an MCP-compatible AI client directly to Morning Consult's underlying economic data and interpretation guidance &mdash; the same datasets behind the dashboards on this site, plus our own methodology notes on reading them correctly, queryable programmatically instead of just read as a one-time downloaded prompt.</p>
 </div>
 
 {% if current_user.api_token and current_user.api_token_is_valid() %}
@@ -34,5 +33,28 @@
     <button type="submit" class="btn">Generate API key</button>
   </form>
 {% endif %}
+
+<div class="guide-box" style="margin-top:1.5rem;">
+  <h3>Setup: Claude Code <span class="subtle" style="font-weight:normal;">(verified working)</span></h3>
+  <p>Add this to your project's <code>.mcp.json</code> (or run <code>claude mcp add</code> and paste the equivalent):</p>
+  <pre><code>{
+  "mcpServers": {
+    "mc-econ-data": {
+      "type": "http",
+      "url": "{{ mcp_server_url }}",
+      "headers": {
+        "Authorization": "Bearer YOUR_KEY_HERE"
+      }
+    }
+  }
+}</code></pre>
+  <p class="subtle">Replace <code>YOUR_KEY_HERE</code> with the key above. Once added, ask Claude something like "what datasets are available from mc-econ-data?" to confirm it's connected.</p>
+
+  <h3 style="margin-top:1.25rem;">Claude Desktop / claude.ai <span class="subtle" style="font-weight:normal;">(not yet supported)</span></h3>
+  <p class="subtle">Their standard "Add custom connector" flow expects a full OAuth login step, which this server doesn't implement yet (it uses a simpler API-key model, same as the setup above). Adding it there today will likely fail at the login step. Use Claude Code for now, or ask your own developer to call it directly -- any MCP client that lets you set a static <code>Authorization</code> header will work the same way as the Claude Code example above.</p>
+
+  <h3 style="margin-top:1.25rem;">Calling it directly <span class="subtle" style="font-weight:normal;">(for your own scripts/tools)</span></h3>
+  <p>This is a standard MCP server (Streamable HTTP transport) at <code>{{ mcp_server_url }}</code>, bearer-token authenticated. Five tools: <code>list_datasets</code>, <code>describe_dataset</code>, <code>query_dataset</code> for data; <code>list_methodology_docs</code>, <code>get_methodology</code> for interpretation guidance. Any MCP client library (Python, TypeScript, etc.) can connect using the key above as the bearer token.</p>
+</div>
 {% endif %}
 {% endblock %}

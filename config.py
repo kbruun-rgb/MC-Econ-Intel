@@ -133,6 +133,7 @@ DASHBOARD_THEME_DISPLAY_NAMES = {
     ("Global", "CHI"): "Global Consumer Health Index",
     ("US", "Inflation & Supply Chains"): "Inflation Perception & Expectations",
     ("US", "SMB"): "SMB Tracker",
+    ("US", "AI Module"): "AI at Work",
 }
 
 # One-line descriptions shown alongside a dashboard's name wherever it's
@@ -157,6 +158,7 @@ DASHBOARD_THEME_DESCRIPTIONS = {
     "International Price Response Indicators": "Price response and sensitivity trends outside the U.S.",
     "Global Consumer Health Index": "Consumer demand index across 43 international markets, combining sentiment and labor market conditions.",
     "SMB Tracker": "Business conditions, outlook, labor, financing, and challenges among small and medium U.S. business owners.",
+    "AI at Work": "Worker and consumer attitudes toward AI -- usage, productivity impact, job disruption, and outlook.",
 }
 
 # Individual dashboard file titles default to a humanized filename (e.g.
@@ -169,6 +171,7 @@ DASHBOARD_FILE_TITLES = {
     "inflation_icie_dashboard.html": "Inflation Expectations Dashboard",
     "smb_tracker_dashboard.html": "SMB Tracker Dashboard",
     "housing_market_tracker.html": "Housing Market Tracker",
+    "ai_dashboard.html": "AI Module Survey Dashboard",
 }
 
 # Dashboards with no built-in toggleTheme() get a generic CSS invert-filter

@@ -168,6 +168,7 @@ DASHBOARD_FILE_TITLES = {
     "chi_dashboard.html": "Global CHI Dashboard",
     "inflation_icie_dashboard.html": "Inflation Expectations Dashboard",
     "smb_tracker_dashboard.html": "SMB Tracker Dashboard",
+    "housing_market_tracker.html": "Housing Market Tracker",
 }
 
 # Dashboards with no built-in toggleTheme() get a generic CSS invert-filter

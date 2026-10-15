@@ -15,6 +15,7 @@ from config import (
     ANALYSES_ROOT,
     DASHBOARD_FILE_TITLES,
     DASHBOARD_THEME_DESCRIPTIONS,
+    DASHBOARD_THEME_ORDER,
     DASHBOARD_THEME_DISPLAY_NAMES,
     ECON_LIBRARY_ROOT,
     GEOGRAPHY_KEYWORDS,
@@ -187,6 +188,12 @@ def scan_econ_library(root=ECON_LIBRARY_ROOT):
                 "has_content": bool(dashboards) or bool(guide_html),
                 "updated_at": updated_at,
             }
+        )
+
+    for geography, entries in library.items():
+        order = DASHBOARD_THEME_ORDER.get(geography, [])
+        entries.sort(
+            key=lambda e: (order.index(e["theme"]) if e["theme"] in order else len(order), e["theme"])
         )
 
     return library

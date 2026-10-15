@@ -136,6 +136,35 @@ DASHBOARD_THEME_DISPLAY_NAMES = {
     ("US", "AI Module"): "AI at Work",
 }
 
+# Display order of dashboard themes on the Dashboards page, per geography:
+# broad macro indices first, getting more granular/topical further down.
+# Listed by display name (post-override, above). Without this the page sorts
+# by folder name, which put "AI at Work" (folder "US AI Module") first.
+# Any theme not listed sorts after these, alphabetically -- so a new theme
+# still shows up, just at the bottom until it's placed here.
+DASHBOARD_THEME_ORDER = {
+    "US": [
+        "Consumer Health Index",
+        "Index of Consumer Sentiment",
+        "Weekly Pulse",
+        "Inflation Perception & Expectations",
+        "Jobs & Labor",
+        "Consumer Spending",
+        "Household Finances",
+        "Price Response Indicators",
+        "Housing",
+        "SMB Tracker",
+        "AI at Work",
+    ],
+    "Global": [
+        "Global Consumer Health Index",
+        "Global Consumer Sentiment",
+        "Global Labor",
+        "International Price Response Indicators",
+        "Geopolitical Risk",
+    ],
+}
+
 # One-line descriptions shown alongside a dashboard's name wherever it's
 # listed as a card (Dashboards index, Topic Hub pages, the Guide me wizard
 # results). Keyed by the display name (post-override, above) since those

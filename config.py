@@ -151,6 +151,7 @@ DASHBOARD_THEME_ORDER = {
         "Jobs & Labor",
         "Consumer Spending",
         "Household Finances",
+        "Consumer Credit",
         "Price Response Indicators",
         "Housing",
         "SMB Tracker",
@@ -177,6 +178,7 @@ DASHBOARD_THEME_DESCRIPTIONS = {
     "Global Consumer Sentiment": "Consumer confidence trends across 43 international markets.",
     "Consumer Spending": "Real, seasonally-adjusted spending levels and category share of wallet.",
     "Household Finances": "Savings, debt, and financial cushion across income groups.",
+    "Consumer Credit": "Monthly household debt payments by type (credit card, auto, mortgage, student, medical and more) and income sources, by demographic group.",
     "Housing": "Home-buying sentiment, affordability, and housing-related spending.",
     "Inflation Perception & Expectations": "Consumer inflation expectations (ICIE) and price surprise signals, updated weekly.",
     "Jobs & Labor": "Weekly unemployment, pay loss, and job search activity, plus a quarterly deep-dive survey.",
@@ -200,6 +202,7 @@ DASHBOARD_FILE_TITLES = {
     "inflation_icie_dashboard.html": "Inflation Expectations Dashboard",
     "smb_tracker_dashboard.html": "SMB Tracker Dashboard",
     "housing_market_tracker.html": "Housing Market Tracker",
+    "consumer_credit_dashboard.html": "Consumer Credit Dashboard",
     "ai_dashboard.html": "AI Module Survey Dashboard",
 }
 
@@ -267,7 +270,7 @@ TOPIC_HUBS = [
         "slug": "consumer-financial-health",
         "label": "Financial Health",
         "icon": "wallet",
-        "dashboard_themes": ["Consumer Health Index", "Household Finances", "Index of Consumer Sentiment", "Global Consumer Health Index"],
+        "dashboard_themes": ["Consumer Health Index", "Household Finances", "Consumer Credit", "Index of Consumer Sentiment", "Global Consumer Health Index"],
         "report_themes": ["Consumer Health Index", "Household Finances"],
     },
     {

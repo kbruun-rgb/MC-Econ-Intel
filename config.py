@@ -26,7 +26,10 @@ ECON_LIBRARY_ROOT = r"G:\Shared drives\mc_econ\Econ Team\Econ Data Library"
 # Library folders that exist on the shared drive but aren't ready for client
 # eyes yet. Fully invisible to the site (not even "coming soon"), both
 # locally and in what sync_to_cloud.py uploads.
-LIBRARY_FOLDERS_NOT_READY = set()
+#
+# "Thought Leadership" holds the public economics site's draft pieces (a separate
+# project); it is not a dashboard folder and must never show up in the portal.
+LIBRARY_FOLDERS_NOT_READY = {"Thought Leadership"}
 
 # Some library folders' dashboard content should be shown on the site under
 # a DIFFERENT folder's public identity (theme name, description, URL slug) --

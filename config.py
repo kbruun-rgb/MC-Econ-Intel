@@ -207,6 +207,8 @@ DASHBOARD_FILE_TITLES = {
     "housing_market_tracker.html": "Housing Market Tracker",
     "consumer_credit_dashboard.html": "Consumer Credit Dashboard",
     "ai_dashboard.html": "AI Module Survey Dashboard",
+    "ics_dashboard.html": "ICS Dashboard",
+    "msa_ics_dashboard.html": "MSA Consumer Sentiment Dashboard",
 }
 
 # Dashboards with no built-in toggleTheme() get a generic CSS invert-filter

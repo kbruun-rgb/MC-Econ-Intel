@@ -183,7 +183,7 @@ DASHBOARD_THEME_DESCRIPTIONS = {
     "Household Finances": "Savings, debt, and financial cushion across income groups.",
     "Consumer Credit": "Monthly household debt payments by type (credit card, auto, mortgage, student, medical and more) and income sources, by demographic group.",
     "Housing": "Home-buying sentiment, affordability, and housing-related spending.",
-    "Inflation Perception & Expectations": "Consumer inflation expectations (ICIE) and price surprise signals, updated weekly.",
+    "Inflation Perception & Expectations": "Consumer inflation expectations (ICIE) and price surprise signals, plus supply chain trouble finding, delivery timing and online shopping friction.",
     "Jobs & Labor": "Weekly unemployment, pay loss, and job search activity, plus a quarterly deep-dive survey.",
     "Price Response Indicators": "How consumers react to price changes -- absorption, trading down, and price sensitivity by category.",
     "Weekly Pulse": "A fast-moving snapshot of consumer sentiment and spending intent, updated weekly.",

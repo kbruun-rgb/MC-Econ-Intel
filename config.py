@@ -331,6 +331,17 @@ TOPIC_HUBS = [
         "dashboard_themes": ["SMB Tracker"],
         "report_themes": [],
     },
+    {
+        # How workers and consumers use and expect to be affected by AI (the AI module
+        # survey). report_themes is empty until an analysis is tagged "AI at Work" in its
+        # publish.json; there is no THEME_KEYWORDS entry because "ai" would match inside
+        # unrelated slugs (retail, chain, gain).
+        "slug": "ai-at-work",
+        "label": "AI at Work",
+        "icon": "chip",
+        "dashboard_themes": ["AI at Work"],
+        "report_themes": ["AI at Work"],
+    },
 ]
 
 # Kill switch for the narrative-content pilot: set to False to pull the
@@ -362,6 +373,8 @@ NARRATIVE_TOPICS = {
     # angle on the existing waves, leading with whatever moved in the newest wave (see the
     # narrative-draft skill's small-business notes).
     "small-business": "weekly",
+    # The AI module is a weekly survey, so this one follows the data week to week.
+    "ai-at-work": "weekly",
 }
 
 # Auto-links the first mention of a known term in narrative body text to its
@@ -388,6 +401,7 @@ NARRATIVE_GLOSSARY = [
     ("Weekly Pulse", False, "US", "weekly-pulse"),
     ("Geopolitical Risk", False, "Global", "geopolitical-risk"),
     ("Global Labor", False, "Global", "jobs-labor"),
+    ("AI at Work", False, "US", "ai-module"),
     ("ICIE", True, "US", "inflation-supply-chains"),
     ("PSI", True, "US", "inflation-supply-chains"),
     ("PRI", True, "US", "price-response-indicators"),

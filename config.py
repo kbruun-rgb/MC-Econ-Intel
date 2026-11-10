@@ -358,6 +358,10 @@ NARRATIVE_TOPICS = {
     "housing": "weekly",
     "global": "weekly",
     "category-level-spending": "weekly",
+    # Quarterly survey, but still a weekly slot: each week works through a different validated
+    # angle on the existing waves, leading with whatever moved in the newest wave (see the
+    # narrative-draft skill's small-business notes).
+    "small-business": "weekly",
 }
 
 # Auto-links the first mention of a known term in narrative body text to its

@@ -228,3 +228,35 @@ class ActivityEvent(db.Model):
     created_at = db.Column(db.DateTime, server_default=db.func.now())
 
     user = db.relationship("User")
+
+
+class EmailOptOut(db.Model):
+    """A user who has unsubscribed from narrative-finding emails. An opt-out
+    table (not a column on User) so everyone defaults to subscribed and so
+    shipping this needs no migration -- db.create_all() creates it on the
+    next startup. Row exists = no emails.
+    """
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), unique=True, nullable=False)
+    created_at = db.Column(db.DateTime, server_default=db.func.now())
+
+    user = db.relationship("User")
+
+
+class NarrativeEmailSend(db.Model):
+    """One row per narrative finding emailed to subscribers. The emails
+    themselves go out from Kayla's Gmail (see send_narrative_email.py); this
+    is the record that stops a double-send, drives the "last sent" warning
+    on the admin page, and lets /admin/narrative/<id>/email show how many
+    recipients came back to the site afterward.
+    """
+
+    id = db.Column(db.Integer, primary_key=True)
+    snippet_id = db.Column(db.Integer, db.ForeignKey("narrative_snippet.id"), nullable=False)
+    sent_at = db.Column(db.DateTime, server_default=db.func.now())
+    sent_by = db.Column(db.String(255), nullable=False)
+    recipient_count = db.Column(db.Integer, nullable=False)
+    subject = db.Column(db.String(255), nullable=False)
+
+    snippet = db.relationship("NarrativeSnippet")

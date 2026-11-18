@@ -52,7 +52,7 @@
 
 <h2 class="section-title" style="font-size:1.05rem; margin-top:2rem;">Currently live</h2>
 <table class="reports-table">
-  <thead><tr><th>Topic</th><th>Headline</th><th>Cadence</th><th>Published</th></tr></thead>
+  <thead><tr><th>Topic</th><th>Headline</th><th>Cadence</th><th>Published</th><th></th></tr></thead>
   <tbody>
     {% for slug, cadence in topics.items() %}
     <tr>
@@ -62,6 +62,7 @@
       </td>
       <td>{{ cadence }}</td>
       <td>{% if live[slug] %}{{ live[slug].published_at.strftime('%b %d, %Y') }}{% endif %}</td>
+      <td>{% if live[slug] %}<a href="{{ url_for('narrative.email_preview', snippet_id=live[slug].id) }}">Preview email</a>{% endif %}</td>
     </tr>
     {% endfor %}
   </tbody>

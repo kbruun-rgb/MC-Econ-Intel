@@ -1,6 +1,18 @@
 from flask import Blueprint, Response, abort, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
+from app.narrative_email import (
+    build_email,
+    engagement,
+    is_subscribed,
+    previous_sends,
+    recipients,
+    send_guard,
+    set_subscribed,
+    skipped,
+    user_from_token,
+)
+
 from app.narrative import (
     approve_snippet,
     create_manual_snippet,
@@ -217,3 +229,42 @@ def chart(slug):
     if not snippet.chart_image:
         abort(404)
     return Response(snippet.chart_image, mimetype=snippet.chart_mimetype or "image/png")
+
+
+@narrative_bp.route("/admin/narrative/<int:snippet_id>/email")
+@login_required
+def email_preview(snippet_id):
+    """Exactly what subscribers would get, who would get it, and whether
+    anything argues against sending now. Sending itself happens from Kayla's
+    Gmail via send_narrative_email.py, not from this page.
+    """
+    _require_admin()
+    snippet = get_snippet(snippet_id) or abort(404)
+    built = build_email(snippet, current_user)
+    # The real email embeds the chart as an attachment (cid:att0); the
+    # preview points at the admin-only chart route instead.
+    preview_html = built["html"].replace("cid:att0", url_for("narrative.admin_chart", snippet_id=snippet.id))
+    sends = [(s, engagement(s)) for s in previous_sends()]
+    return render_template(
+        "narrative_email_preview.html",
+        snippet=snippet,
+        subject=built["subject"],
+        preview_html=preview_html,
+        recipients=recipients(),
+        skipped=skipped(),
+        problems=send_guard(snippet),
+        sends=sends,
+        topic_label=topic_label,
+    )
+
+
+@narrative_bp.route("/email/unsubscribe/<token>", methods=["GET", "POST"])
+def email_unsubscribe(token):
+    """Public (no login) -- reachable from the footer of the email. GET only
+    shows a confirm button: corporate mail scanners fetch every link in a
+    message, and a GET that unsubscribed would silently opt people out.
+    """
+    user = user_from_token(token) or abort(404)
+    if request.method == "POST":
+        set_subscribed(user, request.form.get("action") == "resubscribe")
+    return render_template("email_unsubscribe.html", subscribed=is_subscribed(user), done=request.method == "POST")

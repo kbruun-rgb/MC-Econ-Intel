@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Email preferences — Morning Consult Economic Intelligence{% endblock %}
+{% block content %}
+<div class="login-wrap">
+  <h1>Email preferences</h1>
+  <form method="post">
+    {% if subscribed %}
+      {% if done %}<p>You are subscribed again. We will email you occasionally when there is a finding worth a look.</p>{% else %}
+      <p>You currently receive occasional emails about new findings on the Economic Intelligence portal.</p>
+      <button class="btn" type="submit" name="action" value="unsubscribe" style="width:100%;">Unsubscribe from these emails</button>{% endif %}
+    {% else %}
+      <p>{% if done %}You have been unsubscribed. You will not get these emails anymore.{% else %}You are unsubscribed from these emails.{% endif %} Your portal login is not affected.</p>
+      <button class="btn btn-secondary" type="submit" name="action" value="resubscribe" style="width:100%;">Subscribe again</button>
+    {% endif %}
+  </form>
+</div>
+{% endblock %}

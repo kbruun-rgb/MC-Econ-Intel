@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Email preview — Morning Consult Economic Intelligence{% endblock %}
+{% block content %}
+<h1 class="section-title">Email preview</h1>
+<p class="subtle">{{ topic_label(snippet.topic_slug) }} &middot; Subject: <strong>{{ subject }}</strong></p>
+<p class="subtle">This page only previews. The emails are sent one per person from Kayla's Gmail, by asking Claude to send this finding.</p>
+<a class="btn btn-secondary" href="{{ url_for('narrative.queue') }}">Back to review</a>
+
+{% if problems %}
+<h2 class="section-title" style="font-size:1.05rem; margin-top:1.5rem;">Check before sending</h2>
+<ul>{% for p in problems %}<li>{{ p }}</li>{% endfor %}</ul>
+{% endif %}
+
+<h2 class="section-title" style="font-size:1.05rem; margin-top:1.5rem;">What subscribers get</h2>
+<iframe srcdoc="{{ preview_html }}" style="width:100%; max-width:660px; height:900px; border:1px solid var(--mc-light-gray); border-radius:6px; background:#fff;"></iframe>
+
+<h2 class="section-title" style="font-size:1.05rem; margin-top:1.5rem;">Recipients ({{ recipients|length }})</h2>
+<p class="subtle">{% for u in recipients %}{{ u.email }}{% if not loop.last %}, {% endif %}{% endfor %}</p>
+{% if skipped %}
+<p class="subtle">Left out: {% for u, reason in skipped %}{{ u.email }} ({{ reason }}){% if not loop.last %}, {% endif %}{% endfor %}</p>
+{% endif %}
+
+<h2 class="section-title" style="font-size:1.05rem; margin-top:1.5rem;">Sent so far</h2>
+{% if sends %}
+<table class="reports-table">
+  <thead><tr><th>Sent</th><th>Subject</th><th>Recipients</th><th>Active within 7 days</th></tr></thead>
+  <tbody>
+    {% for s, eng in sends %}
+    <tr>
+      <td>{{ s.sent_at|eastern("%b %d, %Y") }}</td>
+      <td>{{ s.subject }}</td>
+      <td>{{ s.recipient_count }}</td>
+      <td>{% if eng %}{{ eng[0] }} of {{ eng[1] }}{% endif %}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="subtle">Nothing sent yet.</p>
+{% endif %}
+{% endblock %}

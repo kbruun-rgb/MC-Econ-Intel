@@ -118,6 +118,7 @@ def create_app():
         "oauth.register",
         "oauth.token",
         "oauth.authorize",
+        "narrative.email_unsubscribe",
     }
 
     # Lets a plain URL-fetch AI tool (no session, no cookies) read gated

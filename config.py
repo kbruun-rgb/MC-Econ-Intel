@@ -85,7 +85,7 @@ SITE_BASE_URL = os.environ.get("SITE_BASE_URL", "https://mc-econ-intel.onrender.
 # Sent one-per-recipient from Kayla's Gmail; never sent to these addresses
 # (test accounts and anything else that shouldn't get client email).
 EMAIL_EXCLUDE_SUFFIXES = ("@local.invalid", "@client.test")
-EMAIL_EXCLUDE_ADDRESSES = set()
+EMAIL_EXCLUDE_ADDRESSES = {"michael@morningconsult.com"}  # Michael Ramlet: left out for now, per Kayla 2026-11-18
 # Mailing address for the footer of commercial email. Left blank on purpose:
 # fill in Morning Consult's address before the first send (omitted if empty).
 EMAIL_FOOTER_ADDRESS = os.environ.get(

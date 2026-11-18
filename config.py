@@ -84,11 +84,13 @@ SITE_BASE_URL = os.environ.get("SITE_BASE_URL", "https://mc-econ-intel.onrender.
 # Narrative-finding emails (see app/narrative_email.py, send_narrative_email.py).
 # Sent one-per-recipient from Kayla's Gmail; never sent to these addresses
 # (test accounts and anything else that shouldn't get client email).
-EMAIL_EXCLUDE_SUFFIXES = ("@local.invalid",)
+EMAIL_EXCLUDE_SUFFIXES = ("@local.invalid", "@client.test")
 EMAIL_EXCLUDE_ADDRESSES = set()
 # Mailing address for the footer of commercial email. Left blank on purpose:
 # fill in Morning Consult's address before the first send (omitted if empty).
-EMAIL_FOOTER_ADDRESS = os.environ.get("EMAIL_FOOTER_ADDRESS", "")
+EMAIL_FOOTER_ADDRESS = os.environ.get(
+    "EMAIL_FOOTER_ADDRESS", "Morning Consult, 1025 F Street NW, Suite 950, Washington, DC 20004"
+)
 R2_ENDPOINT_URL = os.environ.get("R2_ENDPOINT_URL")
 R2_ACCESS_KEY_ID = os.environ.get("R2_ACCESS_KEY_ID")
 R2_SECRET_ACCESS_KEY = os.environ.get("R2_SECRET_ACCESS_KEY")

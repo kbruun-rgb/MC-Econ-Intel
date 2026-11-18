@@ -55,7 +55,7 @@ def cmd_preview(snippet_id):
             print(f"  {u.email} ({reason})")
 
 
-def cmd_prepare(snippet_id, out_dir, only, force):
+def cmd_prepare(snippet_id, out_dir, only, force, exclude=None):
     snippet = _snippet_or_exit(snippet_id)
     problems = send_guard(snippet)
     if problems and not force:
@@ -70,6 +70,9 @@ def cmd_prepare(snippet_id, out_dir, only, force):
         missing = wanted - {u.email.lower() for u in to}
         if missing:
             sys.exit(f"Not in the recipient list (unknown, unsubscribed or excluded): {', '.join(sorted(missing))}")
+    if exclude:
+        drop = {e.strip().lower() for e in exclude}
+        to = [u for u in to if u.email.lower() not in drop]
     if not to:
         sys.exit("No recipients.")
 
@@ -115,6 +118,7 @@ def main():
     p.add_argument("snippet_id", type=int)
     p.add_argument("--out")
     p.add_argument("--only", nargs="+", help="Test copy: only these addresses.")
+    p.add_argument("--exclude", nargs="+", help="Leave these addresses out of this one send only (they stay subscribed).")
     p.add_argument("--force", action="store_true", help="Prepare even if warnings were raised.")
     p = sub.add_parser("log")
     p.add_argument("snippet_id", type=int)
@@ -126,7 +130,7 @@ def main():
         if args.command == "preview":
             cmd_preview(args.snippet_id)
         elif args.command == "prepare":
-            cmd_prepare(args.snippet_id, args.out, args.only, args.force)
+            cmd_prepare(args.snippet_id, args.out, args.only, args.force, args.exclude)
         else:
             cmd_log(args.snippet_id, args.count)
 

@@ -165,16 +165,22 @@ def build_email(snippet, user):
             f'style="display:block;width:100%;max-width:536px;height:auto;border:1px solid {LIGHT};">{caption}</td></tr>'
         )
 
-    if explore_url:
-        explore_cell = (
-            f'<td style="padding:0 12px 8px 0;"><a href="{escape(explore_url)}" '
-            f'style="display:inline-block;background:{TEAL};color:#FFFFFF;text-decoration:none;font-size:15px;'
-            f'font-weight:bold;padding:12px 22px;border-radius:6px;">Explore more of this data</a></td>'
+    def button(url, label, filled):
+        # Colors live on the <td> (bgcolor + border) as well as the link, because
+        # some mail clients strip background from <a> and white-on-white vanishes.
+        fill = TEAL if filled else "#FFFFFF"
+        text = "#FFFFFF" if filled else TEAL
+        return (
+            f'<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 12px;"><tr>'
+            f'<td bgcolor="{fill}" style="background-color:{fill};border:1px solid {TEAL};border-radius:6px;">'
+            f'<a href="{escape(url)}" style="display:block;color:{text};font-size:15px;font-weight:bold;'
+            f'text-decoration:none;padding:12px 22px;">{label} &rarr;</a></td></tr></table>'
         )
-        browse_style = f"background:#FFFFFF;color:{TEAL};border:1px solid {TEAL};"
-    else:
-        explore_cell = ""
-        browse_style = f"background:{TEAL};color:#FFFFFF;"
+
+    buttons = ""
+    if explore_url:
+        buttons += button(explore_url, "Explore more of this data", True)
+    buttons += button(browse_url, "See the full dashboard suite", not explore_url)
 
     body_html = "".join(
         f'<p style="margin:0 0 14px;font-size:16px;line-height:1.55;color:{INK};">{p}</p>' for p in paragraphs
@@ -192,10 +198,7 @@ def build_email(snippet, user):
 {chart_html}
 <tr><td style="padding:0 32px 8px;">{body_html}</td></tr>
 <tr><td style="padding:8px 32px 32px;">
-<table role="presentation" cellpadding="0" cellspacing="0"><tr>
-{explore_cell}
-<td style="padding:0 0 8px;"><a href="{escape(browse_url)}" style="display:inline-block;{browse_style}font-size:15px;font-weight:bold;padding:11px 20px;border-radius:6px;text-decoration:none;">Browse all dashboards</a></td>
-</tr></table>
+{buttons}
 </td></tr>
 <tr><td style="border-top:1px solid {LIGHT};padding:18px 32px 24px;font-size:12px;line-height:1.5;color:{GRAY};">
 You are receiving this because you have a login to the Morning Consult Economic Intelligence portal. We send these occasionally, when there is a finding worth a look.
@@ -209,7 +212,7 @@ You are receiving this because you have a login to the Morning Consult Economic 
     text_parts += [p + "\n" for p in plain_paragraphs]
     if explore_url:
         text_parts.append(f"Explore more of this data: {explore_url}")
-    text_parts += [f"Browse all dashboards: {browse_url}", ""]
+    text_parts += [f"See the full dashboard suite: {browse_url}", ""]
     text_parts += [
         "You are receiving this because you have a login to the Morning Consult Economic Intelligence portal.",
         f"Unsubscribe: {unsub_url} (or reply to this email and we will take you off the list.)",

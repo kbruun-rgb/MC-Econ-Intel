@@ -144,8 +144,8 @@ def build_email(snippet, user):
     preview both provide one.
     """
     dash = related_dashboard_link(snippet)
-    cta_url = _abs(dash[0]) if dash else SITE_BASE_URL
-    cta_label = f"Explore the {dash[1]} data" if dash else "Explore the data"
+    explore_url = _abs(dash[0]) if dash else None
+    browse_url = _abs(url_for("dashboards.index"))
     unsub_url = _abs(url_for("narrative.email_unsubscribe", token=unsubscribe_token(user)))
     topic = topic_label(snippet.topic_slug)
     paragraphs = [_style_links(p) for p in render_paragraphs(snippet.body)]
@@ -165,6 +165,17 @@ def build_email(snippet, user):
             f'style="display:block;width:100%;max-width:536px;height:auto;border:1px solid {LIGHT};">{caption}</td></tr>'
         )
 
+    if explore_url:
+        explore_cell = (
+            f'<td style="padding:0 12px 8px 0;"><a href="{escape(explore_url)}" '
+            f'style="display:inline-block;background:{TEAL};color:#FFFFFF;text-decoration:none;font-size:15px;'
+            f'font-weight:bold;padding:12px 22px;border-radius:6px;">Explore more of this data</a></td>'
+        )
+        browse_style = f"background:#FFFFFF;color:{TEAL};border:1px solid {TEAL};"
+    else:
+        explore_cell = ""
+        browse_style = f"background:{TEAL};color:#FFFFFF;"
+
     body_html = "".join(
         f'<p style="margin:0 0 14px;font-size:16px;line-height:1.55;color:{INK};">{p}</p>' for p in paragraphs
     )
@@ -181,8 +192,10 @@ def build_email(snippet, user):
 {chart_html}
 <tr><td style="padding:0 32px 8px;">{body_html}</td></tr>
 <tr><td style="padding:8px 32px 32px;">
-<a href="{escape(cta_url)}" style="display:inline-block;background:{TEAL};color:#FFFFFF;text-decoration:none;font-size:15px;font-weight:bold;padding:12px 22px;border-radius:6px;">{escape(cta_label)}</a>
-<p style="margin:10px 0 0;font-size:12px;color:{GRAY};">You will be asked to sign in with your portal login.</p>
+<table role="presentation" cellpadding="0" cellspacing="0"><tr>
+{explore_cell}
+<td style="padding:0 0 8px;"><a href="{escape(browse_url)}" style="display:inline-block;{browse_style}font-size:15px;font-weight:bold;padding:11px 20px;border-radius:6px;text-decoration:none;">Browse all dashboards</a></td>
+</tr></table>
 </td></tr>
 <tr><td style="border-top:1px solid {LIGHT};padding:18px 32px 24px;font-size:12px;line-height:1.5;color:{GRAY};">
 You are receiving this because you have a login to the Morning Consult Economic Intelligence portal. We send these occasionally, when there is a finding worth a look.
@@ -194,7 +207,9 @@ You are receiving this because you have a login to the Morning Consult Economic 
 
     text_parts = [snippet.headline, ""]
     text_parts += [p + "\n" for p in plain_paragraphs]
-    text_parts += [f"{cta_label}: {cta_url}", "(You will be asked to sign in with your portal login.)", ""]
+    if explore_url:
+        text_parts.append(f"Explore more of this data: {explore_url}")
+    text_parts += [f"Browse all dashboards: {browse_url}", ""]
     text_parts += [
         "You are receiving this because you have a login to the Morning Consult Economic Intelligence portal.",
         f"Unsubscribe: {unsub_url} (or reply to this email and we will take you off the list.)",
